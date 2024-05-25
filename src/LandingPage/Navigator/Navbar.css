@@ -1,0 +1,128 @@
+.navcontainer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    text-align: center;
+    background: rgba(247, 220, 86, 0.9);
+}
+
+.navlogo{
+    margin: 20px 50px;
+}
+.logo{
+    height: 50px;
+    cursor: pointer;
+}
+
+.navcon{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around ;
+    width: 70%;
+}
+
+.navbar{
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+    margin: auto;
+}
+
+.navbar > li{
+    text-decoration: none;
+    list-style: none;
+    color: black;
+    font-size: .9em;
+    font-weight: 500;
+    cursor: pointer;
+    margin: auto 10px;
+}
+
+.navbar > li:hover{
+    font-weight: bold;
+}
+.navbar > li:after{
+    display: block;
+    content: '';
+    width: 10%;
+    transition: width .4s ease-in-out;
+    margin: auto;
+    margin-top: 8px;
+}
+.navbar > li.selected{
+    font-weight: bold;
+}
+.navbar > li.selected:after {
+    display: block;
+    width: 100%;
+    border: solid black 1.3px;
+}
+
+.navend{
+    display: inline-flex;
+    /* flex-wrap: wrap; */
+    height: fit-content;
+    margin: auto;
+}
+.profilelink{
+    display: flex;
+    justify-content: space-between;
+    width: 130px;
+}
+.bids{
+    margin:auto 10px;
+    font-weight: 400;
+    cursor: pointer;
+}
+.usericon{
+    font-size: 1.3em;
+    margin: auto;
+    cursor: pointer;
+}
+.navlogin{
+    color:rgb(30, 29, 29);
+    font-weight: bold;
+    cursor:pointer;
+    margin: auto 20px;
+    font-family: 'MontserratBold';
+}
+.navsignup{
+    color:rgb(68, 64, 64);
+    font-weight: bold;
+    font-family: 'MontserratBold';
+    cursor:pointer;
+    padding: 15px 15px;
+    background: rgba(243, 243, 242, 0.8);
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 700px) {
+
+    .navcontainer{
+        display: flex;
+    }
+    
+    .navlogo{
+        margin: 20px auto;
+    }
+    
+    .navcon{
+        display: block;
+        margin: auto;
+    }
+    
+    .navbar > li{
+        margin: 10px;
+    } 
+    
+    .navend{
+        margin: 20px auto;
+    }
+    
+    .navsignup{
+        margin: 15px auto;
+    }
+    
+
+}

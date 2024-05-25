@@ -1,0 +1,50 @@
+.no-disp{
+    display: none
+}
+.disp{
+    display: block;
+}
+.button{
+    padding: 15px 20px;
+    border-radius: 25px;
+    background-color: #7046aa;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin: auto;
+    margin-top: 50px;
+    width: 80%
+}
+.icons{
+    font-size: 2rem;
+    cursor: pointer;
+}
+.tfnt{
+    font-size: 1.3rem;
+    /* margin: 10px; */
+    font-weight: bold;
+}
+.menubar{
+    font-size: 2.1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+.pcursor{
+    cursor: pointer;
+}
+
+.inperr{
+    border-bottom: solid red 2px;
+}
+
+.norminp{
+    border-bottom: solid black 1px;
+}
+
+.alarm{
+    color: red
+}
+.appr{
+    color: rgb(78, 156, 78)
+}
