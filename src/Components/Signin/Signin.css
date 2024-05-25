@@ -69,7 +69,6 @@
     outline: none;
     text-align: left;
     border-radius: 5px; 
-    
 }
 .sgnpassbx{
     display: flex;
@@ -152,6 +151,7 @@
     }
     .sgnbtn{
         width: 80%;
+        margin: 20px auto;
     }
     .sbidlogocover{
         display: block;
