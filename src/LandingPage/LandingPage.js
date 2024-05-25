@@ -127,7 +127,7 @@ const LandingPage = ()=> {
                                 )
                             })}
                         </div>
-                        <div className='viewmoreauction'>View More Auctions</div>
+                        <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>
                     </div>
 
                 </div>
