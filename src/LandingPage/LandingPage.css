@@ -76,12 +76,12 @@
 .featuredbox{
     margin-top: 50px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
 }
 .featurecard{
     cursor: pointer;
     width: fit-content;
-    margin: auto 10px;
+    margin: auto;
 }
 .featurecard:hover .featurename{
     font-weight: bold;
@@ -267,5 +267,27 @@
     .auctionimg{
         width: 85vw;
     }
-
+    .auctionfiltersection{
+        width: 95%;
+    }
+    .auctionsort{
+        display: flex;
+        justify-content: space-between;
+        font-size: .9em;
+        width: 245px;
+    }
+    .sorttitle{
+        margin: auto;
+        font-weight:600;
+    }
+    .auctionsortselect{
+        text-align: left;
+        width: 170px;
+        margin: auto 0;
+        padding: 8px 20px;
+        cursor: pointer;
+    }
+    .mview{
+        display: none;
+    }
 }

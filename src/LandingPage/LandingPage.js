@@ -91,7 +91,7 @@ const LandingPage = ()=> {
                         <div className='auctionfiltersection'>
                             <div className='auctionviewopt'>
                                 <TfiLayoutGrid3Alt className={'viewicon '+(viewStyle==='grid'?'viewselected':'')}/> 
-                                <FaList className={'viewicon '+(viewStyle==='list'?'viewselected':'')}/>
+                                <FaList className={'viewicon mview'+(viewStyle==='list'?'viewselected':'')}/>
                             </div>
                             <div className='auctionsort'>
                                 <div className='sorttitle'>Sort by</div>

@@ -32,12 +32,12 @@ const Navbar = ()=>{
             </div>
 
             <div className='navcon'>
-                <ul className='navbar'>
+                <div className='navbar'>
                     <li name='' className={endpoint === '' ? 'selected': ''}>AUCTIONS</li>
                     <li name='about' className={endpoint === 'about' ? 'selected': ''}>ABOUT US</li>
                     <li name = 'bidding' className={endpoint === 'bidding' ? 'selected': ''}>BIDDING</li>
                     <li name = 'contact' className={endpoint === 'contact' ? 'selected': ''}>CONTACT US</li>
-                </ul>
+                </div>
                 <div className='navend'>
                     <div className='profilelink'>
                         <div className='bids'>0 Bids</div>
