@@ -68,6 +68,7 @@
     display: block;
     width: 90%;
     border: solid rgb(59, 162, 213) 1.3px;
+    background: rgb(59, 162, 213);
   }
 
 .featuredsection > div:hover{
@@ -125,7 +126,8 @@
 .auctionsection > div.selected:after{
     display: block;
     width: 90%;
-    border: solid rgb(59, 162, 213) 1.3px;   
+    border: solid rgb(59, 162, 213) 1.3px;
+    background: rgb(59, 162, 213);   
 }
 .auctionsection > div:hover{
     font-weight: 600;
@@ -239,7 +241,9 @@
 }
 
 @media screen and (max-width: 700px) {
-
+    .banner{
+        width: 90%;
+    }
     .featuredsection > div {
         margin: 20px 15px;
     }

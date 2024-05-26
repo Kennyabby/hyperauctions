@@ -5,7 +5,7 @@
     height: fit-content;
     background: white;
     margin: 10px auto;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
 }
 .bidmain{
     /* width: 100vw; */
@@ -29,7 +29,7 @@
     font-size: 1.3em;
 }
 
-.bidbtn{
+.bidlive{
     margin: 20px auto;
     background: rgba(247, 220, 86, 0.85);
     width: fit-content;
@@ -38,16 +38,28 @@
     cursor: pointer;
     border-radius: 5px;
 }
+.bidbase{
+    width: 90%;
+    margin: 30px auto;
+    margin-bottom: 15px;
+    text-align: left;
+}
+.bidbrand{
+    background: rgb(216, 234, 243);
+    width: fit-content;
+    padding: 7px 15px;
+    font-size: .7em;
+    border-radius: 15px;
+}
 .bidentry{
     width: 50%;
-    padding: 20px auto;
+    padding: auto;
     margin: auto;
 }
 .bidentrytitle{
     display: block;
     width: fit-content;
-    padding: 10px;
-    margin: auto;
+    margin: 20px auto;
 }
 .entrytitle{
     font-weight: bold;
@@ -57,7 +69,7 @@
 }
 .userbidcard{
     width: 80%;
-    margin: 80px auto;
+    margin: 80px  auto;
 }
 .bidinp{
     font-size: 2em;
@@ -71,9 +83,10 @@
     font-family: 'MontserratBold';
     background: rgba(247, 220, 86, 0.85);
     width: fit-content;
-    padding: 15px 50px;
+    padding: 15px 40px;
     font-weight: bold;
     cursor: pointer;
+    text-align: center;
     border-radius: 5px;
 }
 

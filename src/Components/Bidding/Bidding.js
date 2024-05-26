@@ -14,7 +14,10 @@ const Bidding = ()=>{
                         <img src={currBid.src} className='bidimg'/>
                         <div className='bidname'>{currBid.name}</div>
                         <div className='biddesc'>{currBid.description}</div>
-                        <div className='bidbtn'>LIVE</div>
+                        <div className='bidlive'>LIVE</div>
+                        <div className='bidbase'>
+                            <div className='bidbrand'>{currBid.brand}</div>
+                        </div>
                     </div>
                     <div className='bidentry'>
                         <div className='bidentrytitle'>
@@ -22,7 +25,7 @@ const Bidding = ()=>{
                             <div className='entrytitle'>{'$'+currBid.initialprice}</div>
                         </div>
                         <div className='userbidcard'>
-                            <label>Enter Your Bid</label>
+                            <label>WHAT'S YOUR BID?</label>
                             <input 
                                 className='lgninp bidinp'
                                 type='number'
