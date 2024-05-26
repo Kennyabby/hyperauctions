@@ -31,7 +31,7 @@ const Bidding = ()=>{
                                 type='number'
                                 placeholder={'$'+currBid.initialprice}
                             />
-                            <div className='userbidbtn'>MAKE YOUR BID</div>
+                            <div className='userbidbtn'>BID NOW</div>
                         </div>
                     </div>
                 </div>}
