@@ -84,7 +84,7 @@ const LandingPage = ()=> {
                     </div>
                 </div>
                 <div className='auctions'>
-                    <div className='sectiontitle'>Online Live Auctions For You</div>
+                    <div className='sectiontitle'>Bid2Buy Live Auctions For You</div>
                     <div className='auctioncont'>
                         <div className='auctionsection' onClick={handleAuctionTypeSelection}>
                             {/* <div name='all'  className={currAuction === 'all' ? 'selected' : ''}>All</div> */}
