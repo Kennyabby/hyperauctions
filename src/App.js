@@ -13,7 +13,7 @@ import Verify from './Components/Verify/Verify';
 
 function App() {
   const SERVER = "http://localhost:3001"
-  // const SERVER = "https://hyper-server.vercel.app"
+  // const SERVER = "https://bid2buyserver.vercel.app"
   const [intervalId, setIntervalId] = useState(null)
   const [sessId, setSessID] = useState(null)
   const [winSize, setWinSize] = useState(window.innerWidth)
