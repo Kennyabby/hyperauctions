@@ -1,14 +1,22 @@
 import './Bidding.css'
 import ContextProvider from '../../Resources/ContextProvider'
 import { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 const Bidding = ()=>{
-    const {storePath, userRecord, currBid, setCurrBid} = useContext(ContextProvider)
+    const {storePath, userRecord, currBid, setCurrBid, setLoginMessage} = useContext(ContextProvider)
+    const Navigate = useNavigate()
     useEffect(()=>{
         setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
     },[])
     useEffect(()=>{
         storePath('bidding')
     },[storePath])
+    const  makeBid = ()=>{
+        if(userRecord===null){
+            Navigate('/login')
+            setLoginMessage("Kindly Login to Make Your Bid")
+        }
+    }
     return(
         <>
             <header className='hheader bidheader'>
@@ -34,7 +42,7 @@ const Bidding = ()=>{
                                 type='number'
                                 placeholder={'$'+currBid.initialprice}
                             />
-                            <div className='userbidbtn'>BID NOW</div>
+                            <div className='userbidbtn' onClick={makeBid}>BID NOW</div>
                         </div>
                     </div>
                 </div>}

@@ -25,12 +25,17 @@ const LandingPage = ()=> {
     },[storePath])     
     
     const startBidding = (auction)=>{
+        window.localStorage.setItem('currbid',JSON.stringify(auction))
         if(userRecord!==null){            
             setCurrBid(auction)
+            Navigate('/bidding')
+            document.body.scrollTop = 0; 
+            document.documentElement.scrollTop = 0
         }else{
-            window.localStorage.setItem('currbid',JSON.stringify(auction))
             setLoginMessage("Kindly Login to Continue Bidding")
             Navigate('/login')
+            document.body.scrollTop = 0; 
+            document.documentElement.scrollTop = 0
         }
     }
     const handleFeatureSelection = (e)=>{
@@ -83,8 +88,8 @@ const LandingPage = ()=> {
                     <div className='auctioncont'>
                         <div className='auctionsection' onClick={handleAuctionTypeSelection}>
                             {/* <div name='all'  className={currAuction === 'all' ? 'selected' : ''}>All</div> */}
-                            <div name='live' className={currAuction === 'live' ? 'selected' : ''}>Live Auction</div>
-                            {/* <div name='timed' className={currAuction === 'timed' ? 'selected' : ''}>Timed Auction</div> */}
+                            <div name='live' className={currAuction === 'live' ? 'selected' : ''}>Live Auctions</div>
+                            {userRecord!==null && <div name='userbid' className={currAuction === 'userbid' ? 'selected' : ''}>Your Bids</div>}
                             {/* <div name='buy' className={currAuction === 'buy' ? 'selected' : ''}>Buy Now</div> */}
                         </div>
                         <br className='break'/>

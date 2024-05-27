@@ -7,7 +7,7 @@
     background: rgba(247, 220, 86, 0.9);
 }
 
-.navicon{
+.navicon, .menuicon{
     display: none;
 }
 .navlogo{
@@ -133,6 +133,11 @@
     }
     .navlogo{
         margin: auto 0;
+    }
+    .menuicon{
+        display: block;
+        font-size: 2.7em;
+        cursor: pointer;
     }
     .navicon{
         display: block;

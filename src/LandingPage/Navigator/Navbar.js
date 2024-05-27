@@ -39,7 +39,7 @@ const Navbar = ()=>{
                 <div className='navlogo' >
                     <img src={navlogo} name='' className='logo'/>
                 </div>
-                <div className='navicon' onClick={()=>{setShowMenu(!showMenu)}}>
+                <div className='menuicon' onClick={()=>{setShowMenu(!showMenu)}}>
                     {showMenu? <IoClose/> : <IoMenu/>}
                 </div>
             </div>
