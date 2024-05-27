@@ -78,8 +78,8 @@ const Signin = () => {
           const resp1 = await fetchServer("POST", {
             database: "Bidder_"+field.username,
             collection: "Profile", 
-            userRecord: field
-          }, "postUserDetails", server)
+            update: field
+          }, "createDoc", server)
       
           if (resp1.err){
             setLoginMessage(resp1.mess)
