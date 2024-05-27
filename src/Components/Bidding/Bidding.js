@@ -5,7 +5,7 @@ const Bidding = ()=>{
     const {storePath, userRecord, currBid, setCurrBid} = useContext(ContextProvider)
     useEffect(()=>{
         setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
-    },[currBid])
+    },[])
     return(
         <>
             <header className='hheader bidheader'>

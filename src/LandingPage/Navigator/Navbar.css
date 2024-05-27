@@ -7,6 +7,9 @@
     background: rgba(247, 220, 86, 0.9);
 }
 
+.navicon{
+    display: none;
+}
 .navlogo{
     margin: 20px 50px;
 }
@@ -103,16 +106,47 @@
 
     .navcontainer{
         display: flex;
+        background: rgba(247, 220, 86, 0.95);
     }
-    
-    .navlogo{
+    .navmenu{
+        display: flex;
+        width: 90%;
+        justify-content: space-between;
         margin: 20px auto;
+        z-index: 5;
     }
-    
+    .navlogo{
+        margin: auto 0;
+    }
+    .navicon{
+        display: block;
+        font-size: 2.7em;
+        cursor: pointer;
+    }
+    /* .navcon::before{
+        position: absolute;
+        display: block;
+        content: '';
+        width: 90%;
+        height: 300px;
+        background: rgba(247, 220, 86, 1);
+        opacity: 0;
+        transition: opacity .7s ease-in-out;
+    } */
     .navcon{
         width: 90%;
         display: block;
         margin: auto;
+        margin-top: 0;
+        opacity: 1;
+        transition: margin-top 1s ease-in-out, opacity .7s ease-in-out;
+    }
+    /* .mobilenav::before{
+        opacity: 1;
+    } */
+    .mobilenav{
+        opacity: 0;
+        margin-top: -450px;
     }
     .navbar {
         display: block;
@@ -125,13 +159,22 @@
     
     .navend{
         margin: 20px auto;
+        display: block;
+    }
+    .navend:after{
+        display: block;
+        content: '';
+        width: 100%;
+        /* border: solid black 1px; */
     }
     
     .navsignup{
         margin: 15px auto;
+        z-index: 7;
     }
     
     .profilelink{
+        margin: 10px auto;
         width: 130px;
     }
 

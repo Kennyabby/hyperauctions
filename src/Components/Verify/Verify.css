@@ -1,0 +1,29 @@
+.verifyblock{
+    overflow: auto;
+}
+.verifymsg{
+    display: flex;
+    text-align: left;
+    width: 60%;
+    margin: auto;
+    font-size: .8em;
+    background: rgb(111, 124, 45);
+    color: yellow;
+    /* padding: 10px; */
+    border-radius: 10px;
+    border-left: solid yellow 6px;
+}
+.verifycheck{
+    margin: 10px;
+    font-size: 2em;
+    font-weight: 400;
+}
+.verifymsg > div{
+    margin: 10px 5px;
+}
+
+@media screen and (max-width: 700px) {
+    .verifymsg{
+        width: 80%;
+    }
+}

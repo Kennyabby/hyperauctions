@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import fetchServer from './Resources/ClientServerAPIConn/fetchServer'
 import Navbar from './LandingPage/Navigator/Navbar';
 import Bidding from './Components/Bidding/Bidding';
+import Verify from './Components/Verify/Verify';
 
 function App() {
   const SERVER = "http://localhost:3001"
@@ -18,14 +19,36 @@ function App() {
   const [winSize, setWinSize] = useState(window.innerWidth)
   const [userRecord, setUserRecord] = useState(null)
   const [openNavbar, setOpenNavbar] = useState(false)
-  const pathList = ['auction', 'login', 'signup']
-  const noNavPath = ['login', 'signup']
+  const pathList = ['auction', 'login', 'signup', 'verify']
+  const noNavPath = ['login', 'signup', 'verify']
   const [loginMessage, setLoginMessage] = useState('')
   const [currBid, setCurrBid] = useState(null)
   const [path, setPath] = useState('')
+  const [verificationMail, setVerificationMail] = useState(null)
+  const shuffleList = (array) => {
+    var currentIndex = array.length,
+      randomIndex,
+      temporaryValue
+    while (0 !== currentIndex) {
+      var randomIndex = Math.floor(Math.random() * currentIndex)
+      currentIndex -= 1
+      temporaryValue = array[currentIndex]
+      array[currentIndex] = array[randomIndex]
+      array[randomIndex] = temporaryValue
+    }
+    return array
+  }
+  const generateCode = () => {
+    let number = '0123456789987654321001234567899876543210'
+    var list = number.split('')
+    var shuffledList = shuffleList(list)
+    const code = shuffledList.slice(6, 12).join('')
+    return code
+  }
+  const [verificationCode, setVerificationCode] = useState(generateCode())
+  
   const Navigate = useNavigate()
   
-
   const storePath = (path)=>{
     setPath(path)
     // if (window.localStorage.getItem('sess-id') !== null){
@@ -49,7 +72,7 @@ function App() {
       Navigate("/")
     }
   }
- 
+  
   const loadPage = async (propVal, currPath)=>{
     const resp = await fetchServer("POST", {
       database: "UsersModule",
@@ -146,13 +169,19 @@ function App() {
       loginMessage, 
       setLoginMessage,
       currBid,
-      setCurrBid
+      setCurrBid,
+      verificationMail,
+      setVerificationMail,
+      verificationCode,
+      setVerificationCode,
+      generateCode
     }}>
        {!noNavPath.includes(path) && <Navbar/>}
        <Routes>
               <Route element={<LandingPage/>} path="/"></Route>
               <Route element={<Login/>} path='/login'></Route>
               <Route element={<Signin/>} path='/signup'></Route>
+              <Route element={<Verify/>} path='/verify'></Route>
               <Route element={<Bidding/>} path='/bidding'></Route>
         </Routes>
     </ContextProvider.Provider>

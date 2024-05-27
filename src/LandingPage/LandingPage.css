@@ -29,6 +29,7 @@
     width: fit-content;
 }
 .featured{
+    display: none;
     margin: 50px auto;
     text-align: center;
     width: 90%;
@@ -98,6 +99,9 @@
 }
 .auctions{
     margin-top: 200px;
+    margin: 50px auto;
+    text-align: center;
+    width: 90%;
 }
 .auctioncont{
     display: block;

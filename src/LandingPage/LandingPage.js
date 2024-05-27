@@ -77,59 +77,58 @@ const LandingPage = ()=> {
                             })}
                         </div>
                     </div>
-                    <div className='auctions'>
-                        <div className='sectiontitle'>Upcoming Online Auctions</div>
-                        <div className='auctioncont'>
-                            <div className='auctionsection' onClick={handleAuctionTypeSelection}>
-                                <div name='all'  className={currAuction === 'all' ? 'selected' : ''}>All</div>
-                                <div name='live' className={currAuction === 'live' ? 'selected' : ''}>Live Auction</div>
-                                <div name='timed' className={currAuction === 'timed' ? 'selected' : ''}>Timed Auction</div>
-                                <div name='buy' className={currAuction === 'buy' ? 'selected' : ''}>Buy Now</div>
-                            </div>
-                            <br className='break'/>
+                </div>
+                <div className='auctions'>
+                    <div className='sectiontitle'>Upcoming Online Auctions</div>
+                    <div className='auctioncont'>
+                        <div className='auctionsection' onClick={handleAuctionTypeSelection}>
+                            <div name='all'  className={currAuction === 'all' ? 'selected' : ''}>All</div>
+                            <div name='live' className={currAuction === 'live' ? 'selected' : ''}>Live Auction</div>
+                            <div name='timed' className={currAuction === 'timed' ? 'selected' : ''}>Timed Auction</div>
+                            <div name='buy' className={currAuction === 'buy' ? 'selected' : ''}>Buy Now</div>
                         </div>
-                        <div className='auctionfiltersection'>
-                            <div className='auctionviewopt'>
-                                <TfiLayoutGrid3Alt className={'viewicon '+(viewStyle==='grid'?'viewselected':'')}/> 
-                                <FaList className={'viewicon mview'+(viewStyle==='list'?'viewselected':'')}/>
-                            </div>
-                            <div className='auctionsort'>
-                                <div className='sorttitle'>Sort by</div>
-                                <select
-                                    className='auctionsortselect'
-                                >
-                                    <option value='today'>Today</option>
-                                    <option value='endingsoon'>Ending Soon</option>
-                                    <option value='upcoming'>Upcoming</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className='auctionbox'>
-                            {allData.slice(0,21).map((auction)=>{
-                                return (
-                                    <div className='auctioncard'>
-                                        <div className='auctioncardtitle'>
-                                            <div className='auctionstatus'>
-                                                Live
-                                            </div>
-                                            <div className='auctionprice'>
-                                                {'$'+auction.initialprice}
-                                            </div>
-                                        </div>
-                                        <img src={auction.src} className='auctionimg'/>
-                                        <div className='auctionname'>{auction.name}</div>
-                                        <div className='auctiondesc'>{auction.description}</div>
-                                        <div 
-                                            className='auctionbtn'
-                                            onClick={()=>{startBidding(auction)}}
-                                        >BID NOW</div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>
+                        <br className='break'/>
                     </div>
-
+                    <div className='auctionfiltersection'>
+                        <div className='auctionviewopt'>
+                            <TfiLayoutGrid3Alt className={'viewicon '+(viewStyle==='grid'?'viewselected':'')}/> 
+                            <FaList className={'viewicon mview'+(viewStyle==='list'?'viewselected':'')}/>
+                        </div>
+                        <div className='auctionsort'>
+                            <div className='sorttitle'>Sort by</div>
+                            <select
+                                className='auctionsortselect'
+                            >
+                                <option value='today'>Today</option>
+                                <option value='endingsoon'>Ending Soon</option>
+                                <option value='upcoming'>Upcoming</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className='auctionbox'>
+                        {allData.slice(0,21).map((auction)=>{
+                            return (
+                                <div className='auctioncard'>
+                                    <div className='auctioncardtitle'>
+                                        <div className='auctionstatus'>
+                                            Live
+                                        </div>
+                                        <div className='auctionprice'>
+                                            {'$'+auction.initialprice}
+                                        </div>
+                                    </div>
+                                    <img src={auction.src} className='auctionimg'/>
+                                    <div className='auctionname'>{auction.name}</div>
+                                    <div className='auctiondesc'>{auction.description}</div>
+                                    <div 
+                                        className='auctionbtn'
+                                        onClick={()=>{startBidding(auction)}}
+                                    >BID NOW</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>
                 </div>
             </main>
             <footer className='footer'>

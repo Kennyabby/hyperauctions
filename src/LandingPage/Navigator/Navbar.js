@@ -11,11 +11,11 @@ const Navbar = ()=>{
     const location = useLocation()
     const Navigate = useNavigate()
     const [endpoint, setEndpoint] = useState(location)
+    const [showMenu, setShowMenu] = useState(false)
     
     useEffect(()=>{
         const pathname = location.pathname
         setEndpoint(pathname.slice(pathname.indexOf('/')+1,))
-        console.log(pathname.slice(pathname.indexOf('/')+1,))
     },[location])
 
     const handleNavClick = (e) =>{
@@ -27,11 +27,16 @@ const Navbar = ()=>{
     return (
         <>
         <div className='navcontainer' onClick={handleNavClick}>
-            <div className='navlogo' >
-                <img src={navlogo} name='' className='logo'/>
+            <div className='navmenu'>
+                <div className='navlogo' >
+                    <img src={navlogo} name='' className='logo'/>
+                </div>
+                <div className='navicon' onClick={()=>{setShowMenu(!showMenu)}}>
+                    {showMenu? <IoClose/> : <IoMenu/>}
+                </div>
             </div>
 
-            <div className='navcon'>
+            <div className={'navcon'+(showMenu?'':' mobilenav')}>
                 <div className='navbar'>
                     <li name='' className={endpoint === '' ? 'selected': ''}>AUCTIONS</li>
                     <li name='about' className={endpoint === 'about' ? 'selected': ''}>ABOUT US</li>
