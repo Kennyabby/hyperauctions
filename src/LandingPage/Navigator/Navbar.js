@@ -14,12 +14,16 @@ const Navbar = ()=>{
     const [endpoint, setEndpoint] = useState(location)
     const [showMenu, setShowMenu] = useState(false)
     const {userRecord} = useContext(ContextProvider)
+    const [loggedin, setLoggedin] = useState(false)
     useEffect(()=>{
         const pathname = location.pathname
         setEndpoint(pathname.slice(pathname.indexOf('/')+1,))
     },[location])
     useEffect(()=>{
-        console.log(userRecord)
+        var sid = window.localStorage.getItem('sess-id')
+        if (sid!==null){
+            setLoggedin(true)
+        }
     },[userRecord])
     const handleNavClick = (e) =>{
         const name = e.target.getAttribute('name')
@@ -49,12 +53,12 @@ const Navbar = ()=>{
                 <div className='navend'>
                     <div className={'profilelink'+(userRecord!==null?' userprofilelink':'')}>
                         <div className='bids'>0 Bids</div>
-                        {userRecord!==null&&<div className='usericon'><IoNotifications/></div>}
+                        {loggedin&&<div className='usericon'><IoNotifications/></div>}
                         <div className='usericon'>
                             <FaUser/><IoChevronDownOutline/>
                         </div>
                     </div>
-                    {userRecord==null ?
+                    {userRecord===null?
                         <div className='visitview'>
                             <div className='navlogin' name='login'>LOGIN</div>
                             <div className='navsignup' name='signup'>SIGN UP</div>

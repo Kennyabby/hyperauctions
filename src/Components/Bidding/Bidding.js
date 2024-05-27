@@ -6,6 +6,9 @@ const Bidding = ()=>{
     useEffect(()=>{
         setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
     },[])
+    useEffect(()=>{
+        storePath('bidding')
+    },[storePath])
     return(
         <>
             <header className='hheader bidheader'>
@@ -21,7 +24,7 @@ const Bidding = ()=>{
                     </div>
                     <div className='bidentry'>
                         <div className='bidentrytitle'>
-                            <div className='entrycardlabel'>CURRENT BID VALUE</div>
+                            <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
                             <div className='entrytitle'>{'$'+currBid.initialprice}</div>
                         </div>
                         <div className='userbidcard'>

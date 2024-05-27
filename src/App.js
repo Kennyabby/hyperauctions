@@ -19,7 +19,7 @@ function App() {
   const [winSize, setWinSize] = useState(window.innerWidth)
   const [userRecord, setUserRecord] = useState(null)
   const [openNavbar, setOpenNavbar] = useState(false)
-  const pathList = ['', 'login', 'signup', 'verify']
+  const pathList = ['', 'bidding','login', 'signup', 'verify']
   const noNavPath = ['login', 'signup', 'verify']
   const [loginMessage, setLoginMessage] = useState('')
   const [currBid, setCurrBid] = useState(null)
@@ -75,7 +75,6 @@ function App() {
   }
   
   const loadPage = async (propVal, currPath)=>{
-    console.log(propVal)
     const resp = await fetchServer("POST", {
       database: "AuctionDB",
       collection: "UsersBase", 
@@ -85,7 +84,7 @@ function App() {
       removeSessions()
     }else{
       setUserRecord(resp.record)
-      if(!resp.verified){
+      if(!resp.record.verified){
         Navigate('/verify')
       }else{
         Navigate('/'+currPath)

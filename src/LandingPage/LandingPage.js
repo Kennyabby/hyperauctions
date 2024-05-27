@@ -79,13 +79,13 @@ const LandingPage = ()=> {
                     </div>
                 </div>
                 <div className='auctions'>
-                    <div className='sectiontitle'>Upcoming Online Auctions</div>
+                    <div className='sectiontitle'>Online Live Auctions For You</div>
                     <div className='auctioncont'>
                         <div className='auctionsection' onClick={handleAuctionTypeSelection}>
-                            <div name='all'  className={currAuction === 'all' ? 'selected' : ''}>All</div>
+                            {/* <div name='all'  className={currAuction === 'all' ? 'selected' : ''}>All</div> */}
                             <div name='live' className={currAuction === 'live' ? 'selected' : ''}>Live Auction</div>
-                            <div name='timed' className={currAuction === 'timed' ? 'selected' : ''}>Timed Auction</div>
-                            <div name='buy' className={currAuction === 'buy' ? 'selected' : ''}>Buy Now</div>
+                            {/* <div name='timed' className={currAuction === 'timed' ? 'selected' : ''}>Timed Auction</div> */}
+                            {/* <div name='buy' className={currAuction === 'buy' ? 'selected' : ''}>Buy Now</div> */}
                         </div>
                         <br className='break'/>
                     </div>
@@ -101,7 +101,7 @@ const LandingPage = ()=> {
                             >
                                 <option value='today'>Today</option>
                                 <option value='endingsoon'>Ending Soon</option>
-                                <option value='upcoming'>Upcoming</option>
+                                {/* <option value='upcoming'>Upcoming</option> */}
                             </select>
                         </div>
                     </div>
