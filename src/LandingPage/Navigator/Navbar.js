@@ -29,6 +29,7 @@ const Navbar = ()=>{
         const name = e.target.getAttribute('name')
         if (![null, undefined].includes(name)){
             Navigate('/'+name)
+            setShowMenu(false)
         }
     }
     return (
