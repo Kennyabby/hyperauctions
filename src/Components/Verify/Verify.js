@@ -8,7 +8,7 @@ import bidlogo from '../../assets/images/auctionbidlogo.png'
 
 const Verify = () => {
   const { server, fetchServer, storePath,
-    verificationMail, verificationCode,
+    verificationMail, verificationCode,loadPage,userRecord,
     setVerificationCode, generateCode,setVerificationMail
   } = useContext(ContextProvider)
   const [countDownId,setCountDownId] = useState(null)
@@ -45,12 +45,41 @@ const Verify = () => {
     if(field.code===verificationCode){
         SetVerificationMessage("")
         setVerifyStatus("VERIFYING...")
-        setTimeout(()=>{
-            SetVerificationMessage("Thank You. Email Verified Successfully!")
-        },5000)
-        setTimeout(()=>{
-            Navigate('/')
-        },8000)
+        const resps = await fetchServer("POST", {
+            database: "AuctionDB",
+            collection: "UsersBase", 
+            prop: [{email: userRecord.email}, {verified:true}]
+        }, "updateOneDoc", server)
+
+        if (resps.err){
+            setLoginMessage(resps.mess)
+            // console.log(resps.mess)
+        }else{
+            if (resps.updated){
+                const resps1 = await fetchServer("POST", {
+                    database: "Bidder_"+userRecord.username,
+                    collection: "Profile", 
+                    prop: [{email: userRecord.email}, {verified:true}]
+                }, "updateOneDoc", server)
+                if (resps1.err){
+                    setLoginMessage(resps1.mess)
+                }else{
+                    if(resps1.updated){
+                        SetVerificationMessage("Thank You. Email Verified Successfully!")
+                        setVerifyStatus("VERIFY")
+                        setTimeout(()=>{
+                            Navigate('/')
+                        },3000)
+                    }else{
+                        setLoginMessage("Service error. No cause for alarm. Kindly try again!")
+                        setVerifyStatus("VERIFY")
+                    }
+                }
+            }else{
+                setLoginMessage("Service error. No cause for alarm. Kindly try again!")
+                setVerifyStatus("VERIFY")
+            }
+        }
     }else{
         setLoginMessage("Code Not Valid!")
         setVerifyStatus("VERIFY")
@@ -84,7 +113,7 @@ const Verify = () => {
         const bodyCode = generateCode()
         setVerificationCode(bodyCode) 
         const message =
-        "<h2>Verify your email address by copying the verification code below.</h2><p style='font-family:monospace; font-size: 1rem;'>Hello!,</p><p style='font-family:monospace; font-size: 1rem;'>You are getting this email to confirm that you want to create an account with <b>Bid2Buy</b>.</p><p>Your Verification code is: <b>" +
+        "<h2>Verify your email address by copying the verification code below.</h2><p style='font-family:monospace; font-size: 1rem;'>Hello!,</p><p style='font-family:monospace; font-size: 1rem;'>You are getting this email to validate your identity with <b>Bid2Buy</b>.</p><p>Your Verification code is: <b>" +
         bodyCode +
         "</b></p><h2>Not You?</h2><p style='font-family:monospace; font-size: 1rem;'>If this was not you, kindly <a href='https://xdot.vercel.app/help'>click here</a>. </p><p style='margin-top: 50px; font-family:monospace;'>Regards. <b>The Bid2Buy Support Team</b> in partnership with <b>Hypercity</b>.</p><p style='margin-top: 150px; font-family:monospace'>If you do no want to get future notifications through this email, kindly <a href='https://xdot.vercel.app/help'>stop it here</a>.</p>"
     

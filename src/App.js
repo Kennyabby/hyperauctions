@@ -19,7 +19,7 @@ function App() {
   const [winSize, setWinSize] = useState(window.innerWidth)
   const [userRecord, setUserRecord] = useState(null)
   const [openNavbar, setOpenNavbar] = useState(false)
-  const pathList = ['auction', 'login', 'signup', 'verify']
+  const pathList = ['', 'login', 'signup', 'verify']
   const noNavPath = ['login', 'signup', 'verify']
   const [loginMessage, setLoginMessage] = useState('')
   const [currBid, setCurrBid] = useState(null)
@@ -51,6 +51,7 @@ function App() {
   
   const storePath = (path)=>{
     setPath(path)
+    window.localStorage.setItem('curr-path',path)
     // if (window.localStorage.getItem('sess-id') !== null){
     //   window.localStorage.setItem('curr-path',path)
     // } else {
@@ -74,15 +75,21 @@ function App() {
   }
   
   const loadPage = async (propVal, currPath)=>{
+    console.log(propVal)
     const resp = await fetchServer("POST", {
-      database: "UsersModule",
-      collection: "users_db", 
+      database: "AuctionDB",
+      collection: "UsersBase", 
       sessionId: propVal
     }, "getDocDetails", SERVER)
     if (resp.record === null){
       removeSessions()
     }else{
-      
+      setUserRecord(resp.record)
+      if(!resp.verified){
+        Navigate('/verify')
+      }else{
+        Navigate('/'+currPath)
+      }
     }
   }
   
@@ -163,6 +170,7 @@ function App() {
       loadPage,
       sessId,
       userRecord,
+      setUserRecord,
       storePath,
       getImage,
       getDate,

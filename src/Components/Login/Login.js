@@ -8,7 +8,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import bidlogo from '../../assets/images/auctionbidlogo.png'
 
 const Login = () => {
-  const { server, fetchServer, storePath, loginMessage, setLoginMessage } = useContext(ContextProvider)
+  const { server, fetchServer, storePath, 
+    loginMessage, setLoginMessage, loadPage
+  } = useContext(ContextProvider)
   const [field, setField] = useState({
     email: "",
     password: "",
@@ -32,8 +34,8 @@ const Login = () => {
     setSigninStatus("SIGNING IN...")
     setLoginMessage("")
     const resp = await fetchServer("POST", {
-      database: "UsersModule",
-      collection: "users_db", 
+      database: "AuctionDB",
+      collection: "UsersBase",
       pass: field.password,
       prop: {email: field.email}
     }, "authenticateUser", server)
@@ -53,20 +55,20 @@ const Login = () => {
         },5000)
       }else{
         var idVal = resp.id
+        
         var now = Date.now()
         var sess = 0
         idVal.split('').forEach((chr)=>{
           sess += chr.codePointAt(0)
         })
-        
         window.localStorage.setItem('sess-recg-id', now * sess)
         window.localStorage.setItem('idt-curr-usr', now)
         window.localStorage.setItem('sess-id', idVal)
-        window.location.href ="/dashboard"
         setField((field)=>{
           return({...field, email: "", password: ""})
         })
         setSigninStatus("SIGN IN")
+        loadPage(idVal, '')
       }
     }
     

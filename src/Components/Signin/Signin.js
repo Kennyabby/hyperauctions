@@ -11,7 +11,8 @@ const Signin = () => {
   
   const { server, fetchServer, storePath, 
     setVerificationMail, setVerificationCode, 
-  generateCode } = useContext(ContextProvider)
+    generateCode, loadPage
+  } = useContext(ContextProvider)
   
   const [field, setField] = useState({
     firstname: "",
@@ -57,8 +58,8 @@ const Signin = () => {
     const resp = await fetchServer("POST", {
       database: "AuctionDB",
       collection: "UsersBase", 
-      update: field
-    }, "createDoc", server)
+      userRecord: field
+    }, "postUserDetails", server)
 
     if (resp.err){
       setLoginMessage(resp.mess)
@@ -74,11 +75,11 @@ const Signin = () => {
           setLoginMessage("")
         },3000)
       }else{
-        const resp1 = await fetchServer("POST", {
+          const resp1 = await fetchServer("POST", {
             database: "Bidder_"+field.username,
             collection: "Profile", 
-            update: field
-          }, "createDoc", server)
+            userRecord: field
+          }, "postUserDetails", server)
       
           if (resp1.err){
             setLoginMessage(resp1.mess)
@@ -94,52 +95,87 @@ const Signin = () => {
                 setLoginMessage("")
               },3000)
             }else{
-                setVerificationMail(field.email)
-                const bodyCode = generateCode()
-                setVerificationCode(bodyCode) 
-                const message =
-                "<h2>Verify your email address by copying the verification code below.</h2><p style='font-family:monospace; font-size: 1rem;'>Hello!,</p><p style='font-family:monospace; font-size: 1rem;'>You are getting this email to confirm that you want to create an account with <b>Bid2Buy</b>.</p><p>Your Verification code is: <b>" +
-                bodyCode +
-                "</b></p><h2>Not You?</h2><p style='font-family:monospace; font-size: 1rem;'>If this was not you, kindly <a href='https://xdot.vercel.app/help'>click here</a>. </p><p style='margin-top: 50px; font-family:monospace;'>Regards. <b>The  Bid2Buy Support Team</b> in partnership with <b>Hypercity</b>.</p><p style='margin-top: 150px; font-family:monospace'>If you do no want to get future notifications through this email, kindly <a href='https://xdot.vercel.app/help'>stop it here</a>.</p>"
-
-                const detailsVal = {
-                    to: [field.email],
-                    type: 'html',
-                    subject: 'Verify your account on Bid2Buy',
-                    message: message,
-                }
-                const resp = await fetchServer("POST", {
-                    details: detailsVal
-                }, "mailUser", server)
-            
-                if (resp.err){
-                    setLoginMessage(resp.mess)
-                    setSigninStatus("SIGN UP")
+                const resp2 = await fetchServer("POST", {
+                    database: "AuctionDB",
+                    collection: "UsersBase",
+                    pass: field.password,
+                    prop: {email: field.email}
+                }, "authenticateUser", server)
+                if (resp2.err){
+                    setLoginMessage('Login To Continue!')
                     setTimeout(()=>{
                         setLoginMessage("")
+                        Navigate('/Login')
                     },5000)
                 }else{
-                    if (resp.mess){
-                        setLoginMessage(resp.mess)
-                        setSigninStatus("SIGN UP")
+                    if (resp2.mess){
+                        setLoginMessage('Login To Continue!')
                         setTimeout(()=>{
-                        setLoginMessage("")
+                            setLoginMessage("")
+                            Navigate('/Login')
                         },5000)
                     }else{
-                        setField((field)=>{
-                            return({...field, firstname: "",
-                                lastname: "",
-                                contact: "",
-                                email:"",
-                                username: "",
-                                password: ""
-                            })
+                        var idVal = resp2.id
+                        var now = Date.now()
+                        var sess = 0
+                        idVal.split('').forEach((chr)=>{
+                          sess += chr.codePointAt(0)
                         })
-                        Navigate('/verify')
-                        setSigninStatus("SIGN UP")
+                        
+                        window.localStorage.setItem('sess-recg-id', now * sess)
+                        window.localStorage.setItem('idt-curr-usr', now)
+                        window.localStorage.setItem('sess-id', idVal)
+                        setVerificationMail(field.email)
+                        const bodyCode = generateCode()
+                        setVerificationCode(bodyCode) 
+                        const message =
+                        "<h2>Verify your email address by copying the verification code below.</h2><p style='font-family:monospace; font-size: 1rem;'>Hello!,</p><p style='font-family:monospace; font-size: 1rem;'>You are getting this email to validate your identity with <b>Bid2Buy</b>.</p><p>Your Verification code is: <b>" +
+                        bodyCode +
+                        "</b></p><h2>Not You?</h2><p style='font-family:monospace; font-size: 1rem;'>If this was not you, kindly <a href='https://xdot.vercel.app/help'>click here</a>. </p><p style='margin-top: 50px; font-family:monospace;'>Regards. <b>The  Bid2Buy Support Team</b> in partnership with <b>Hypercity</b>.</p><p style='margin-top: 150px; font-family:monospace'>If you do no want to get future notifications through this email, kindly <a href='https://xdot.vercel.app/help'>stop it here</a>.</p>"
+        
+                        const detailsVal = {
+                            to: [field.email],
+                            type: 'html',
+                            subject: 'Verify your account on Bid2Buy',
+                            message: message,
+                        }
+                        const resp = await fetchServer("POST", {
+                            details: detailsVal
+                        }, "mailUser", server)
+                    
+                        if (resp.err){
+                            setLoginMessage(resp.mess)
+                            setSigninStatus("SIGN UP")
+                            setTimeout(()=>{
+                                setLoginMessage("")
+                                loadPage(idVal, '')
+                            },5000)
+                        }else{
+                            if (resp.mess){
+                                setLoginMessage(resp.mess)
+                                setSigninStatus("SIGN UP")
+                                setTimeout(()=>{
+                                    setLoginMessage("")
+                                    loadPage(idVal, '')
+                                },5000)
+                            }else{
+                                setField((field)=>{
+                                    return({...field, firstname: "",
+                                        lastname: "",
+                                        contact: "",
+                                        email:"",
+                                        username: "",
+                                        password: ""
+                                    })
+                                })
+                                loadPage(idVal, '')
+                                setSigninStatus("SIGN UP")
+                            }
+                        }
+        
                     }
                 }
-               
+                               
             }
         }
         
