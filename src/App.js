@@ -53,6 +53,28 @@ function App() {
   
   const Navigate = useNavigate()
   
+  // const targetDate = new Date("May 30, 2024 12:00:00").getTime();
+// Update countdown every second
+const countDownTime = (startDate,targetDate,timerId) =>{
+  
+  // const startDate = new Date().getTime();
+  const distance = targetDate - startDate;
+
+  // Calculate days, hours, minutes, and seconds
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="countdown"
+  if (distance < 0) {
+      clearInterval(timerId);
+      return null;
+  }
+  return  `
+      ${days}d ${hours}h ${minutes}m ${seconds}s
+  `;
+}
   const storePath = (path)=>{
     setPath(path)
     window.localStorage.setItem('curr-path',path)
@@ -79,16 +101,16 @@ function App() {
   }
   const loadAuctions = async()=>{
       const categories = await getCategories()
-        if (categories!==null){
-          let categoryList = []
-          categories.forEach((type)=>{
-            categoryList = categoryList.concat([type.category])
-          })
-          // console.log(categoryList)
-          loadAuctionItems(categoryList,{})
-      }
-      // const categoryList = ['tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
-      // loadAuctionItems(categoryList,{})
+      // if (categories!==null){
+      //   let categoryList = []
+      //   categories.forEach((type)=>{
+      //     categoryList = categoryList.concat([type.category])
+      //   })
+      //   console.log(categoryList)
+      //   loadAuctionItems(categoryList,{})
+      // }
+      const categoryList = ['tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
+      loadAuctionItems(categoryList,{})
   }
   const loadPage = async (propVal, currPath)=>{
     const resp = await fetchServer("POST", {
@@ -248,7 +270,8 @@ function App() {
       generateCode,
       categories, setCategories,
       auctionItems, setAuctionItems,
-      auctionImages, setAuctionImages
+      auctionImages, setAuctionImages,
+      countDownTime
     }}>
        {!noNavPath.includes(path) && <Navbar/>}
        <Routes>

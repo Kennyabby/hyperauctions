@@ -226,6 +226,22 @@
     cursor: pointer;
     border-radius: 5px;
 }
+.auctionlive{
+    display: flex;
+    width: fit-content;
+    margin: 30px auto;
+}
+.auctionlive > div{
+    display: block;
+    margin: auto 20px;
+}
+.auctionlive > div .bid-no{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.auctiontimer{
+    font-weight: bold;
+}
 .viewmoreauction{
     width: fit-content;
     margin: 20px auto;

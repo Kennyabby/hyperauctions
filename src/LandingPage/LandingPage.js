@@ -1,6 +1,7 @@
 import './LandingPage.css'
 import { useContext, useEffect, useState } from 'react'
 import Navbar from './Navigator/Navbar'
+import Auctions from './Auctions'
 import { Navigate, useNavigate } from 'react-router-dom'
 import ContextProvider from '../Resources/ContextProvider'
 import JelweryData from '../Resources/AuctionData/JewelryData'
@@ -15,7 +16,8 @@ import { FaList } from "react-icons/fa6";
 
 const LandingPage = ()=> {
     const {storePath, userRecord, setLoginMessage, 
-        setCurrBid, auctionItems, setAuctionImages
+        setCurrBid, auctionItems, setAuctionImages,
+        countDownTime
     } = useContext(ContextProvider)
     const Navigate = useNavigate()
     const auctionImages = {...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
@@ -119,27 +121,11 @@ const LandingPage = ()=> {
                         </div>
                     </div>
                     <div className='auctionbox'>
-                        {auctionItems.length ? auctionItems.slice(0,21).map((auction)=>{
-                            return (
-                                <div className='auctioncard'>
-                                    <div className='auctioncardtitle'>
-                                        <div className='auctionstatus'>
-                                            Live
-                                        </div>
-                                        <div className='auctionprice'>
-                                            {'₦'+auction.initialprice}
-                                        </div>
-                                    </div>
-                                    <img src={auctionImages[auction.src]} className='auctionimg'/>
-                                    <div className='auctionname'>{auction.name}</div>
-                                    <div className='auctiondesc'>{auction.description}</div>
-                                    <div 
-                                        className='auctionbtn'
-                                        onClick={()=>{startBidding(auction)}}
-                                    >BID NOW</div>
-                                </div>
-                            )}) : <div>Loading...</div>
-                        }
+                        <Auctions 
+                            auctionItems = {auctionItems}
+                            auctionImages = {auctionImages}
+                            startBidding = {startBidding}
+                        />
                     </div>
                     <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>
                 </div>
@@ -157,3 +143,4 @@ const LandingPage = ()=> {
 }
 
 export default LandingPage
+
