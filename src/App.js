@@ -10,6 +10,13 @@ import fetchServer from './Resources/ClientServerAPIConn/fetchServer'
 import Navbar from './LandingPage/Navigator/Navbar';
 import Bidding from './Components/Bidding/Bidding';
 import Verify from './Components/Verify/Verify';
+import JelweryData from './Resources/AuctionData/JewelryData'
+import RelicData from './Resources/AuctionData/RelicData'
+import ArtsData from './Resources/AuctionData/ArtsData'
+import TvData from './Resources/AuctionData/TvData'
+import CoushionData from './Resources/AuctionData/CoushionData'
+import ShoeData from './Resources/AuctionData/ShoeData'
+import WatchData from './Resources/AuctionData/WatchData'
 
 function App() {
   // const SERVER = "http://localhost:3001"
@@ -22,13 +29,13 @@ function App() {
   const pathList = ['', 'bidding','login', 'signup', 'verify']
   const noNavPath = ['login', 'signup', 'verify']
   const [loginMessage, setLoginMessage] = useState('')
-  const [currBid, setCurrBid] = useState(null)
+  const [currBid, setCurrBid] = useState(JSON.parse(window.localStorage.getItem('currbid')))
   const [path, setPath] = useState('')
   const [verificationMail, setVerificationMail] = useState(null)
   const [categories, setCategories] = useState(null)
   const [auctionItems, setAuctionItems] = useState([])
-  const [auctionImages, setAuctionImages] = useState(null)
   const [catTries, setCatTries] = useState(0)
+  const auctionImages = {...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
   const shuffleList = (array) => {
     var currentIndex = array.length,
       randomIndex,
@@ -241,8 +248,8 @@ const countDownTime = (startDate,targetDate,timerId) =>{
           removeSessions()
         }
       }else{
+        removeSessions(currPath)
         loadAuctions()
-        removeSessions()
       }
     }else{
       loadAuctions()
@@ -270,7 +277,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       generateCode,
       categories, setCategories,
       auctionItems, setAuctionItems,
-      auctionImages, setAuctionImages,
+      auctionImages,
       countDownTime
     }}>
        {!noNavPath.includes(path) && <Navbar/>}

@@ -30,12 +30,12 @@
 }
 
 .bidlive{
-    margin: 20px auto;
+    margin: 5px auto;
+    margin-bottom: 20px;
     background: rgba(247, 220, 86, 0.85);
-    width: fit-content;
+    width: 70%;
     padding: 15px 50px;
     font-weight: bold;
-    cursor: pointer;
     border-radius: 5px;
 }
 .bidbase{
@@ -91,6 +91,9 @@
 }
 
 @media screen and (max-width: 700px) {
+    .biddingcover{
+        margin: 20px auto;
+    }
     .biddetails{
         width: 100%;
         margin: auto;
@@ -103,5 +106,14 @@
     .bidmain{
         height: 85vh;
         background: white;
+    }
+    .bidimg{
+        width: 100%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+    .bidlive{
+        width: 70%;
+        margin-bottom: 15px;
     }
 }

@@ -2,25 +2,16 @@ import './LandingPage.css'
 import { useContext, useEffect, useState } from 'react'
 import Navbar from './Navigator/Navbar'
 import Auctions from './Auctions'
-import { Navigate, useNavigate } from 'react-router-dom'
 import ContextProvider from '../Resources/ContextProvider'
-import JelweryData from '../Resources/AuctionData/JewelryData'
-import RelicData from '../Resources/AuctionData/RelicData'
-import ArtsData from '../Resources/AuctionData/ArtsData'
-import TvData from '../Resources/AuctionData/TvData'
-import CoushionData from '../Resources/AuctionData/CoushionData'
-import ShoeData from '../Resources/AuctionData/ShoeData'
-import WatchData from '../Resources/AuctionData/WatchData'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { TfiLayoutGrid3Alt } from "react-icons/tfi";
 import { FaList } from "react-icons/fa6";
 
 const LandingPage = ()=> {
     const {storePath, userRecord, setLoginMessage, 
-        setCurrBid, auctionItems, setAuctionImages,
-        countDownTime
+        setCurrBid, auctionItems, auctionImages 
     } = useContext(ContextProvider)
     const Navigate = useNavigate()
-    const auctionImages = {...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
     const [currFeature, setCurrFeature] = useState('tvs')
     const [currAuction, setCurrAuction] = useState('live')
     const [viewStyle, stViewStyle] = useState('grid')
@@ -30,9 +21,6 @@ const LandingPage = ()=> {
     useEffect(()=>{
         // console.log(auctionItems)
     },[auctionItems])
-    useEffect(()=>{
-        setAuctionImages(auctionImages)
-    },[])
     const startBidding = (auction)=>{
         window.localStorage.setItem('currbid',JSON.stringify(auction))
         if(userRecord!==null){            

@@ -1,6 +1,6 @@
 import './Bidding.css'
 import ContextProvider from '../../Resources/ContextProvider'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 const Bidding = ()=>{
     const {storePath, userRecord, currBid, 
@@ -12,25 +12,87 @@ const Bidding = ()=>{
     },[])
     useEffect(()=>{
         storePath('bidding')
-    },[storePath])
+    },[])
     const  makeBid = ()=>{
         if(userRecord===null){
             Navigate('/login')
             setLoginMessage("Kindly Login to Make Your Bid")
+        }else{
+
         }
     }
+    const calculateTimeLeft = (target) => {
+        const now = new Date().getTime();
+        const targetDate = new Date(target).getTime();
+        const distance = targetDate - now;
+    
+        return distance
+    };
+    
+    const getTimerString = (time)=>{
+        if (time <= 0) return 'EXPIRED';
+        const days = Math.floor(time / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((time % (1000 * 60)) / 1000);
+    
+        return `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+    }
+    const [startTimer, setStartTimer] = useState(calculateTimeLeft(currBid.start));
+    const [targetTimer, setTargetTimer] = useState(calculateTimeLeft(currBid.target));
+    
+    useEffect(() => {
+        const startTimerInterval = setInterval(() => {
+            setStartTimer(calculateTimeLeft(currBid.start));
+        }, 1000);
+    
+        return () => clearInterval(startTimerInterval);
+    }, [currBid]);
+    
+    useEffect(()=>{
+        const targetTimerInterval = setInterval(() => {
+            setTargetTimer(calculateTimeLeft(currBid.target));
+        }, 1000);
+    
+        return () => clearInterval(targetTimerInterval);
+    
+    },[currBid])
+    const starting = getTimerString(startTimer)
+    const ending = getTimerString(targetTimer)
+    const bidPeriod = (currBid.target-currBid.start)
     return(
         <>
             <header className='hheader bidheader'>
                 {currBid!==null && auctionImages!==null && <div className='biddingcover'>
                     <div className='biddetails'>
                         <img src={auctionImages[currBid.src]} className='bidimg'/>
+                        {/* <div className='bidlive'>LIVE</div> */}
+                        <div className={'bidlive'+(targetTimer<=0?' bidended':'')}>
+                            {startTimer>0 && 'LIVE SOON'}
+                            {targetTimer<=bidPeriod && targetTimer >=0 && 'LIVE'}
+                            {targetTimer<=0 && 'LIVE ENDED'}
+                        </div>
                         <div className='bidname'>{currBid.name}</div>
                         <div className='biddesc'>{currBid.description}</div>
-                        <div className='bidlive'>LIVE</div>
-                        <div className='bidbase'>
-                            <div className='bidbrand'>{currBid.brand}</div>
+                        <div className='auctionlive'>
+                        <div className='auctionbids'>
+                            <div className='bid-no'>{currBid.bids}</div>
+                            <div>All Bids</div>
                         </div>
+                        <div className='auctionbiders'>
+                            <div className='bid-no'> {currBid.biders.length}</div>
+                            <div>Bidders</div>
+                        </div>
+
+                        {userRecord!==null && <div className='myauctionbids'>
+                            <div className='bid-no'>{currBid.mybids}</div>
+                            <div>Your Bids</div>
+                        </div>}
+                        </div>
+                        {/* <div className='bidbase'>
+                            <div className='bidbrand'>{currBid.brand}</div>
+                        </div> */}
+
                     </div>
                     <div className='bidentry'>
                         <div className='bidentrytitle'>
