@@ -81,7 +81,7 @@ const Navbar = ()=>{
                         exit={{opacity:0, transition:{duration:.59}}}
                     >
                         <div className='bids extbids'><b>0</b> Bids</div>
-                        <div className='profilevisit'>{userRecord.username}</div>
+                        <div className='profilevisit'>{userRecord!==null ?userRecord.username: '....'}</div>
                         <div className='usericon exticons'><IoNotifications/></div>
                         <div className='usericon exticons'>
                             <FaUser/><IoChevronDownOutline 
