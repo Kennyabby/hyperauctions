@@ -1,20 +1,27 @@
 import './Navbar.css'
-import { FaUser } from "react-icons/fa";
+import { FaUser,FaRegUser,FaList } from "react-icons/fa";
 import { TfiMenuAlt } from "react-icons/tfi";
-import { IoMenu, IoClose, IoChevronDownOutline, IoNotifications } from "react-icons/io5";
+import { IoMenu, IoClose, 
+    IoChevronDownOutline, 
+    IoNotifications,
+    IoNotificationsOutline 
+} from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import navlogo from '../../assets/images/hyperlogo.png'
 import { useEffect, useState, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import ContextProvider from '../../Resources/ContextProvider';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = ()=>{
     const location = useLocation()
     const Navigate = useNavigate()
     const [endpoint, setEndpoint] = useState(location)
     const [showMenu, setShowMenu] = useState(false)
-    const {userRecord} = useContext(ContextProvider)
+    const {userRecord, fetchServer,server,removeSessions} = useContext(ContextProvider)
     const [loggedin, setLoggedin] = useState(false)
+    const [logoutStatus, setLogoutStatus] = useState('Log Out')
+    const [dropdown, setDropdown] = useState(false)
     useEffect(()=>{
         const pathname = location.pathname
         setEndpoint(pathname.slice(pathname.indexOf('/')+1,))
@@ -27,21 +34,66 @@ const Navbar = ()=>{
     },[userRecord])
     const handleNavClick = (e) =>{
         const name = e.target.getAttribute('name')
-        if (![null, undefined].includes(name)){
+        if (![null, undefined,'dropdown','logout'].includes(name)){
             Navigate('/'+name)
             setShowMenu(false)
         }
+        if (!['dropdown','logout'].includes(name)){
+            setDropdown(false)
+        }
+    }
+    const logout = async ()=> {
+        setLogoutStatus("Closing Session...")
+        const resp = await fetchServer("POST", {
+            database: "AuctionDB",
+            collection: "UsersBase", 
+            record: userRecord
+        }, "closeSession", server)
+        
+        if (resp.err){
+            console.log(resp.mess)
+        }else{
+            // console.log(resp)
+            setLogoutStatus("Logged Out")
+        }
+        setShowMenu(false)
+        setDropdown(false)
+        removeSessions("")
     }
     return (
         <>
         <div className='navcontainer' onClick={handleNavClick}>
-            <div className='navmenu'>
-                <div className='navlogo' >
-                    <img src={navlogo} name='' className='logo'/>
+            <div className='navsubbody'>
+                <div className='navmenu'>
+                    <div className='navlogo' >
+                        <img src={navlogo} name='' className='logo'/>
+                    </div>
+                    <div className='menuicon' onClick={()=>{setShowMenu(!showMenu)}}>
+                        {showMenu? <IoClose/> : <IoMenu/>}
+                    </div>
                 </div>
-                <div className='menuicon' onClick={()=>{setShowMenu(!showMenu)}}>
-                    {showMenu? <IoClose/> : <IoMenu/>}
-                </div>
+                <AnimatePresence>
+                    {!showMenu && <motion.div 
+                        className={'profilelink userprofilelink extnavigators'}
+                        initial={{opacity:0}}
+                        animate={{opacity:1}}
+                        transition={{duration:1.5}}
+                        exit={{opacity:0, transition:{duration:.59}}}
+                    >
+                        <div className='bids extbids'><b>0</b> Bids</div>
+                        <div className='profilevisit'>{userRecord.username}</div>
+                        <div className='usericon exticons'><IoNotifications/></div>
+                        <div className='usericon exticons'>
+                            <FaUser/><IoChevronDownOutline 
+                                name='dropdown'
+                                className='navoptions'
+                                onClick = {()=>{
+                                    setDropdown(!dropdown)
+                                }}
+                            />
+                        </div>
+                    </motion.div>}
+                </AnimatePresence>
             </div>
 
             <div className={'navcon'+(showMenu?'':' mobilenav')}>
@@ -52,13 +104,33 @@ const Navbar = ()=>{
                     <li name = 'contact' className={endpoint === 'contact' ? 'selected': ''}>CONTACT US</li>
                 </div>
                 <div className='navend'>
-                    <div className={'profilelink'+(userRecord!==null?' userprofilelink':'')}>
-                        <div className='bids'>0 Bids</div>
-                        {loggedin&&<div className='usericon'><IoNotifications/></div>}
-                        <div className='usericon'>
-                            <FaUser/><IoChevronDownOutline/>
+                    {loggedin && 
+                        <div className={'profilelink userprofilelink navigators'}>
+                            <div className='bids'>0 Bids</div>
+                            <div className='usericon'><IoNotifications/></div>
+                            <div className='usericon'>
+                                <FaUser/><IoChevronDownOutline 
+                                    name='dropdown'
+                                    className='navoptions'
+                                    onClick = {()=>{
+                                        setDropdown(!dropdown)
+                                    }}
+                                />
+                            </div>
+                            {dropdown && <div className='dropdown'>
+                                <div><IoNotificationsOutline className='dropicon'/><div className='droplabel'>Notifications</div></div>
+                                <div><FaRegUser className='dropicon'/>
+                                <div className='droplabel'>Profile</div></div>
+                                <div><FaList className='dropicon'/> <div className='droplabel'>History</div></div>
+                                <div name='logout' 
+                                    className='logout'
+                                    onClick={logout}
+                                >
+                                    {logoutStatus}
+                                </div>
+                            </div>}
                         </div>
-                    </div>
+                    }
                     {userRecord===null?
                         <div className='visitview'>
                             <div className='navlogin' name='login'>LOGIN</div>

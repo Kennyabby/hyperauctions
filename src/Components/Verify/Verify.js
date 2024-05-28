@@ -40,6 +40,8 @@ const Verify = () => {
       },5000)
     }
   },[loginMessage])
+
+  
   const validateLogin = async ()=> {
     setVerifyStatus("VERIFYING...")
     if(field.code===verificationCode){

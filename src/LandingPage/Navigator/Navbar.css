@@ -1,4 +1,5 @@
 .navcontainer{
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -9,6 +10,9 @@
 
 .navicon, .menuicon{
     display: none;
+}
+.navigators{
+    display: block;
 }
 .navlogo{
     margin: 20px 50px;
@@ -84,9 +88,13 @@
     cursor: pointer;
 }
 .usericon{
+    display: flex;
     font-size: 1.3em;
     margin: auto;
     cursor: pointer;
+}
+.navoptions{
+    display: block;
 }
 .visitview{
     display: flex;
@@ -118,12 +126,68 @@
     background: rgba(243, 243, 242, 0.8);
     border-radius: 10px;
 }
+.dropdown{
+    position: absolute;
+    top: 85px;
+    display: block;
+    background: whitesmoke;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 10px 20px;
+    padding-top: 20px;
+    border-radius: 10px;
+    width:200px;
+    z-index: 5;
+}
+
+.dropdown > div{
+    display: flex;
+    margin: auto;
+    margin-bottom: 20px;
+    text-align: left;
+    cursor: pointer;
+    height: fit-content;
+}
+.dropicon{
+    font-weight: bold;
+    margin: auto;
+    font-size: 1.2em;
+    margin-right: 20px;
+    margin-left: 0px;
+    color: rgb(183, 125, 18);
+}
+.droplabel{
+    font-size: 1em;
+}
+.dropdown > div:hover .dropicon{
+    color: black;
+}
+.dropdown > div:hover .droplabel{
+    border-bottom: solid black 1.5px;
+}
+.dropdown > div.logout{
+    width: fit-content;
+    margin-top: 50px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: rgb(228, 100, 15);
+}
+.extnavigators{
+    display: none;
+}
 @media screen and (max-width: 700px) {
 
     .navcontainer{
         display: flex;
         background: rgba(247, 220, 86, 0.95);
     }
+    .navsubbody{
+        display: block;
+        width: 100%;
+    }
+    .navigators{
+        display: none;
+    }
+    
     .navmenu{
         display: flex;
         width: 90%;
@@ -144,6 +208,9 @@
         font-size: 2.7em;
         cursor: pointer;
         margin: auto 15px;
+    }
+    .navoptions{
+        display: none;
     }
     /* .navcon::before{
         position: absolute;
@@ -204,5 +271,18 @@
     .userprofilelink{
         width: 160px;
     }
-
+    .extnavigators{     
+        display: flex;
+        width: 90%;
+        margin: 20px auto;
+        margin-top: 30px;
+        margin-left: auto;
+    }
+    .exticons{
+        margin: auto 0px;
+        font-size: 1.5em;
+    }
+    .extbids{
+        font-size: 1.3em;
+    }
 }
