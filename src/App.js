@@ -25,6 +25,9 @@ function App() {
   const [currBid, setCurrBid] = useState(null)
   const [path, setPath] = useState('')
   const [verificationMail, setVerificationMail] = useState(null)
+  const [categories, setCategories] = useState(null)
+  const [auctionItems, setAuctionItems] = useState([])
+  const [catTries, setCatTries] = useState(0)
   const shuffleList = (array) => {
     var currentIndex = array.length,
       randomIndex,
@@ -84,6 +87,15 @@ function App() {
       removeSessions()
     }else{
       setUserRecord(resp.record)
+      const categories = await getCategories()
+      if (categories!==null){
+        let categoryList = []
+        categories.forEach((type)=>{
+          categoryList = categoryList.concat([type.category])
+        })
+        console.log(categoryList)
+        loadAuctionItems(categoryList,{})
+      }
       if(!resp.record.verified){
         Navigate('/verify')
       }else{
@@ -91,7 +103,57 @@ function App() {
       }
     }
   }
+
+  const getCategories = async () =>{
+    setCatTries((tries)=>{
+      return(tries+1)
+    })
+    const resp = await fetchServer("POST", {
+        database: 'AuctionSettings',
+        collection: "Categories", 
+        prop: {}
+    }, "getDocsDetails", SERVER)
+    if (resp.record === null){
+        console.log(resp)
+        return null
+    }else{
+        if (resp.err){
+            console.log(resp.mess)
+            if(catTries<4){
+              setTimeout(()=>{
+                getCategories()
+              },5000)
+            }
+        }else{
+            setCategories(resp.record)
+        }
+        return resp.record
+    }
+  }
   
+  const loadAuctionItems = async (categories,filter)=>{
+    let loadgap = 0
+    categories.forEach( async (category)=>{
+      loadgap += 3
+      setTimeout( async ()=>{
+        const resp = await fetchServer("POST", {
+          database: 'AuctionItems',
+          collection: category, 
+          prop: filter
+        }, "getDocsDetails", SERVER)
+        if (resp.record === null){
+            console.log(resp)
+        }else{
+            if (resp.err){
+                console.log(resp.mess)
+            }else{
+                setAuctionItems((auctionItems)=>{
+                  return [...auctionItems, ...resp.record]
+                })
+            }
+        }
+      },loadgap*1000)
+  })}
   const getDate = (timestamp)=>{
     const date = new Date(timestamp)
     var month = (date.getMonth() + 1);               
@@ -161,27 +223,23 @@ function App() {
   return (
     <>
     <ContextProvider.Provider value={{
-      openNavbar,
-      setOpenNavbar,
+      openNavbar, setOpenNavbar,
       server:SERVER, 
       removeSessions,
       fetchServer,
       loadPage,
       sessId,
-      userRecord,
-      setUserRecord,
+      userRecord, setUserRecord,
       storePath,
       getImage,
       getDate,
-      loginMessage, 
-      setLoginMessage,
-      currBid,
-      setCurrBid,
-      verificationMail,
-      setVerificationMail,
-      verificationCode,
-      setVerificationCode,
-      generateCode
+      loginMessage, setLoginMessage,
+      currBid, setCurrBid,
+      verificationMail, setVerificationMail,
+      verificationCode, setVerificationCode,
+      generateCode,
+      categories, setCategories,
+      auctionItems, setAuctionItems
     }}>
        {!noNavPath.includes(path) && <Navbar/>}
        <Routes>

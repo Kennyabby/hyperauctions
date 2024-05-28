@@ -4,40 +4,12 @@ import wallcluster from '../../assets/images/auctionimages/arts/art-wall-cluster
 import elkfortune from '../../assets/images/auctionimages/arts/art-wealth-elk-fortune-decorative.jpg'
 
 
-const ArtsData = [
-    
-    {
-        src: outwardstark,
-        type:'arts',
-        name:'Outward Stark Art',
-        description: 'quis nostrud exercitation ullamco',
-        brand: 'Davinci Brands',
-        initialprice: '65,800'
-    },
-    {
-        src: repulsionspike,
-        type:'arts',
-        name:'Proton-Electron Repulsive Spike',
-        description: 'ullamco laboris nisi ut aliquip',
-        brand: 'Davinci Brands',
-        initialprice: '58,500'
-    },
-    {
-        src: wallcluster,
-        type:'arts',
-        name:'Wall Cluster Home Art',
-        description: 'quis nostrud exercitation ullamco',
-        brand: 'Davinci Brands',
-        initialprice: '46,000'
-    },
-    {
-        src: elkfortune,
-        type:'arts',
-        name:'Wealth Elk Fortune Decoration',
-        description: 'exercitation ullamco laboris aliquip',
-        brand: 'Davinci Brands',
-        initialprice: '310,000'
-    },
-]
+const ArtsData = {
+    "art-outward-stark.jpg": outwardstark,
+    "art-proton-electron-repulsive-spike.jpg": repulsionspike,
+    "art-wall-cluster.jpg": wallcluster,
+    "art-wealth-elk-fortune-decorative.jpg": elkfortune
+}
+
 
 export default ArtsData

@@ -14,16 +14,19 @@ import { TfiLayoutGrid3Alt } from "react-icons/tfi";
 import { FaList } from "react-icons/fa6";
 
 const LandingPage = ()=> {
-    const {storePath, userRecord, setLoginMessage, setCurrBid} = useContext(ContextProvider)
+    const {storePath, userRecord, setLoginMessage, 
+        setCurrBid, auctionItems} = useContext(ContextProvider)
     const Navigate = useNavigate()
-    const allData = [...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData]
+    const auctionImages = {...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
     const [currFeature, setCurrFeature] = useState('tvs')
     const [currAuction, setCurrAuction] = useState('live')
     const [viewStyle, stViewStyle] = useState('grid')
     useEffect(()=>{
         storePath('')
     },[storePath])     
-    
+    useEffect(()=>{
+        console.log(auctionItems)
+    },[auctionItems])
     const startBidding = (auction)=>{
         window.localStorage.setItem('currbid',JSON.stringify(auction))
         if(userRecord!==null){            
@@ -69,17 +72,18 @@ const LandingPage = ()=> {
                         </div>
                         <br className='break'/>
                         <div className='featuredbox'>
-                            {allData.filter((feature)=>{
+                            {auctionItems.length ? auctionItems.filter((feature)=>{
                                 return feature.type===currFeature
                             }).slice(0,4).map((auction)=>{
                                 return (
                                     <div className='featurecard'>
-                                        <img src={auction.src} className='featureimg'/>
+                                        <img src={auctionImages[auction.src]} className='featureimg'/>
                                         <div className='featurename'>{auction.name}</div>
                                         <div className='featuredesc'>{auction.description}</div>
                                     </div>
                                 )
-                            })}
+                            }):<div></div>
+                        }
                         </div>
                     </div>
                 </div>
@@ -111,7 +115,7 @@ const LandingPage = ()=> {
                         </div>
                     </div>
                     <div className='auctionbox'>
-                        {allData.slice(0,21).map((auction)=>{
+                        {auctionItems.length ? auctionItems.slice(0,21).map((auction)=>{
                             return (
                                 <div className='auctioncard'>
                                     <div className='auctioncardtitle'>
@@ -122,7 +126,7 @@ const LandingPage = ()=> {
                                             {'$'+auction.initialprice}
                                         </div>
                                     </div>
-                                    <img src={auction.src} className='auctionimg'/>
+                                    <img src={auctionImages[auction.src]} className='auctionimg'/>
                                     <div className='auctionname'>{auction.name}</div>
                                     <div className='auctiondesc'>{auction.description}</div>
                                     <div 
@@ -130,8 +134,8 @@ const LandingPage = ()=> {
                                         onClick={()=>{startBidding(auction)}}
                                     >BID NOW</div>
                                 </div>
-                            )
-                        })}
+                            )}) : <div></div>
+                        }
                     </div>
                     <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>
                 </div>

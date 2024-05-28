@@ -7,64 +7,15 @@ import slimneck from '../../assets/images/auctionimages/jewelries/jewelry-slim-n
 import spiralneck from '../../assets/images/auctionimages/jewelries/jewelry-spiral-neck.jpg'
 
 
-const JewelryData = [
-    
-    {
-        src: crabshape,
-        type:'jewelry',
-        name:'Jewelry Crab Necklace',
-        description: 'quis nostrud exercitation ullamco',
-        brand: 'JWR Brands',
-        initialprice: '25,000'
-    },
-    {
-        src: crownneck,
-        type:'jewelry',
-        name:'Jewelry Crown Necklace',
-        description: 'ullamco laboris nisi ut aliquip',
-        brand: 'JWR Brands',
-        initialprice: '103,000'
-    },
-    {
-        src: diamondshine,
-        type:'jewelry',
-        name:'Jewelry Diamond Shine',
-        description: 'exercitation ullamco laboris aliquip',
-        brand: 'JWR Brands',
-        initialprice: '210,000'
-    },
-    {
-        src: roundneck,
-        type:'jewelry',
-        name:'Jewelry Round Necklace',
-        description: 'quis nostrud exercitation aliquip',
-        brand: 'JWR Brands',
-        initialprice: '76,000'
-    },
-    {
-        src: slimneck,
-        type:'jewelry',
-        name:'Jewelry Slim Necklace',
-        description: 'quis nostrud exercitation ullamco',
-        brand: 'JWR Brands',
-        initialprice: '45,000'
-    },
-    {
-        src: spiralneck,
-        type:'jewelry',
-        name:'Jewelry Spiral Necklace',
-        description: 'quis nostrud exercitation ullamco',
-        brand: 'JWR Brands',
-        initialprice: '96,000'
-    },
-    {
-        src: jelwerynecklace,
-        type:'jewelry',
-        name:'Jewelry Necklace',
-        description: 'quis nostrud exercitation ullamco',
-        brand: 'JWR Brands',
-        initialprice: '30,000'
-    },
-]
+const JewelryData = {
+    "jewelry-crab-shape.jpg": crabshape,
+    "jewelry-crown-neck.jpg": crownneck,
+    "jewelry-diamond-shine.jpg": diamondshine,
+    "jewelry-round-neck.jpg": roundneck,
+    "jewelry-slim-neck.jpg": slimneck,
+    "jewelry-spiral-neck.jpg": spiralneck,
+    "jelwery-necklace.jpg": jelwerynecklace
+}
+
 
 export default JewelryData
