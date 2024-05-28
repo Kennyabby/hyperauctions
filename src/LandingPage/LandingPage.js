@@ -138,7 +138,7 @@ const LandingPage = ()=> {
                                         onClick={()=>{startBidding(auction)}}
                                     >BID NOW</div>
                                 </div>
-                            )}) : <div></div>
+                            )}) : <div>Loading...</div>
                         }
                     </div>
                     <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>

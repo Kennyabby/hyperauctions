@@ -77,7 +77,19 @@ function App() {
       Navigate("/")
     }
   }
-  
+  const loadAuctions = async()=>{
+      const categories = await getCategories()
+        if (categories!==null){
+          let categoryList = []
+          categories.forEach((type)=>{
+            categoryList = categoryList.concat([type.category])
+          })
+          // console.log(categoryList)
+          loadAuctionItems(categoryList,{})
+      }
+      // const categoryList = ['tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
+      // loadAuctionItems(categoryList,{})
+  }
   const loadPage = async (propVal, currPath)=>{
     const resp = await fetchServer("POST", {
       database: "AuctionDB",
@@ -88,17 +100,8 @@ function App() {
       removeSessions()
     }else{
       setUserRecord(resp.record)
-      // const categories = await getCategories()
-      // if (categories!==null){
-      //   let categoryList = []
-      //   categories.forEach((type)=>{
-      //     categoryList = categoryList.concat([type.category])
-      //   })
-      //   console.log(categoryList)
-      //   loadAuctionItems(categoryList,{})
-      // }
-      const categoryList = ['tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
-      loadAuctionItems(categoryList,{})
+      loadAuctions()
+      setVerificationMail(resp.record.email)
       if(!resp.record.verified){
         Navigate('/verify')
       }else{
@@ -216,9 +219,11 @@ function App() {
           removeSessions()
         }
       }else{
+        loadAuctions()
         removeSessions()
       }
     }else{
+      loadAuctions()
       // removeSessions()
     }
   },[sessId])
