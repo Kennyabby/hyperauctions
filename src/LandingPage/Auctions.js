@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-const Auctions = ({ auctionItems, auctionImages, startBidding }) => {
+const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => {
   const calculateTimeLeft = (target) => {
     const now = new Date().getTime();
-    const targetDate = new Date(target).getTime()-3600000;
+    const targetDate = new Date(target).getTime();
     const distance = targetDate - now;
 
     return distance
@@ -55,9 +55,10 @@ const Auctions = ({ auctionItems, auctionImages, startBidding }) => {
         return (
           <div className='auctioncard' key={auction._id}>
             <div className='auctioncardtitle'>
-              <div className='auctionstatus'>
-               {startTimers[index]>0 && 'Coming up'}
-               {targetTimers[index]<=bidPeriod && 'Live'}
+              <div className={'auctionstatus'+(targetTimers[index]<=0?' bidended':'')}>
+               {startTimers[index]>0 && 'Live Soon'}
+               {targetTimers[index]<=bidPeriod && targetTimers[index] >=0 && 'Live'}
+               {targetTimers[index]<=0 && 'Live Ended'}
               </div>
               <div className='auctionprice'>
                 {'₦' + auction.initialprice}
@@ -76,25 +77,32 @@ const Auctions = ({ auctionItems, auctionImages, startBidding }) => {
                 <div>Bidders</div>
               </div>
 
-              <div className='myauctionbids'>
+              {userRecord!==null && <div className='myauctionbids'>
                 <div className='bid-no'>{auction.mybids}</div>
                 <div>Your Bids</div>
-              </div>
+              </div>}
             </div>
             
             {startTimers[index]>0 && <div className='auctiontimer'>
               
-              <div>Live in</div>{starting}
+              <div>Live in</div>
+              <div className='timervalue'>{starting}</div>
             </div>}
 
-            {targetTimers[index]<=bidPeriod && <div className='auctiontimer'>
+            {targetTimers[index]<=bidPeriod && targetTimers[index]>=0+
+            6 && <div className='auctiontimer'>
               
-              <div>Ends in</div>{ending}
+              <div>Ends in</div>
+              <div className='timervalue'>{ending}</div>
             </div>}
 
             <div
-              className='auctionbtn'
-              onClick={() => { startBidding(auction) }}
+              className={'auctionbtn'+(targetTimers[index]<=0?' bidended':'')}
+              onClick={() => { 
+                if (targetTimers[index]>0){
+                  startBidding(auction) 
+                }
+              }}
             >{starting==='EXPIRED'?'BID NOW':(startTimers[index]<=3600000?'STARTING SOON':'UPCOMING')}</div>
           </div>
         )

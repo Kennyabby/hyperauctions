@@ -125,6 +125,7 @@ const LandingPage = ()=> {
                             auctionItems = {auctionItems}
                             auctionImages = {auctionImages}
                             startBidding = {startBidding}
+                            userRecord = {userRecord}
                         />
                     </div>
                     <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>
