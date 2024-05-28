@@ -59,6 +59,7 @@ const Navbar = ()=>{
         setShowMenu(false)
         setDropdown(false)
         removeSessions("")
+        window.location.reload()
     }
     return (
         <>
@@ -73,7 +74,7 @@ const Navbar = ()=>{
                     </div>
                 </div>
                 <AnimatePresence>
-                    {!showMenu && <motion.div 
+                    {!showMenu && loggedin && <motion.div 
                         className={'profilelink userprofilelink extnavigators'}
                         initial={{opacity:0}}
                         animate={{opacity:1}}
@@ -102,7 +103,14 @@ const Navbar = ()=>{
                     <li name='about' className={endpoint === 'about' ? 'selected': ''}>ABOUT US</li>
                     <li name = 'bidding' className={endpoint === 'bidding' ? 'selected': ''}>BIDDING</li>
                     <li name = 'contact' className={endpoint === 'contact' ? 'selected': ''}>CONTACT US</li>
+                    
                 </div>
+                {loggedin && <div name='logout' 
+                    className='navlogout'
+                    onClick={logout}
+                >
+                    {logoutStatus}
+                </div>}
                 <div className='navend'>
                     {loggedin && 
                         <div className={'profilelink userprofilelink navigators'}>
