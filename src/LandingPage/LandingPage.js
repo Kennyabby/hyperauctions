@@ -15,7 +15,8 @@ import { FaList } from "react-icons/fa6";
 
 const LandingPage = ()=> {
     const {storePath, userRecord, setLoginMessage, 
-        setCurrBid, auctionItems} = useContext(ContextProvider)
+        setCurrBid, auctionItems, setAuctionImages
+    } = useContext(ContextProvider)
     const Navigate = useNavigate()
     const auctionImages = {...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
     const [currFeature, setCurrFeature] = useState('tvs')
@@ -25,8 +26,11 @@ const LandingPage = ()=> {
         storePath('')
     },[storePath])     
     useEffect(()=>{
-        console.log(auctionItems)
+        // console.log(auctionItems)
     },[auctionItems])
+    useEffect(()=>{
+        setAuctionImages(auctionImages)
+    },[])
     const startBidding = (auction)=>{
         window.localStorage.setItem('currbid',JSON.stringify(auction))
         if(userRecord!==null){            
@@ -123,7 +127,7 @@ const LandingPage = ()=> {
                                             Live
                                         </div>
                                         <div className='auctionprice'>
-                                            {'$'+auction.initialprice}
+                                            {'₦'+auction.initialprice}
                                         </div>
                                     </div>
                                     <img src={auctionImages[auction.src]} className='auctionimg'/>

@@ -12,8 +12,8 @@ import Bidding from './Components/Bidding/Bidding';
 import Verify from './Components/Verify/Verify';
 
 function App() {
-  // const SERVER = "http://localhost:3001"
-  const SERVER = "https://bid2buyserver.vercel.app"
+  const SERVER = "http://localhost:3001"
+  // const SERVER = "https://bid2buyserver.vercel.app"
   const [intervalId, setIntervalId] = useState(null)
   const [sessId, setSessID] = useState(null)
   const [winSize, setWinSize] = useState(window.innerWidth)
@@ -27,6 +27,7 @@ function App() {
   const [verificationMail, setVerificationMail] = useState(null)
   const [categories, setCategories] = useState(null)
   const [auctionItems, setAuctionItems] = useState([])
+  const [auctionImages, setAuctionImages] = useState(null)
   const [catTries, setCatTries] = useState(0)
   const shuffleList = (array) => {
     var currentIndex = array.length,
@@ -87,15 +88,17 @@ function App() {
       removeSessions()
     }else{
       setUserRecord(resp.record)
-      const categories = await getCategories()
-      if (categories!==null){
-        let categoryList = []
-        categories.forEach((type)=>{
-          categoryList = categoryList.concat([type.category])
-        })
-        console.log(categoryList)
-        loadAuctionItems(categoryList,{})
-      }
+      // const categories = await getCategories()
+      // if (categories!==null){
+      //   let categoryList = []
+      //   categories.forEach((type)=>{
+      //     categoryList = categoryList.concat([type.category])
+      //   })
+      //   console.log(categoryList)
+      //   loadAuctionItems(categoryList,{})
+      // }
+      const categoryList = ['tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
+      loadAuctionItems(categoryList,{})
       if(!resp.record.verified){
         Navigate('/verify')
       }else{
@@ -134,7 +137,6 @@ function App() {
   const loadAuctionItems = async (categories,filter)=>{
     let loadgap = 0
     categories.forEach( async (category)=>{
-      loadgap += 3
       setTimeout( async ()=>{
         const resp = await fetchServer("POST", {
           database: 'AuctionItems',
@@ -153,6 +155,7 @@ function App() {
             }
         }
       },loadgap*1000)
+      loadgap += 3
   })}
   const getDate = (timestamp)=>{
     const date = new Date(timestamp)
@@ -239,7 +242,8 @@ function App() {
       verificationCode, setVerificationCode,
       generateCode,
       categories, setCategories,
-      auctionItems, setAuctionItems
+      auctionItems, setAuctionItems,
+      auctionImages, setAuctionImages
     }}>
        {!noNavPath.includes(path) && <Navbar/>}
        <Routes>

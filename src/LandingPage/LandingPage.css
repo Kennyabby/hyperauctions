@@ -206,7 +206,7 @@
 }
 .auctionprice{
     width: fit-content;
-    margin: auto 10px;
+    margin: auto;
     font-size: .9em;
 }
 .auctionimg{

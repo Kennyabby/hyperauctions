@@ -3,7 +3,9 @@ import ContextProvider from '../../Resources/ContextProvider'
 import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 const Bidding = ()=>{
-    const {storePath, userRecord, currBid, setCurrBid, setLoginMessage} = useContext(ContextProvider)
+    const {storePath, userRecord, currBid, 
+        setCurrBid, setLoginMessage, auctionImages
+    } = useContext(ContextProvider)
     const Navigate = useNavigate()
     useEffect(()=>{
         setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
@@ -20,9 +22,9 @@ const Bidding = ()=>{
     return(
         <>
             <header className='hheader bidheader'>
-                {currBid!==null && <div className='biddingcover'>
+                {currBid!==null && auctionImages!==null && <div className='biddingcover'>
                     <div className='biddetails'>
-                        <img src={currBid.src} className='bidimg'/>
+                        <img src={auctionImages[currBid.src]} className='bidimg'/>
                         <div className='bidname'>{currBid.name}</div>
                         <div className='biddesc'>{currBid.description}</div>
                         <div className='bidlive'>LIVE</div>
@@ -33,14 +35,14 @@ const Bidding = ()=>{
                     <div className='bidentry'>
                         <div className='bidentrytitle'>
                             <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
-                            <div className='entrytitle'>{'$'+currBid.initialprice}</div>
+                            <div className='entrytitle'>{'₦'+currBid.initialprice}</div>
                         </div>
                         <div className='userbidcard'>
                             <label>WHAT'S YOUR BID?</label>
                             <input 
                                 className='lgninp bidinp'
                                 type='number'
-                                placeholder={'$'+currBid.initialprice}
+                                placeholder={'₦'+currBid.initialprice}
                             />
                             <div className='userbidbtn' onClick={makeBid}>BID NOW</div>
                         </div>
