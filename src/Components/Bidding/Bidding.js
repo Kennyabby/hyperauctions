@@ -15,7 +15,7 @@ const Bidding = ()=>{
     const [bidStatus, setBidStatus] = useState('')
     const Navigate = useNavigate()
     useEffect(()=>{
-        console.log(currBid)
+        // console.log(currBid)
         // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
         setCurBid(JSON.parse(window.localStorage.getItem('currbid')))
     },[currBid,window.localStorage.getItem('currbid')])
