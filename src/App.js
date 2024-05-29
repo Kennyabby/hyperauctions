@@ -97,6 +97,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     window.localStorage.removeItem('idt-curr-usr')
     window.localStorage.removeItem('sess-id')
     window.localStorage.removeItem('curr-path')
+    // window.localStorage.removeItem('currbid')
     window.localStorage.removeItem('slvw')
     window.localStorage.removeItem('sldtl')
     setSessID(null)

@@ -2,10 +2,12 @@ import './Bidding.css'
 import ContextProvider from '../../Resources/ContextProvider'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { IoMdArrowRoundBack } from "react-icons/io";
 const Bidding = ()=>{
     const {storePath, userRecord, currBid, 
         setCurrBid, setLoginMessage, auctionImages
     } = useContext(ContextProvider)
+    const [viewBidEntry, setViewBidEntry] = useState(false)
     const Navigate = useNavigate()
     useEffect(()=>{
         setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
@@ -65,9 +67,12 @@ const Bidding = ()=>{
             <header className='hheader bidheader'>
                 {currBid!==null && auctionImages!==null && <div className='biddingcover'>
                     <div className='biddetails'>
+                        <div className='bidbase'>
+                            <div className='bidbrand'>{currBid.brand}</div>
+                        </div>
                         <img src={auctionImages[currBid.src]} className='bidimg'/>
                         {/* <div className='bidlive'>LIVE</div> */}
-                        <div className={'bidlive'+(targetTimer<=0?' bidended':'')}>
+                        <div className={'bidlive '+(targetTimer<=0?' bidended':'')}>
                             {startTimer>0 && 'LIVE SOON'}
                             {targetTimer<=bidPeriod && targetTimer >=0 && 'LIVE'}
                             {targetTimer<=0 && 'LIVE ENDED'}
@@ -75,40 +80,52 @@ const Bidding = ()=>{
                         <div className='bidname'>{currBid.name}</div>
                         <div className='biddesc'>{currBid.description}</div>
                         <div className='auctionlive'>
-                        <div className='auctionbids'>
-                            <div className='bid-no'>{currBid.bids}</div>
-                            <div>All Bids</div>
-                        </div>
-                        <div className='auctionbiders'>
-                            <div className='bid-no'> {currBid.biders.length}</div>
-                            <div>Bidders</div>
-                        </div>
+                            <div className='auctionbids'>
+                                <div className='bid-no'>{currBid.bids}</div>
+                                <div>All Bids</div>
+                            </div>
+                            <div className='auctionbiders'>
+                                <div className='bid-no'> {currBid.biders.length}</div>
+                                <div>Bidders</div>
+                            </div>
 
-                        {userRecord!==null && <div className='myauctionbids'>
-                            <div className='bid-no'>{currBid.mybids}</div>
-                            <div>Your Bids</div>
-                        </div>}
+                            {userRecord!==null && <div className='myauctionbids'>
+                                <div className='bid-no'>{currBid.mybids}</div>
+                                <div>Your Bids</div>
+                            </div>}
                         </div>
-                        {/* <div className='bidbase'>
-                            <div className='bidbrand'>{currBid.brand}</div>
-                        </div> */}
+                        {startTimer>0 && <div className='auctiontimer bidauctiontimer'>
+                            <div>Live in</div>
+                            <div className='timervalue'>{starting}</div>
+                        </div>}
+
+                        {targetTimer<=bidPeriod && targetTimer>=0 && <div className='auctiontimer'>     
+                            <div>Ends in</div>
+                            <div className='timervalue'>{ending}</div>
+                        </div>}
+                        <div className='mobilebidlive' onClick={()=>{
+                            setViewBidEntry(true)
+                        }}>Make Your Bid</div>
 
                     </div>
-                    <div className='bidentry'>
+                    {<div className={'bidentry'+(viewBidEntry?'':' viewbidentry')}>
+                        <IoMdArrowRoundBack className='leavebidentry' onClick={()=>{
+                            setViewBidEntry(false)
+                        }}/>
                         <div className='bidentrytitle'>
-                            <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
                             <div className='entrytitle'>{'₦'+currBid.initialprice}</div>
+                            <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
                         </div>
                         <div className='userbidcard'>
                             <label>WHAT'S YOUR BID?</label>
                             <input 
                                 className='lgninp bidinp'
                                 type='number'
-                                placeholder={'₦'+currBid.initialprice}
+                                placeholder={'> ₦'+currBid.initialprice}
                             />
-                            <div className='userbidbtn' onClick={makeBid}>BID NOW</div>
+                            <div className='userbidbtn' onClick={makeBid}>POST BID</div>
                         </div>
-                    </div>
+                    </div>}
                 </div>}
             </header>
             <main className='main bidmain'></main>
