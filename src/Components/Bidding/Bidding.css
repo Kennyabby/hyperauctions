@@ -166,5 +166,8 @@
         margin-top: 70px;
         width: 75%;
     }
-    
+    .bidverifymsg{
+        width: 80%;
+        font-size: 1.2em
+    }
 }

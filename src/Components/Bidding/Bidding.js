@@ -3,6 +3,8 @@ import ContextProvider from '../../Resources/ContextProvider'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IoMdArrowRoundBack } from "react-icons/io";
+import {motion, AnimatePresence} from 'framer-motion'
+import { FaCircleCheck } from 'react-icons/fa6';
 const Bidding = ()=>{
     const {storePath, userRecord, currBid, fetchServer,
         setCurrBid, setLoginMessage, 
@@ -28,31 +30,29 @@ const Bidding = ()=>{
             setLoginMessage("Kindly Login to Make Your Bid")
         }else{
             if (targetTimer<=bidPeriod && targetTimer >=0){   
-
+                
                 var price = ''
-                price = curBid.initialprice.split('').filter((chr)=>{
+                price = Number(curBid.initialprice.split('').filter((chr)=>{
                     return chr!==','
-                }).join('')
+                }).join(''))
 
                 var bidprice = ''
-                bidprice = curBid.bidprice.split('').filter((chr)=>{
+                bidprice = Number(curBid.bidprice.split('').filter((chr)=>{
                     return chr!==','
-                }).join('')
-
-                if(bidvalue>price && bidvalue>bidprice){  
-                    setBidMessage('BIDDING')              
-                    console.log('before loading auctions:',curBid)
+                }).join(''))
+                
+                if(Number(bidvalue)>price && Number(bidvalue)>bidprice){  
+                    console.log(bidvalue>price)
+                    setBidMessage('BIDDING')                                 
                     loadAuctions()
-                    setTimeout(async()=>{
-                        console.log('after loading auctions for 3s:',curBid)
+                    setTimeout(async()=>{                        
                         const auctionbiders = !curBid.biders.includes(curBid._id)?curBid.biders.concat(curBid._id):currBid.biders
                         const updateField = {
                             bidprice: bidvalue,
                             bids: Number(curBid.bids)+1,
                             biders: auctionbiders,
                             bidersno: auctionbiders.length
-                        }
-                        console.log( bidvalue,price,curBid.bidprice,'bidding')
+                        }                        
                         const resps = await fetchServer("POST", {
                             database: "AuctionItems",
                             collection: curBid.type, 
@@ -66,16 +66,31 @@ const Bidding = ()=>{
                         }else{
                             if (resps.updated){
                                 loadAuctions()
-                                setBidMessage('MAKE BID')
                                 setTimeout(()=>{
-                                    console.log('after updating bid and loading auctions in 3s:',curBid)
+                                    setBidStatus("Your bid was Successful")                                
+                                    setBidMessage('MAKE BID')
+                                    setBidvalue('')
                                 },3000)
-                                setViewBidEntry(false)
+                                
+                                setTimeout(()=>{
+                                    setBidStatus("")
+                                    setViewBidEntry(false)
+                                },5000)
                             }
                         }                    
                        
                     },3000)
+                }else{
+                    setBidStatus("Your next bid must be greater than ₦"+(curBid.bidprice?Number(curBid.bidprice).toLocaleString():curBid.initialprice))
+                    setTimeout(()=>{
+                        setBidStatus("")
+                    },5000) 
                 }                
+            }else{
+                setBidStatus("Bidding is not available for this item at this time")
+                setTimeout(()=>{
+                    setBidStatus("")
+                },5000)
             }
         }
     }
@@ -172,6 +187,25 @@ const Bidding = ()=>{
                             <div className='entrytitle'>{'₦'+(curBid.bidprice?Number(curBid.bidprice).toLocaleString():curBid.initialprice)}</div>
                             <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
                         </div>
+                        <AnimatePresence>
+                            {bidStatus && <motion.div initial={{opacity:0}}
+                                animate={{opacity:1}}
+                                transition={{
+                                    opacity: {
+                                        duration: .8,
+                                        ease: 'easeIn'
+                                    },
+                                }}
+                                exit={{opacity: 0, transition:{opacity:{
+                                    duration: 0.8,
+                                    ease: 'easeOut',
+                                }}}}
+                                
+                                className='verifymsg bidverifymsg'>
+                                <FaCircleCheck className='verifycheck'/>
+                                <div>{bidStatus}</div>
+                            </motion.div>}
+                        </AnimatePresence>
                         <div className='userbidcard'>
                             <label>WHAT'S YOUR BID?</label>
                             <input 
