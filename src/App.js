@@ -19,8 +19,8 @@ import ShoeData from './Resources/AuctionData/ShoeData'
 import WatchData from './Resources/AuctionData/WatchData'
 
 function App() {
-  const SERVER = "http://localhost:3001"
-  // const SERVER = "https://bid2buyserver.vercel.app"
+  // const SERVER = "http://localhost:3001"
+  const SERVER = "https://bid2buyserver.vercel.app"
   const [intervalId, setIntervalId] = useState(null)
   const [sessId, setSessID] = useState(null)
   const [winSize, setWinSize] = useState(window.innerWidth)
