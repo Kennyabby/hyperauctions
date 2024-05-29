@@ -32,7 +32,6 @@ const Bidding = ()=>{
             setLoginMessage("Kindly Login to Make Your Bid")
         }else{
             if (targetTimer<=bidPeriod && targetTimer >=0){   
-                
                 var price = ''
                 price = Number(curBid.initialprice.split('').filter((chr)=>{
                     return chr!==','
@@ -113,28 +112,37 @@ const Bidding = ()=>{
     
         return `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
     }
-    const [startTimer, setStartTimer] = useState(calculateTimeLeft(curBid.start));
-    const [targetTimer, setTargetTimer] = useState(calculateTimeLeft(curBid.target));
+    const [startTimer, setStartTimer] = useState(![null, undefined].includes(curBid)?calculateTimeLeft(curBid.start):'');
+    const [targetTimer, setTargetTimer] = useState(![null, undefined].includes(curBid)?calculateTimeLeft(curBid.target):'');
     
     useEffect(() => {
-        const startTimerInterval = setInterval(() => {
-            setStartTimer(calculateTimeLeft(curBid.start));
-        }, 1000);
-    
-        return () => clearInterval(startTimerInterval);
+        if(![null, undefined].includes(curBid)){           
+            const startTimerInterval = setInterval(() => {
+                setStartTimer(calculateTimeLeft(curBid.start));
+            }, 1000);
+        
+            return () => clearInterval(startTimerInterval);
+        }
     }, [curBid]);
     
     useEffect(()=>{
-        const targetTimerInterval = setInterval(() => {
-            setTargetTimer(calculateTimeLeft(curBid.target));
-        }, 1000);
-    
-        return () => clearInterval(targetTimerInterval);
+        if(![null, undefined].includes(curBid)){
+            const targetTimerInterval = setInterval(() => {
+                setTargetTimer(calculateTimeLeft(curBid.target));
+            }, 1000);
+        
+            return () => clearInterval(targetTimerInterval);
+        }
     
     },[currBid])
-    const starting = getTimerString(startTimer)
-    const ending = getTimerString(targetTimer)
-    const bidPeriod = (curBid.target-curBid.start)
+    let starting = ''
+    let ending = ''
+    let bidPeriod = ''
+    if(![null, undefined].includes(curBid)){
+        starting = getTimerString(startTimer)
+        ending = getTimerString(targetTimer)
+        bidPeriod = (curBid.target-curBid.start)
+    }
     return(
         <>
             <header className='hheader bidheader'>
