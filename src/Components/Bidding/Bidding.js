@@ -4,23 +4,79 @@ import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IoMdArrowRoundBack } from "react-icons/io";
 const Bidding = ()=>{
-    const {storePath, userRecord, currBid, 
-        setCurrBid, setLoginMessage, auctionImages
+    const {storePath, userRecord, currBid, fetchServer,
+        setCurrBid, setLoginMessage, 
+        auctionImages,server, loadAuctions
     } = useContext(ContextProvider)
+    const [bidMessage, setBidMessage] = useState('MAKE BID')
+    const [curBid, setCurBid] = useState(JSON.parse(window.localStorage.getItem('currbid')))
     const [viewBidEntry, setViewBidEntry] = useState(false)
+    const [bidvalue, setBidvalue] = useState('')
+    const [bidStatus, setBidStatus] = useState('')
     const Navigate = useNavigate()
     useEffect(()=>{
-        setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
-    },[])
+        console.log(currBid)
+        // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
+        setCurBid(JSON.parse(window.localStorage.getItem('currbid')))
+    },[currBid,window.localStorage.getItem('currbid')])
     useEffect(()=>{
         storePath('bidding')
     },[])
-    const  makeBid = ()=>{
+    const  makeBid = async ()=>{
         if(userRecord===null){
             Navigate('/login')
             setLoginMessage("Kindly Login to Make Your Bid")
         }else{
+            if (targetTimer<=bidPeriod && targetTimer >=0){   
 
+                var price = ''
+                price = curBid.initialprice.split('').filter((chr)=>{
+                    return chr!==','
+                }).join('')
+
+                var bidprice = ''
+                bidprice = curBid.bidprice.split('').filter((chr)=>{
+                    return chr!==','
+                }).join('')
+
+                if(bidvalue>price && bidvalue>bidprice){  
+                    setBidMessage('BIDDING')              
+                    console.log('before loading auctions:',curBid)
+                    loadAuctions()
+                    setTimeout(async()=>{
+                        console.log('after loading auctions for 3s:',curBid)
+                        const auctionbiders = !curBid.biders.includes(curBid._id)?curBid.biders.concat(curBid._id):currBid.biders
+                        const updateField = {
+                            bidprice: bidvalue,
+                            bids: Number(curBid.bids)+1,
+                            biders: auctionbiders,
+                            bidersno: auctionbiders.length
+                        }
+                        console.log( bidvalue,price,curBid.bidprice,'bidding')
+                        const resps = await fetchServer("POST", {
+                            database: "AuctionItems",
+                            collection: curBid.type, 
+                            record: curBid,
+                            update: updateField
+                        }, "updateAuctionItems", server)
+                          
+                        if (resps.err){
+                            console.log(resps.mess)
+                            setBidMessage('MAKE BID')
+                        }else{
+                            if (resps.updated){
+                                loadAuctions()
+                                setBidMessage('MAKE BID')
+                                setTimeout(()=>{
+                                    console.log('after updating bid and loading auctions in 3s:',curBid)
+                                },3000)
+                                setViewBidEntry(false)
+                            }
+                        }                    
+                       
+                    },3000)
+                }                
+            }
         }
     }
     const calculateTimeLeft = (target) => {
@@ -40,20 +96,20 @@ const Bidding = ()=>{
     
         return `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
     }
-    const [startTimer, setStartTimer] = useState(calculateTimeLeft(currBid.start));
-    const [targetTimer, setTargetTimer] = useState(calculateTimeLeft(currBid.target));
+    const [startTimer, setStartTimer] = useState(calculateTimeLeft(curBid.start));
+    const [targetTimer, setTargetTimer] = useState(calculateTimeLeft(curBid.target));
     
     useEffect(() => {
         const startTimerInterval = setInterval(() => {
-            setStartTimer(calculateTimeLeft(currBid.start));
+            setStartTimer(calculateTimeLeft(curBid.start));
         }, 1000);
     
         return () => clearInterval(startTimerInterval);
-    }, [currBid]);
+    }, [curBid]);
     
     useEffect(()=>{
         const targetTimerInterval = setInterval(() => {
-            setTargetTimer(calculateTimeLeft(currBid.target));
+            setTargetTimer(calculateTimeLeft(curBid.target));
         }, 1000);
     
         return () => clearInterval(targetTimerInterval);
@@ -61,36 +117,36 @@ const Bidding = ()=>{
     },[currBid])
     const starting = getTimerString(startTimer)
     const ending = getTimerString(targetTimer)
-    const bidPeriod = (currBid.target-currBid.start)
+    const bidPeriod = (curBid.target-curBid.start)
     return(
         <>
             <header className='hheader bidheader'>
-                {currBid!==null && auctionImages!==null && <div className='biddingcover'>
+                {curBid!==null && auctionImages!==null && <div className='biddingcover'>
                     <div className='biddetails'>
                         {/* <div className='bidbase'>
                             <div className='bidbrand'>{currBid.brand}</div>
                         </div> */}
-                        <img src={auctionImages[currBid.src]} className='bidimg'/>
+                        <img src={auctionImages[curBid.src]} className='bidimg'/>
                         {/* <div className='bidlive'>LIVE</div> */}
                         <div className={'bidlive '+(targetTimer<=0?' bidended':'')}>
                             {startTimer>0 && 'LIVE SOON'}
                             {targetTimer<=bidPeriod && targetTimer >=0 && 'LIVE'}
                             {targetTimer<=0 && 'LIVE ENDED'}
                         </div>
-                        <div className='bidname'>{currBid.name}</div>
-                        <div className='biddesc'>{currBid.description}</div>
+                        <div className='bidname'>{curBid.name}</div>
+                        <div className='biddesc'>{curBid.description}</div>
                         <div className='auctionlive'>
                             <div className='auctionbids'>
-                                <div className='bid-no'>{currBid.bids}</div>
+                                <div className='bid-no'>{curBid.bids}</div>
                                 <div>All Bids</div>
                             </div>
                             <div className='auctionbiders'>
-                                <div className='bid-no'> {currBid.biders.length}</div>
+                                <div className='bid-no'> {curBid.biders.length}</div>
                                 <div>Bidders</div>
                             </div>
 
                             {userRecord!==null && <div className='myauctionbids'>
-                                <div className='bid-no'>{currBid.mybids}</div>
+                                <div className='bid-no'>{curBid.mybids}</div>
                                 <div>Your Bids</div>
                             </div>}
                         </div>
@@ -99,7 +155,7 @@ const Bidding = ()=>{
                             <div className='timervalue'>{starting}</div>
                         </div>}
 
-                        {targetTimer<=bidPeriod && targetTimer>=0 && <div className='auctiontimer'>     
+                        {targetTimer<=bidPeriod && targetTimer>=0 && <div className='auctiontimer bidauctiontimer'>     
                             <div>Ends in</div>
                             <div className='timervalue'>{ending}</div>
                         </div>}
@@ -113,7 +169,7 @@ const Bidding = ()=>{
                             setViewBidEntry(false)
                         }}/>
                         <div className='bidentrytitle'>
-                            <div className='entrytitle'>{'₦'+currBid.initialprice}</div>
+                            <div className='entrytitle'>{'₦'+(curBid.bidprice?Number(curBid.bidprice).toLocaleString():curBid.initialprice)}</div>
                             <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
                         </div>
                         <div className='userbidcard'>
@@ -121,9 +177,13 @@ const Bidding = ()=>{
                             <input 
                                 className='lgninp bidinp'
                                 type='number'
-                                placeholder={'> ₦'+currBid.initialprice}
+                                value={bidvalue}
+                                onChange={(e)=>{
+                                    setBidvalue(e.target.value)
+                                }}
+                                placeholder={'> ₦'+(curBid.bidprice?Number(curBid.bidprice).toLocaleString():curBid.initialprice)}
                             />
-                            <div className='userbidbtn' onClick={makeBid}>POST BID</div>
+                            <div className='userbidbtn' onClick={makeBid}>{targetTimer<=bidPeriod && targetTimer >=0 ? bidMessage :'NOT AVAILABLE'}</div>
                         </div>
                     </div>}
                 </div>}

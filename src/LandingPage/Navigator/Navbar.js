@@ -6,6 +6,7 @@ import { IoMenu, IoClose,
     IoNotifications,
     IoNotificationsOutline 
 } from "react-icons/io5";
+import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from 'react-router-dom';
 import navlogo from '../../assets/images/hyperlogo.png'
 import { useEffect, useState, useContext } from 'react';
@@ -81,8 +82,11 @@ const Navbar = ()=>{
                         transition={{duration:1.5}}
                         exit={{opacity:0, transition:{duration:.59}}}
                     >
+                        <IoIosArrowBack className='backbtn' onClick={()=>{
+                            Navigate(-1)
+                        }}/>
                         <div className='bids extbids'><b>0</b> Bids</div>
-                        <div className='profilevisit'>{userRecord!==null ?userRecord.username: '....'}</div>
+                        <div className='profilevisit extprofilevisit'>{![undefined, null].includes(userRecord) ?userRecord.username: '....'}</div>
                         <div className='usericon exticons'><IoNotifications/></div>
                         <div className='usericon exticons'>
                             <FaUser/><IoChevronDownOutline 

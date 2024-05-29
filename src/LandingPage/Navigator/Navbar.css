@@ -179,6 +179,7 @@
     width: fit-content;
     /* margin-top: 50px; */
     margin: auto;
+    
     margin-bottom: 10px;
     font-weight: bold;
     color: rgb(228, 100, 15);
@@ -289,11 +290,20 @@
         margin-top: 30px;
         margin-left: auto;
     }
+    .backbtn{
+        width: fit-content;
+        margin: auto 0px;
+        font-size: 1.5em;
+    }
     .exticons{
         margin: auto 0px;
         font-size: 1.5em;
     }
     .extbids{
         font-size: 1.3em;
+        margin: auto 0px;
+    }
+    .extprofilevisit{
+        margin: auto 0px;
     }
 }

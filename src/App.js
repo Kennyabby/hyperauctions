@@ -19,8 +19,8 @@ import ShoeData from './Resources/AuctionData/ShoeData'
 import WatchData from './Resources/AuctionData/WatchData'
 
 function App() {
-  // const SERVER = "http://localhost:3001"
-  const SERVER = "https://bid2buyserver.vercel.app"
+  const SERVER = "http://localhost:3001"
+  // const SERVER = "https://bid2buyserver.vercel.app"
   const [intervalId, setIntervalId] = useState(null)
   const [sessId, setSessID] = useState(null)
   const [winSize, setWinSize] = useState(window.innerWidth)
@@ -169,6 +169,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   
   const loadAuctionItems = async (categories,filter)=>{
     let loadgap = 0
+    const currBidDetails = JSON.parse(window.localStorage.getItem('currbid'))
     categories.forEach( async (category)=>{
       setTimeout( async ()=>{
         const resp = await fetchServer("POST", {
@@ -176,15 +177,28 @@ const countDownTime = (startDate,targetDate,timerId) =>{
           collection: category, 
           prop: filter
         }, "getDocsDetails", SERVER)
-        if (resp.record === null){
+        if ([null,undefined].includes(resp.record)){
             console.log(resp)
         }else{
             if (resp.err){
                 console.log(resp.mess)
             }else{
+              // console.log("got details",resp.record)
                 setAuctionItems((auctionItems)=>{
                   return [...auctionItems, ...resp.record]
                 })
+                // console.log(currBidDetails)
+                if(currBidDetails!==null){
+                  // console.log("not null")
+                  resp.record.forEach((record)=>{
+                    if (record._id === currBidDetails._id){
+                      // console.log(true)
+                      setCurrBid(record)
+                      // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))
+                      window.localStorage.setItem('currbid',JSON.stringify(record))
+                    }
+                  })
+                }
             }
         }
       },loadgap*1000)
@@ -279,7 +293,8 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       categories, setCategories,
       auctionItems, setAuctionItems,
       auctionImages,
-      countDownTime
+      countDownTime,
+      loadAuctions
     }}>
        {!noNavPath.includes(path) && <Navbar/>}
        <Routes>
