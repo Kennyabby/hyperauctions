@@ -57,7 +57,7 @@ const LandingPage = ()=> {
                     <img className='bannerimg' src={banner1}/>
                 </div>
             </header>
-            <main className='main'>
+            <main className='main bidmain'>
                 <div className='featured'>
                     <div className='sectiontitle'>Featured Auction Items</div>
                     <div className='featuredcont'>
