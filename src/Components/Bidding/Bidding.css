@@ -166,8 +166,13 @@
         width: 75%;
     }
     .bidverifymsg{
-        width: 80%;
-        font-size: 1.2em
+        display: inline-flex;
+        width: 80%;        
+        font-size: 1em
+    }
+    .bidverifymsg > div{
+        text-align: center;
+        font-size: 1.3em;
     }
     .bidmain{
         /* padding-top: 0px; */

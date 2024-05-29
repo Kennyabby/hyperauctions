@@ -10,6 +10,7 @@ const Bidding = ()=>{
         setCurrBid, setLoginMessage, 
         auctionImages,server, loadAuctions
     } = useContext(ContextProvider)
+    const [bidSuccessful, setBidSuccessful] = useState(false)
     const [bidMessage, setBidMessage] = useState('MAKE BID')
     const [curBid, setCurBid] = useState(JSON.parse(window.localStorage.getItem('currbid')))
     const [viewBidEntry, setViewBidEntry] = useState(false)
@@ -42,7 +43,6 @@ const Bidding = ()=>{
                 }).join(''))
                 
                 if(Number(bidvalue)>price && Number(bidvalue)>bidprice){  
-                    console.log(bidvalue>price)
                     setBidMessage('BIDDING')                                 
                     loadAuctions()
                     setTimeout(async()=>{                        
@@ -67,7 +67,8 @@ const Bidding = ()=>{
                             if (resps.updated){
                                 loadAuctions()
                                 setTimeout(()=>{
-                                    setBidStatus("Your bid was Successful")                                
+                                    setBidSuccessful(true)                               
+                                    setBidStatus("Your bid was Successful") 
                                     setBidMessage('MAKE BID')
                                     setBidvalue('')
                                 },3000)
@@ -176,6 +177,7 @@ const Bidding = ()=>{
                         </div>}
                         <div className='mobilebidlive' onClick={()=>{
                             setViewBidEntry(true)
+                            setBidSuccessful(false)
                         }}>Make Your Bid</div>
 
                     </div>
@@ -202,7 +204,7 @@ const Bidding = ()=>{
                                 }}}}
                                 
                                 className='verifymsg bidverifymsg'>
-                                <FaCircleCheck className='verifycheck'/>
+                                {bidSuccessful && <FaCircleCheck className='verifycheck'/>}
                                 <div>{bidStatus}</div>
                             </motion.div>}
                         </AnimatePresence>
