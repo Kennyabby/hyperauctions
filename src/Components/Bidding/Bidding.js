@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { IoMdArrowRoundBack } from "react-icons/io";
 import {motion, AnimatePresence} from 'framer-motion'
 import { FaCircleCheck } from 'react-icons/fa6';
+import { IoChevronBack, IoChevronForwardOutline } from "react-icons/io5";
 const Bidding = ()=>{
     const {storePath, userRecord, currBid, fetchServer,
         setCurrBid, setLoginMessage, 
@@ -46,7 +47,7 @@ const Bidding = ()=>{
                     setBidMessage('BIDDING')                                 
                     loadAuctions()
                     setTimeout(async()=>{                        
-                        const auctionbiders = !curBid.biders.includes(curBid._id)?curBid.biders.concat(curBid._id):currBid.biders
+                        const auctionbiders = !curBid.biders.includes(userRecord._id)?curBid.biders.concat(userRecord._id):currBid.biders
                         const updateField = {
                             bidprice: bidvalue,
                             bids: Number(curBid.bids)+1,
@@ -138,6 +139,8 @@ const Bidding = ()=>{
         <>
             <header className='hheader bidheader'>
                 {curBid!==null && auctionImages!==null && <div className='biddingcover'>
+                    <div className='bidpre'><IoChevronBack/></div>
+                    <div className='bidnext'><IoChevronForwardOutline/></div>
                     <div className='biddetails'>
                         {/* <div className='bidbase'>
                             <div className='bidbrand'>{currBid.brand}</div>
