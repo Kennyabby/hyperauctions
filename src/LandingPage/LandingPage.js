@@ -6,6 +6,10 @@ import ContextProvider from '../Resources/ContextProvider'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { TfiLayoutGrid3Alt } from "react-icons/tfi";
 import { FaList } from "react-icons/fa6";
+import banner1 from '../assets/images/bannerimages/banner1.jpg'
+import banner2 from '../assets/images/bannerimages/banner2.jpg'
+import banner3 from '../assets/images/bannerimages/banner3.jpg'
+import banner4 from '../assets/images/bannerimages/banner4.jpg'
 
 const LandingPage = ()=> {
     const {storePath, userRecord, setLoginMessage, 
@@ -49,7 +53,9 @@ const LandingPage = ()=> {
     return (
         <>
             <header className='hheader'>
-                <div className='banner'></div>
+                <div className='banner'>
+                    <img className='bannerimg' src={banner1}/>
+                </div>
             </header>
             <main className='main'>
                 <div className='featured'>
