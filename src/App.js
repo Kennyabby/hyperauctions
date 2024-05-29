@@ -29,7 +29,7 @@ function App() {
   const pathList = ['', 'bidding','login', 'signup', 'verify']
   const noNavPath = ['login', 'signup', 'verify']
   const [loginMessage, setLoginMessage] = useState('')
-  const [currBid, setCurrBid] = useState(JSON.parse(window.localStorage.getItem('currbid')))
+  const [currBid, setCurrBid] = useState(JSON.parse(window.localStorage.getItem('curbid')))
   const [path, setPath] = useState('')
   const [verificationMail, setVerificationMail] = useState(null)
   const [categories, setCategories] = useState(null)
@@ -243,7 +243,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   },[winSize])
   
   useEffect(()=>{
-    var currPath = window.localStorage.getItem('cur-path')
+    var currPath = window.localStorage.getItem('curr-path')
     if (currPath !== null && pathList.includes(currPath)){
       var sid = window.localStorage.getItem('sessn-id')
       var sess = 0
