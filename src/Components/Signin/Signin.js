@@ -124,7 +124,7 @@ const Signin = () => {
                         
                         window.localStorage.setItem('sess-recg-id', now * sess)
                         window.localStorage.setItem('idt-curr-usr', now)
-                        window.localStorage.setItem('sess-id', idVal)
+                        window.localStorage.setItem('sessn-id', idVal)
                         setVerificationMail(field.email)
                         const bodyCode = generateCode()
                         setVerificationCode(bodyCode) 

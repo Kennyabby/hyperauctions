@@ -63,7 +63,7 @@ const Login = () => {
         })
         window.localStorage.setItem('sess-recg-id', now * sess)
         window.localStorage.setItem('idt-curr-usr', now)
-        window.localStorage.setItem('sess-id', idVal)
+        window.localStorage.setItem('sessn-id', idVal)
         setField((field)=>{
           return({...field, email: "", password: ""})
         })

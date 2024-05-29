@@ -28,7 +28,7 @@ const Navbar = ()=>{
         setEndpoint(pathname.slice(pathname.indexOf('/')+1,))
     },[location])
     useEffect(()=>{
-        var sid = window.localStorage.getItem('sess-id')
+        var sid = window.localStorage.getItem('sessn-id')
         if (sid!==null){
             setLoggedin(true)
         }

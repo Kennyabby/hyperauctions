@@ -26,7 +26,7 @@ const LandingPage = ()=> {
         // console.log(auctionItems)
     },[auctionItems])
     const startBidding = (auction)=>{
-        window.localStorage.setItem('currbid',JSON.stringify(auction))
+        window.localStorage.setItem('curbid',JSON.stringify(auction))
         if(userRecord!==null){            
             setCurrBid(auction)
             Navigate('/bidding')

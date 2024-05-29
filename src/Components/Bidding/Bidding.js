@@ -13,7 +13,7 @@ const Bidding = ()=>{
     } = useContext(ContextProvider)
     const [bidSuccessful, setBidSuccessful] = useState(false)
     const [bidMessage, setBidMessage] = useState('MAKE BID')
-    const [curBid, setCurBid] = useState(JSON.parse(window.localStorage.getItem('currbid')))
+    const [curBid, setCurBid] = useState(JSON.parse(window.localStorage.getItem('curbid')))
     const [viewBidEntry, setViewBidEntry] = useState(false)
     const [bidvalue, setBidvalue] = useState('')
     const [bidStatus, setBidStatus] = useState('')
@@ -21,8 +21,8 @@ const Bidding = ()=>{
     useEffect(()=>{
         // console.log(currBid)
         // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
-        setCurBid(JSON.parse(window.localStorage.getItem('currbid')))
-    },[currBid,window.localStorage.getItem('currbid')])
+        setCurBid(JSON.parse(window.localStorage.getItem('curbid')))
+    },[currBid,window.localStorage.getItem('curbid')])
     useEffect(()=>{
         storePath('bidding')
     },[])

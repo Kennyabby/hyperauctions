@@ -95,9 +95,9 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   const removeSessions = (path)=>{
     window.localStorage.removeItem('sess-recg-id')
     window.localStorage.removeItem('idt-curr-usr')
-    window.localStorage.removeItem('sess-id')
+    window.localStorage.removeItem('sessn-id')
     window.localStorage.removeItem('curr-path')
-    // window.localStorage.removeItem('currbid')
+    // window.localStorage.removeItem('curbid')
     window.localStorage.removeItem('slvw')
     window.localStorage.removeItem('sldtl')
     setSessID(null)
@@ -195,7 +195,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
                       // console.log(true)
                       setCurrBid(record)
                       // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))
-                      window.localStorage.setItem('currbid',JSON.stringify(record))
+                      window.localStorage.setItem('curbid',JSON.stringify(record))
                     }
                   })
                 }
@@ -243,9 +243,9 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   },[winSize])
   
   useEffect(()=>{
-    var currPath = window.localStorage.getItem('curr-path')
+    var currPath = window.localStorage.getItem('cur-path')
     if (currPath !== null && pathList.includes(currPath)){
-      var sid = window.localStorage.getItem('sess-id')
+      var sid = window.localStorage.getItem('sessn-id')
       var sess = 0
       if (sid !==null ){
         sid.split('').forEach((chr)=>{
