@@ -67,9 +67,9 @@ const Bidding = ()=>{
             <header className='hheader bidheader'>
                 {currBid!==null && auctionImages!==null && <div className='biddingcover'>
                     <div className='biddetails'>
-                        <div className='bidbase'>
+                        {/* <div className='bidbase'>
                             <div className='bidbrand'>{currBid.brand}</div>
-                        </div>
+                        </div> */}
                         <img src={auctionImages[currBid.src]} className='bidimg'/>
                         {/* <div className='bidlive'>LIVE</div> */}
                         <div className={'bidlive '+(targetTimer<=0?' bidended':'')}>
