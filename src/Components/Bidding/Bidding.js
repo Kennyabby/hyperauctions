@@ -187,7 +187,7 @@ const Bidding = ()=>{
                 autoPlay= {false} 
                 stopOnHover 
                 interval={5000} 
-                showArrows={!viewBidEntry}
+                showArrows={true}
                 useKeyboardArrows={!viewBidEntry}
                 transitionTime={1000} 
                 selectedItem={biditemindex} 
@@ -247,6 +247,8 @@ const Bidding = ()=>{
                                     setBidSuccessful(false)
                                     setBiditemindex(index)
                                     window.localStorage.setItem('curbid',JSON.stringify(auction))
+                                    document.body.scrollTop = 0; 
+                                    document.documentElement.scrollTop = 0
                                 }}>Make Your Bid</div>
 
                             </div>
