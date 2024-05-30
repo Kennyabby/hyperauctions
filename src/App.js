@@ -17,6 +17,8 @@ import TvData from './Resources/AuctionData/TvData'
 import CoushionData from './Resources/AuctionData/CoushionData'
 import ShoeData from './Resources/AuctionData/ShoeData'
 import WatchData from './Resources/AuctionData/WatchData'
+import DrinkData from './Resources/AuctionData/DrinkData';
+import TomatoData from './Resources/AuctionData/TomatoData';
 
 function App() {
   // const SERVER = "http://localhost:3001"
@@ -35,7 +37,7 @@ function App() {
   const [categories, setCategories] = useState(null)
   const [auctionItems, setAuctionItems] = useState([])
   const [catTries, setCatTries] = useState(0)
-  const auctionImages = {...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
+  const auctionImages = {...DrinkData,...TomatoData,...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
   const shuffleList = (array) => {
     var currentIndex = array.length,
       randomIndex,
@@ -117,7 +119,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       //   console.log(categoryList)
       //   loadAuctionItems(categoryList,{})
       // }
-      const categoryList = ['tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
+      const categoryList = ['drinks','tomatoes','tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
       loadAuctionItems(categoryList,{})
   }
   const loadPage = async (propVal, currPath)=>{

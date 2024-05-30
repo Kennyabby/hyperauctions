@@ -89,8 +89,7 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
               <div className='timervalue'>{starting}</div>
             </div>}
 
-            {targetTimers[index]<=bidPeriod && targetTimers[index]>=0+
-            6 && <div className='auctiontimer'>
+            {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='auctiontimer'>
               
               <div>Ends in</div>
               <div className='timervalue'>{ending}</div>
