@@ -109,7 +109,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       Navigate("/")
     }
   }
-  const loadAuctions = async()=>{
+  const loadAuctions = async(reload)=>{
       const categories = await getCategories()
       // if (categories!==null){
       //   let categoryList = []
@@ -120,7 +120,11 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       //   loadAuctionItems(categoryList,{})
       // }
       const categoryList = ['drinks','tomatoes','tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
-      loadAuctionItems(categoryList,{})
+      if(reload===true){
+        loadAuctionItems(categoryList,{},true)
+      }else{
+        loadAuctionItems(categoryList,{})        
+      }
   }
   const loadPage = async (propVal, currPath)=>{
     const resp = await fetchServer("POST", {
@@ -170,7 +174,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }
   }
   
-  const loadAuctionItems = async (categories,filter)=>{
+  const loadAuctionItems = async (categories,filter,reload)=>{
     let loadgap = 0
     const currBidDetails = JSON.parse(window.localStorage.getItem('currbid'))
     categories.forEach( async (category)=>{
@@ -187,9 +191,22 @@ const countDownTime = (startDate,targetDate,timerId) =>{
                 console.log(resp.mess)
             }else{
               // console.log("got details",resp.record)
-                setAuctionItems((auctionItems)=>{
-                  return [...auctionItems, ...resp.record]
-                })
+                if (reload===true && auctionItems!==null){
+                  setAuctionItems((auctionItems)=>{
+                    resp.record.forEach((record)=>{
+                      auctionItems.forEach((auction,index)=>{
+                        if (auction._id === record._id){
+                          auctionItems[index]=record
+                        }
+                      })
+                    })
+                    return [...auctionItems]
+                  })
+                }else{
+                  setAuctionItems((auctionItems)=>{
+                    return [...auctionItems, ...resp.record]
+                  })
+                }
                 // console.log(currBidDetails)
                 if(currBidDetails!==null){
                   // console.log("not null")

@@ -18,9 +18,7 @@ const Bidding = ()=>{
     const [viewBidEntry, setViewBidEntry] = useState(false)
     const [bidvalue, setBidvalue] = useState('')
     const [bidStatus, setBidStatus] = useState('')
-    const [biditemindex, setBiditemindex] = useState(0)
-    const [starting, setStarting] = useState(0)
-    const [ending, setEnding] = useState(0)
+    const [biditemindex, setBiditemindex] = useState(0)    
     const Navigate = useNavigate()
     useEffect(()=>{
         // console.log(currBid)
@@ -67,10 +65,10 @@ const Bidding = ()=>{
                 bidprice = Number(curBid.bidprice.split('').filter((chr)=>{
                     return chr!==','
                 }).join(''))
-                
+                // console.log(bidvalue,bidprice,price)
                 if(Number(bidvalue)>price && Number(bidvalue)>bidprice){  
                     setBidMessage('BIDDING')                                 
-                    loadAuctions()
+                    loadAuctions(true)
                     setTimeout(async()=>{                        
                         const auctionbiders = !curBid.biders.includes(userRecord._id)?curBid.biders.concat(userRecord._id):curBid.biders
                         const updateField = {
@@ -91,7 +89,7 @@ const Bidding = ()=>{
                             setBidMessage('MAKE BID')
                         }else{
                             if (resps.updated){
-                                loadAuctions()
+                                loadAuctions(true)
                                 setTimeout(()=>{
                                     setBidSuccessful(true)                               
                                     setBidStatus("Your bid was Successful") 
@@ -183,7 +181,8 @@ const Bidding = ()=>{
     return(
         <>
             <header className='hheader bidheader'>
-            <Carousel autoPlay 
+            <Carousel 
+                autoPlay= {!viewBidEntry} 
                 stopOnHover 
                 interval={5000} 
                 showArrows={!viewBidEntry}
