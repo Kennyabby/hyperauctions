@@ -6,6 +6,8 @@ import ContextProvider from '../Resources/ContextProvider'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { TfiLayoutGrid3Alt } from "react-icons/tfi";
 import { FaList } from "react-icons/fa6";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import banner1 from '../assets/images/bannerimages/banner1.jpg'
 import banner2 from '../assets/images/bannerimages/banner2.jpg'
 import banner3 from '../assets/images/bannerimages/banner3.jpg'
@@ -53,9 +55,20 @@ const LandingPage = ()=> {
     return (
         <>
             <header className='hheader'>
-                <div className='banner'>
-                    <img className='bannerimg' src={banner1}/>
-                </div>
+                <Carousel autoPlay infiniteLoop stopOnHover={false} interval={5000} transitionTime={1000} >
+                    <div className='banner'>
+                        <img alt='bannerimg' className='bannerimg' src={banner1}/>
+                    </div>
+                    <div className='banner'>
+                        <img alt='bannerimg' className='bannerimg' src={banner2}/>
+                    </div>
+                    <div className='banner'>
+                        <img alt='bannerimg' className='bannerimg' src={banner3}/>
+                    </div>
+                    <div className='banner'>
+                        <img alt='bannerimg' className='bannerimg' src={banner4}/>
+                    </div>
+                </Carousel>
             </header>
             <main className='main bidmain'>
                 <div className='featured'>
