@@ -22,8 +22,16 @@ const Bidding = ()=>{
     const Navigate = useNavigate()
     useEffect(()=>{
         // console.log(currBid)
-        // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))        
-        setCurBid(JSON.parse(window.localStorage.getItem('curbid')))
+        // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))  
+        const bid = JSON.parse(window.localStorage.getItem('curbid'))
+        if(![null,undefined].includes(bid)){
+            auctionItems.forEach((auction, index)=>{
+                if (auction._id === bid._id){
+                        setBiditemindex(index)
+                }     
+            })  
+        }    
+        setCurBid(bid)
     },[currBid,window.localStorage.getItem('curbid')])
     useEffect(()=>{
         storePath('bidding')

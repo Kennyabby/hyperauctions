@@ -132,6 +132,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       removeSessions()
     }else{
       setUserRecord(resp.record)
+      // console.log(resp.record)
       loadAuctions()
       setVerificationMail(resp.record.email)
       if(!resp.record.verified){
