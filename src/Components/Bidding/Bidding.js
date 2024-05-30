@@ -191,7 +191,7 @@ const Bidding = ()=>{
                 useKeyboardArrows={!viewBidEntry}
                 transitionTime={1000} 
                 selectedItem={biditemindex} 
-                swipeable={!viewBidEntry}
+                swipeable={false}
                 showThumbs={false}
             >
                 {auctionItems.length ? auctionItems.filter((auction)=>{
