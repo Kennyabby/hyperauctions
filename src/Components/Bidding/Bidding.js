@@ -16,7 +16,7 @@ const Bidding = ()=>{
     const [bidMessage, setBidMessage] = useState('MAKE BID')
     const [curBid, setCurBid] = useState(JSON.parse(window.localStorage.getItem('curbid')))
     const [viewBidEntry, setViewBidEntry] = useState(false)
-    const [bidvalue, setBidvalue] = useState('')
+    const [bidvalues, setBidvalues] = useState([])
     const [bidStatus, setBidStatus] = useState('')
     const [biditemindex, setBiditemindex] = useState(0)    
     const [liveAuctions, setLiveAuctions] = useState(auctionItems)
@@ -26,7 +26,7 @@ const Bidding = ()=>{
         // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))  
         setBiditemindex(0)
         const bid = JSON.parse(window.localStorage.getItem('curbid'))
-        console.log(bid)
+        // console.log(bid)
         if(![null,undefined].includes(bid)){
             let ct = 0
             auctionItems.filter((auction)=>{
@@ -55,6 +55,7 @@ const Bidding = ()=>{
             return auction.start <= datenow && auction.target >= datenow
         }))
     },[auctionItems])
+
     const  makeBid = async (curBid,biditemindex)=>{
         if(userRecord===null){
             Navigate('/login')
@@ -73,14 +74,14 @@ const Bidding = ()=>{
                     return chr!==','
                 }).join(''))
                 // console.log(bidvalue,bidprice,price)
-                if(Number(bidvalue)>price && Number(bidvalue)>bidprice){  
+                if(Number(bidvalues[biditemindex])>price && Number(bidvalues[biditemindex])>bidprice){  
                     let currIndex = biditemindex
                     setBidMessage('BIDDING')                                 
                     loadAuctions(true)
                     setTimeout(async()=>{                        
                         const auctionbiders = !curBid.biders.includes(userRecord._id)?curBid.biders.concat(userRecord._id):curBid.biders
                         const updateField = {
-                            bidprice: bidvalue,
+                            bidprice: bidvalues[currIndex],
                             bids: Number(curBid.bids)+1,
                             biders: auctionbiders,
                             bidersno: auctionbiders.length
@@ -102,7 +103,9 @@ const Bidding = ()=>{
                                     setBidSuccessful(true)                               
                                     setBidStatus("Your bid was Successful") 
                                     setBidMessage('MAKE BID')
-                                    setBidvalue('')
+                                    setBidvalues(liveAuctions.map(()=>{
+                                        return ""
+                                    }))
                                 },3000)
                                 
                                 setTimeout(()=>{
@@ -168,7 +171,6 @@ const Bidding = ()=>{
         
             return () => clearInterval(targetTimerInterval);
         }
-    
     },[auctionItems])
     
     
@@ -273,9 +275,13 @@ const Bidding = ()=>{
                                     <input 
                                         className='lgninp bidinp'
                                         type='number'
-                                        value={bidvalue}
+                                        name={index}
+                                        value={bidvalues[index]}
                                         onChange={(e)=>{
-                                            setBidvalue(e.target.value)
+                                            setBidvalues((bidvalues)=>{
+                                                bidvalues[index] = e.target.value
+                                                return [...bidvalues]
+                                            })
                                         }}
                                         placeholder={'> ₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
                                     />
