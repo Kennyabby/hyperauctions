@@ -19,20 +19,21 @@ const Bidding = ()=>{
     const [bidvalue, setBidvalue] = useState('')
     const [bidStatus, setBidStatus] = useState('')
     const [biditemindex, setBiditemindex] = useState(0)    
+    const [liveAuctions, setLiveAuctions] = useState(auctionItems)
     const Navigate = useNavigate()
     useEffect(()=>{
         // console.log(currBid)
         // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))  
         setBiditemindex(0)
         const bid = JSON.parse(window.localStorage.getItem('curbid'))
-        // console.log(bid)
+        console.log(bid)
         if(![null,undefined].includes(bid)){
             let ct = 0
             auctionItems.filter((auction)=>{
                 let datenow = Date.now()
                 return auction.start <= datenow && auction.target >= datenow
             }).forEach((auction, index)=>{
-                if (auction._id === bid._id){
+                if (auction._id === bid._id){               
                     ct += 1 
                     // console.log('true value')
                     // console.log(index, auction._id, bid._id)
@@ -48,7 +49,13 @@ const Bidding = ()=>{
     useEffect(()=>{
         storePath('bidding')
     },[])
-    const  makeBid = async ()=>{
+    useEffect(()=>{
+        setLiveAuctions(auctionItems.filter((auction)=>{
+            let datenow = Date.now()
+            return auction.start <= datenow && auction.target >= datenow
+        }))
+    },[auctionItems])
+    const  makeBid = async (curBid,biditemindex)=>{
         if(userRecord===null){
             Navigate('/login')
             setLoginMessage("Kindly Login to Make Your Bid")
@@ -139,26 +146,14 @@ const Bidding = ()=>{
         return `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
     }
     const [startTimers, setStartTimers] = useState(![null, undefined].includes(curBid)?
-        auctionItems.filter((auction)=>{
-            let datenow = Date.now()
-            return auction.start <= datenow && auction.target >= datenow
-        }).map((auction) =>calculateTimeLeft(auction.start)):'');
+       liveAuctions.map((auction) =>calculateTimeLeft(auction.start)):'');
     const [targetTimers, setTargetTimers] = useState(![null, undefined].includes(curBid)?
-        auctionItems.filter((auction)=>{
-            let datenow = Date.now()
-            return auction.start <= datenow && auction.target >= datenow
-        }).map((auction) =>calculateTimeLeft(auction.target)):'');
+        liveAuctions.map((auction) =>calculateTimeLeft(auction.target)):'');
     
     useEffect(() => {
         if(![null, undefined].includes(curBid)){           
             const startTimerInterval = setInterval(() => {
-                setStartTimers(auctionItems.filter((auction)=>{
-                    let datenow = Date.now()
-                    return auction.start <= datenow && auction.target >= datenow
-                }).filter((auction)=>{
-                    let datenow = Date.now()
-                    return auction.start <= datenow && auction.target >= datenow
-                }).map((auction) =>calculateTimeLeft(auction.start)));
+                setStartTimers(liveAuctions.map((auction) =>calculateTimeLeft(auction.start)));
             }, 1000);
         
             return () => clearInterval(startTimerInterval);
@@ -168,10 +163,7 @@ const Bidding = ()=>{
     useEffect(()=>{
         if(![null, undefined].includes(curBid)){
             const targetTimerInterval = setInterval(() => {
-                setTargetTimers(auctionItems.filter((auction)=>{
-                    let datenow = Date.now()
-                    return auction.start <= datenow && auction.target >= datenow
-                }).map((auction) =>calculateTimeLeft(auction.target)));
+                setTargetTimers(liveAuctions.map((auction) =>calculateTimeLeft(auction.target)));
             }, 1000);
         
             return () => clearInterval(targetTimerInterval);
@@ -193,11 +185,9 @@ const Bidding = ()=>{
                 selectedItem={biditemindex} 
                 swipeable={false}
                 showThumbs={false}
+                axis='horizontal'
             >
-                {auctionItems.length ? auctionItems.filter((auction)=>{
-                    let datenow = Date.now()
-                    return auction.start <= datenow && auction.target >= datenow
-                }).map((auction, index) => {
+                {auctionItems.length ? liveAuctions.map((auction, index) => {
                     const starting = getTimerString(startTimers[index])
                     const ending = getTimerString(targetTimers[index])
                     const bidPeriod = targetTimers[index] - startTimers[index]
@@ -245,7 +235,6 @@ const Bidding = ()=>{
                                 <div className='mobilebidlive' onClick={()=>{
                                     setViewBidEntry(true)
                                     setBidSuccessful(false)
-                                    setBiditemindex(index)
                                     window.localStorage.setItem('curbid',JSON.stringify(auction))
                                     document.body.scrollTop = 0; 
                                     document.documentElement.scrollTop = 0
@@ -290,7 +279,12 @@ const Bidding = ()=>{
                                         }}
                                         placeholder={'> ₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
                                     />
-                                    <div className='userbidbtn' onClick={makeBid}>{targetTimers[index]<=bidPeriod && targetTimers[index] >=0 ? bidMessage :'NOT AVAILABLE'}</div>
+                                    <div className='userbidbtn' onClick={()=>{
+                                        setBiditemindex(index)
+                                        window.localStorage.setItem('curbid',JSON.stringify(auction))
+                                        makeBid(auction,index)
+                                    }
+                                    }>{targetTimers[index]<=bidPeriod && targetTimers[index] >=0 ? bidMessage :'NOT AVAILABLE'}</div>
                                 </div>
                             </div>}
                         </div>
