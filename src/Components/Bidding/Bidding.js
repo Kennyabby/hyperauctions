@@ -27,10 +27,13 @@ const Bidding = ()=>{
         // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))  
         setBiditemindex(0)
         const bid = JSON.parse(window.localStorage.getItem('curbid'))
-        console.log(bid)
+        // console.log(bid)
         if(![null,undefined].includes(bid)){
             let ct = 0
-            auctionItems.forEach((auction, index)=>{
+            auctionItems.filter((auction)=>{
+                let datenow = Date.now()
+                return auction.start <= datenow && auction.target >= datenow
+            }).forEach((auction, index)=>{
                 if (auction._id === bid._id){
                     ct += 1 
                     if (ct===1){
@@ -136,14 +139,26 @@ const Bidding = ()=>{
         return `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
     }
     const [startTimers, setStartTimers] = useState(![null, undefined].includes(curBid)?
-        auctionItems.map((auction) =>calculateTimeLeft(auction.start)):'');
+        auctionItems.filter((auction)=>{
+            let datenow = Date.now()
+            return auction.start <= datenow && auction.target >= datenow
+        }).map((auction) =>calculateTimeLeft(auction.start)):'');
     const [targetTimers, setTargetTimers] = useState(![null, undefined].includes(curBid)?
-        auctionItems.map((auction) =>calculateTimeLeft(auction.target)):'');
+        auctionItems.filter((auction)=>{
+            let datenow = Date.now()
+            return auction.start <= datenow && auction.target >= datenow
+        }).map((auction) =>calculateTimeLeft(auction.target)):'');
     
     useEffect(() => {
         if(![null, undefined].includes(curBid)){           
             const startTimerInterval = setInterval(() => {
-                setStartTimers(auctionItems.map((auction) =>calculateTimeLeft(auction.start)));
+                setStartTimers(auctionItems.filter((auction)=>{
+                    let datenow = Date.now()
+                    return auction.start <= datenow && auction.target >= datenow
+                }).filter((auction)=>{
+                    let datenow = Date.now()
+                    return auction.start <= datenow && auction.target >= datenow
+                }).map((auction) =>calculateTimeLeft(auction.start)));
             }, 1000);
         
             return () => clearInterval(startTimerInterval);
@@ -153,7 +168,10 @@ const Bidding = ()=>{
     useEffect(()=>{
         if(![null, undefined].includes(curBid)){
             const targetTimerInterval = setInterval(() => {
-                setTargetTimers(auctionItems.map((auction) =>calculateTimeLeft(auction.target)));
+                setTargetTimers(auctionItems.filter((auction)=>{
+                    let datenow = Date.now()
+                    return auction.start <= datenow && auction.target >= datenow
+                }).map((auction) =>calculateTimeLeft(auction.target)));
             }, 1000);
         
             return () => clearInterval(targetTimerInterval);
@@ -175,7 +193,10 @@ const Bidding = ()=>{
                 swipeable={!viewBidEntry}
                 showThumbs={false}
             >
-                {auctionItems.length ? auctionItems.slice(0, 21).map((auction, index) => {
+                {auctionItems.length ? auctionItems.filter((auction)=>{
+                    let datenow = Date.now()
+                    return auction.start <= datenow && auction.target >= datenow
+                }).map((auction, index) => {
                     const starting = getTimerString(startTimers[index])
                     const ending = getTimerString(targetTimers[index])
                     const bidPeriod = targetTimers[index] - startTimers[index]
