@@ -93,7 +93,12 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     //   removeSessions()
     // }
   }
-
+  useEffect(()=>{
+    const auctionReloadInterval = setInterval(()=>{
+      loadAuctions(true)
+    },10000)
+    return () => clearInterval(auctionReloadInterval);
+  },[])
   const removeSessions = (path)=>{
     window.localStorage.removeItem('sess-recg-id')
     window.localStorage.removeItem('idt-curr-usr')

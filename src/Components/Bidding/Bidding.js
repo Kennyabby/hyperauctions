@@ -34,11 +34,11 @@ const Bidding = ()=>{
             }).forEach((auction, index)=>{
                 if (auction._id === bid._id){
                     ct += 1 
+                    // console.log('true value')
+                    // console.log(index, auction._id, bid._id)
+                    // console.log(index)
                     if (ct===1){
                         setBiditemindex(index)
-                        // console.log('true value')
-                        // console.log(index, auction._id, bid._id)
-                        // console.log(index)
                     }   
                 }     
             })  
@@ -67,6 +67,7 @@ const Bidding = ()=>{
                 }).join(''))
                 // console.log(bidvalue,bidprice,price)
                 if(Number(bidvalue)>price && Number(bidvalue)>bidprice){  
+                    let currIndex = biditemindex
                     setBidMessage('BIDDING')                                 
                     loadAuctions(true)
                     setTimeout(async()=>{                        
@@ -100,6 +101,7 @@ const Bidding = ()=>{
                                 setTimeout(()=>{
                                     setBidStatus("")
                                     setViewBidEntry(false)
+                                    setBiditemindex(currIndex)
                                 },5000)
                             }
                         }                    
@@ -182,7 +184,7 @@ const Bidding = ()=>{
         <>
             <header className='hheader bidheader'>
             <Carousel 
-                autoPlay= {!viewBidEntry} 
+                autoPlay= {false} 
                 stopOnHover 
                 interval={5000} 
                 showArrows={!viewBidEntry}
