@@ -95,9 +95,9 @@ const LandingPage = ()=> {
                         <div className='featuredbox'>
                             {auctionItems.length ? auctionItems.filter((feature)=>{
                                 return feature.type===currFeature
-                            }).slice(0,4).map((auction)=>{
+                            }).slice(0,4).map((auction, index)=>{
                                 return (
-                                    <div className='featurecard'>
+                                    <div className='featurecard' key={index}>
                                         <img src={auctionImages[auction.src]} className='featureimg'/>
                                         <div className='featurename'>{auction.name}</div>
                                         <div className='featuredesc'>{auction.description}</div>
