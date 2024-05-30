@@ -61,7 +61,7 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
                {targetTimers[index]<=0 && 'Live Ended'}
               </div>
               <div className='auctionprice'>
-                {'₦' + auction.initialprice}
+                {'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
               </div>
             </div>
             <img src={auctionImages[auction.src]} className='auctionimg' alt={auction.name} />

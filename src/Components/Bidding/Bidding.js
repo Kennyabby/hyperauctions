@@ -19,14 +19,19 @@ const Bidding = ()=>{
     const [bidvalue, setBidvalue] = useState('')
     const [bidStatus, setBidStatus] = useState('')
     const [biditemindex, setBiditemindex] = useState(0)
+    const [starting, setStarting] = useState(0)
+    const [ending, setEnding] = useState(0)
     const Navigate = useNavigate()
     useEffect(()=>{
         // console.log(currBid)
         // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))  
+        setBiditemindex(0)
         const bid = JSON.parse(window.localStorage.getItem('curbid'))
+        // console.log(bid)
         if(![null,undefined].includes(bid)){
             auctionItems.forEach((auction, index)=>{
                 if (auction._id === bid._id){
+                        // console.log('true value')
                         setBiditemindex(index)
                 }     
             })  
@@ -41,7 +46,9 @@ const Bidding = ()=>{
             Navigate('/login')
             setLoginMessage("Kindly Login to Make Your Bid")
         }else{
-            if (targetTimers[biditemindex]<=bidPeriod && targetTimers[biditemindex] >=0){   
+            const bidPeriod = targetTimers[biditemindex] - startTimers[biditemindex]
+
+             if (targetTimers[biditemindex]<=bidPeriod && targetTimers[biditemindex] >=0){   
                 var price = ''
                 price = Number(curBid.initialprice.split('').filter((chr)=>{
                     return chr!==','
@@ -147,14 +154,8 @@ const Bidding = ()=>{
         }
     
     },[auctionItems])
-    let starting = ''
-    let ending = ''
-    let bidPeriod = ''
-    if(![null, undefined].includes(curBid)){
-        starting = getTimerString(startTimers)
-        ending = getTimerString(targetTimers)
-        bidPeriod = (curBid.target-curBid.start)
-    }
+    
+    
     return(
         <>
             <header className='hheader bidheader'>
@@ -169,6 +170,9 @@ const Bidding = ()=>{
                 showThumbs={false}
             >
                 {auctionItems.length ? auctionItems.slice(0, 21).map((auction, index) => {
+                    const starting = getTimerString(startTimers[index])
+                    const ending = getTimerString(targetTimers[index])
+                    const bidPeriod = targetTimers[index] - startTimers[index]
                     return (
                         curBid!==null && auctionImages!==null && <div className='biddingcover' key={auction._id}>
                             {/* <div className='bidpre'><IoChevronBack/></div>
@@ -214,6 +218,8 @@ const Bidding = ()=>{
                                     console.log('making bid')
                                     setViewBidEntry(true)
                                     setBidSuccessful(false)
+                                    setBiditemindex(index)
+                                    window.localStorage.setItem('curbid',JSON.stringify(auction))
                                 }}>Make Your Bid</div>
 
                             </div>

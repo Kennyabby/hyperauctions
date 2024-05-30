@@ -303,8 +303,14 @@
     .auctioncard{
         margin: 20px auto;
     }
+    .auctionname{
+        font-weight: bold;
+    }
     .auctionimg{
         width: 85vw;
+    }
+    .auctionprice{
+        font-weight: bold;
     }
     .auctionfiltersection{
         width: 95%;
