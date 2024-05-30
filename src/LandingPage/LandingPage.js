@@ -55,7 +55,15 @@ const LandingPage = ()=> {
     return (
         <>
             <header className='hheader'>
-                <Carousel autoPlay infiniteLoop stopOnHover={false} interval={5000} transitionTime={1000} >
+                <Carousel autoPlay 
+                    infiniteLoop 
+                    stopOnHover={false} 
+                    interval={5000} 
+                    showArrows
+                    useKeyboardArrows={true}
+                    transitionTime={1000} 
+                    selectedItem={0} 
+                >
                     <div className='banner'>
                         <img alt='bannerimg' className='bannerimg' src={banner1}/>
                     </div>
