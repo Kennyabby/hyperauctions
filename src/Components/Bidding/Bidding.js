@@ -27,12 +27,18 @@ const Bidding = ()=>{
         // setCurrBid(JSON.parse(window.localStorage.getItem('currbid')))  
         setBiditemindex(0)
         const bid = JSON.parse(window.localStorage.getItem('curbid'))
-        // console.log(bid)
+        console.log(bid)
         if(![null,undefined].includes(bid)){
+            let ct = 0
             auctionItems.forEach((auction, index)=>{
                 if (auction._id === bid._id){
-                        // console.log('true value')
+                    ct += 1 
+                    if (ct===1){
                         setBiditemindex(index)
+                        // console.log('true value')
+                        // console.log(index, auction._id, bid._id)
+                        // console.log(index)
+                    }   
                 }     
             })  
         }    
@@ -162,11 +168,11 @@ const Bidding = ()=>{
             <Carousel autoPlay 
                 stopOnHover 
                 interval={5000} 
-                showArrows
-                useKeyboardArrows={true}
+                showArrows={!viewBidEntry}
+                useKeyboardArrows={!viewBidEntry}
                 transitionTime={1000} 
                 selectedItem={biditemindex} 
-                swipeable={true}
+                swipeable={!viewBidEntry}
                 showThumbs={false}
             >
                 {auctionItems.length ? auctionItems.slice(0, 21).map((auction, index) => {
@@ -215,7 +221,6 @@ const Bidding = ()=>{
                                     <div className='timervalue'>{ending}</div>
                                 </div>}
                                 <div className='mobilebidlive' onClick={()=>{
-                                    console.log('making bid')
                                     setViewBidEntry(true)
                                     setBidSuccessful(false)
                                     setBiditemindex(index)
