@@ -33,10 +33,10 @@ const Bidding = ()=>{
                 let datenow = Date.now()
                 return auction.start <= datenow && auction.target >= datenow
             }).forEach((auction, index)=>{
+                // console.log(index, auction._id, bid._id)
                 if (auction._id === bid._id){               
                     ct += 1 
                     // console.log('true value')
-                    // console.log(index, auction._id, bid._id)
                     // console.log(index)
                     if (ct===1){
                         setBiditemindex(index)
