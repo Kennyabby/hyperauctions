@@ -56,7 +56,7 @@ const Bidding = ()=>{
                     setBidMessage('BIDDING')                                 
                     loadAuctions()
                     setTimeout(async()=>{                        
-                        const auctionbiders = !curBid.biders.includes(userRecord._id)?curBid.biders.concat(userRecord._id):currBid.biders
+                        const auctionbiders = !curBid.biders.includes(userRecord._id)?curBid.biders.concat(userRecord._id):curBid.biders
                         const updateField = {
                             bidprice: bidvalue,
                             bids: Number(curBid.bids)+1,
