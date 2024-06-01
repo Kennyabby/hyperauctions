@@ -19,7 +19,9 @@ const Navbar = ()=>{
     const Navigate = useNavigate()
     const [endpoint, setEndpoint] = useState(location)
     const [showMenu, setShowMenu] = useState(false)
-    const {userRecord, fetchServer,server,removeSessions} = useContext(ContextProvider)
+    const {userRecord, fetchServer,
+        server,removeSessions, myBidcount
+    } = useContext(ContextProvider)
     const [loggedin, setLoggedin] = useState(false)
     const [logoutStatus, setLogoutStatus] = useState('Log Out')
     const [dropdown, setDropdown] = useState(false)
@@ -75,7 +77,7 @@ const Navbar = ()=>{
                     </div>
                 </div>
                 <AnimatePresence>
-                    {!showMenu && loggedin && <motion.div 
+                    {(!showMenu && loggedin) && <motion.div 
                         className={'profilelink userprofilelink extnavigators'}
                         initial={{opacity:0}}
                         animate={{opacity:1}}
@@ -85,7 +87,7 @@ const Navbar = ()=>{
                         <IoIosArrowBack className='backbtn' onClick={()=>{
                             Navigate(-1)
                         }}/>
-                        <div className='bids extbids'><b>0</b> Bids</div>
+                        <div className='bids extbids'><b>{myBidcount===null?'...':myBidcount}</b> Bids</div>
                         <div className='profilevisit extprofilevisit'>{![undefined, null].includes(userRecord) ?userRecord.username: '....'}</div>
                         <div className='usericon exticons'><IoNotifications/></div>
                         <div className='usericon exticons'>
@@ -97,6 +99,22 @@ const Navbar = ()=>{
                                 }}
                             />
                         </div>
+                    </motion.div> 
+                    }
+                    {!loggedin && !showMenu && <motion.div 
+                        className='extbidnotify'
+                        initial={{opacity:0}}
+                        animate={{opacity:1}}
+                        transition={{duration:1.5}}
+                        exit={{opacity:0, transition:{duration:.59}}}
+                        onClick={()=>{
+                            Navigate('/Login')
+                        }}
+                    >
+                        {/* <IoIosArrowBack className='backbtn' onClick={()=>{
+                            Navigate(-1)
+                        }}/> */}
+                        Login to make your bids
                     </motion.div>}
                 </AnimatePresence>
             </div>

@@ -21,8 +21,8 @@ import DrinkData from './Resources/AuctionData/DrinkData';
 import TomatoData from './Resources/AuctionData/TomatoData';
 
 function App() {
-  // const SERVER = "http://localhost:3001"
-  const SERVER = "https://bid2buyserver.vercel.app"
+  const SERVER = "http://localhost:3001"
+  // const SERVER = "https://bid2buyserver.vercel.app"
   const [intervalId, setIntervalId] = useState(null)
   const [sessId, setSessID] = useState(null)
   const [winSize, setWinSize] = useState(window.innerWidth)
@@ -37,6 +37,7 @@ function App() {
   const [categories, setCategories] = useState(null)
   const [auctionItems, setAuctionItems] = useState([])
   const [catTries, setCatTries] = useState(0)
+  const [myBidcount, setMybidcount] = useState(null)
   const auctionImages = {...DrinkData,...TomatoData,...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
   const shuffleList = (array) => {
     var currentIndex = array.length,
@@ -93,12 +94,16 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     //   removeSessions()
     // }
   }
-  useEffect(()=>{
-    const auctionReloadInterval = setInterval(()=>{
-      loadAuctions(true)
-    },10000)
-    return () => clearInterval(auctionReloadInterval);
-  },[])
+  // useEffect(()=>{
+  //   const auctionReloadInterval = setInterval(()=>{
+  //     if (userRecord!==null){
+  //       loadAuctions(true)
+  //     }else{
+  //       loadAuctions()
+  //     }
+  //   },10000)
+  //   return () => clearInterval(auctionReloadInterval);
+  // },[])
   const removeSessions = (path)=>{
     window.localStorage.removeItem('sess-recg-id')
     window.localStorage.removeItem('idt-curr-usr')
@@ -114,7 +119,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       Navigate("/")
     }
   }
-  const loadAuctions = async(reload)=>{
+  const loadAuctions = async({user, reload})=>{
       const categories = await getCategories()
       // if (categories!==null){
       //   let categoryList = []
@@ -124,12 +129,29 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       //   console.log(categoryList)
       //   loadAuctionItems(categoryList,{})
       // }
+      if(user!==null){
+        countBids(user)
+      }
       const categoryList = ['drinks','tomatoes','tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
       if(reload===true){
-        loadAuctionItems(categoryList,{},true)
+        loadAuctionItems(categoryList,{},user,true)
       }else{
-        loadAuctionItems(categoryList,{})        
+        loadAuctionItems(categoryList,{},user)        
       }
+  }
+  const countBids = async (user)=>{
+    const resp1 = await fetchServer("POST", {
+      database: "Bidder_"+user.username,
+      collection: "Auctions", 
+      prop: {}
+    }, "getDocCount", SERVER)
+
+    if (resp1.err){
+      console.log(resp1.err)
+    }else{
+      // console.log('bid count:',resp1.count)
+      setMybidcount(resp1.count)
+    }
   }
   const loadPage = async (propVal, currPath)=>{
     const resp = await fetchServer("POST", {
@@ -137,12 +159,12 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       collection: "UsersBase", 
       sessionId: propVal
     }, "getDocDetails", SERVER)
-    if (resp.record === null){
+    if ([null, undefined].includes(resp.record)){
       removeSessions()
     }else{
       setUserRecord(resp.record)
       // console.log(resp.record)
-      loadAuctions()
+      loadAuctions({user:resp.record, reload: true})
       setVerificationMail(resp.record.email)
       if(!resp.record.verified){
         Navigate('/verify')
@@ -179,7 +201,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }
   }
   
-  const loadAuctionItems = async (categories,filter,reload)=>{
+  const loadAuctionItems = async (categories,filter,user,reload)=>{
     let loadgap = 0
     const currBidDetails = JSON.parse(window.localStorage.getItem('currbid'))
     categories.forEach( async (category)=>{
@@ -190,25 +212,56 @@ const countDownTime = (startDate,targetDate,timerId) =>{
           prop: filter
         }, "getDocsDetails", SERVER)
         if ([null,undefined].includes(resp.record)){
-            console.log(resp)
+            // console.log(resp)
         }else{
             if (resp.err){
                 console.log(resp.mess)
             }else{
               // console.log("got details",resp.record)
-                if (reload===true && auctionItems!==null){
+                // console.log(reload, auctionItems)
+                if (reload===true && auctionItems.length){
                   setAuctionItems((auctionItems)=>{
                     resp.record.forEach((record)=>{
                       auctionItems.forEach((auction,index)=>{
-                        if (auction._id === record._id){
-                          auctionItems[index]=record
+                        if (!auction.mybids){
+                          auction.mybids = 0
                         }
+                        if(user!==null){
+                          if (auction._id === record._id){
+                            auctionItems[index]=record
+                            auction.biders.forEach((bidder)=>{
+                              if(bidder.bidder === user._id){
+                                auctionItems[index].mybids = bidder.mybids.length
+                              }
+                            })
+                          }else{
+                            auction.biders.forEach((bidder)=>{
+                              if(bidder._id === user._id){
+                                auction.mybids = bidder.mybids.length
+                              }
+                            })
+                          }
+                        }
+                        
                       })
                     })
                     return [...auctionItems]
                   })
                 }else{
+                  // console.log('setting auction items')
                   setAuctionItems((auctionItems)=>{
+                    auctionItems.forEach((auction)=>{
+                      let bidders = auction.biders
+                      auction.mybids = 0
+                      if (user!==null){
+                        bidders.forEach((bidder)=>{
+                          // console.log(bidder, user)
+                          if(bidder.bidder === user._id){
+                            auction.mybids = bidder.mybids.length
+                          }
+                        })
+                      }
+                    })
                     return [...auctionItems, ...resp.record]
                   })
                 }
@@ -224,11 +277,12 @@ const countDownTime = (startDate,targetDate,timerId) =>{
                     }
                   })
                 }
-            }
+              }
         }
       },loadgap*1000)
       loadgap += 3
-  })}
+    })
+  }
   const getDate = (timestamp)=>{
     const date = new Date(timestamp)
     var month = (date.getMonth() + 1);               
@@ -289,7 +343,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
         }
       }else{
         removeSessions(currPath)
-        loadAuctions()
+        loadAuctions({user:null,reload:true})
       }
     }else{
       loadAuctions()
@@ -319,7 +373,8 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       auctionItems, setAuctionItems,
       auctionImages,
       countDownTime,
-      loadAuctions
+      loadAuctions,
+      myBidcount
     }}>
        {!noNavPath.includes(path) && <Navbar/>}
        <Routes>

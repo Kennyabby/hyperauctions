@@ -184,6 +184,9 @@
     font-weight: bold;
     color: rgb(228, 100, 15);
 }
+.extbidnotify{
+    display: none;
+}
 @media screen and (max-width: 700px) {
 
     .navcontainer{
@@ -305,5 +308,13 @@
     }
     .extprofilevisit{
         margin: auto 0px;
+    }
+    .extbidnotify{
+        display: block;
+        font-weight: bold;
+        width: fit-content;
+        text-align: center;
+        margin: auto;
+        cursor: pointer;
     }
 }

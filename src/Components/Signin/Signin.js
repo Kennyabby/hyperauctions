@@ -17,7 +17,7 @@ const Signin = () => {
   const [field, setField] = useState({
     firstname: "",
     lastname: "",
-    contact: "",
+    // contact: "",
     email:"",
     username: "",
     password: "",
@@ -162,7 +162,7 @@ const Signin = () => {
                                 setField((field)=>{
                                     return({...field, firstname: "",
                                         lastname: "",
-                                        contact: "",
+                                        // contact: "",
                                         email:"",
                                         username: "",
                                         password: ""
@@ -279,7 +279,7 @@ const Signin = () => {
                 value={field.email}
               />
             </div>
-            <div className="inpsgcv">
+            {/* <div className="inpsgcv">
               <label>PHONE NUMBER </label>
               <input
                 name="contact"
@@ -289,7 +289,7 @@ const Signin = () => {
                 defaultValue={field.contact}
                 value={field.contact}
               />
-            </div>
+            </div> */}
             <div className="inpsgcv">
               <label>PASSWORD</label>
               <div className="sgnpassbx">

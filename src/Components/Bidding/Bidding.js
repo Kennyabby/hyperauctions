@@ -77,9 +77,27 @@ const Bidding = ()=>{
                 if(Number(bidvalues[biditemindex])>price && Number(bidvalues[biditemindex])>bidprice){  
                     let currIndex = biditemindex
                     setBidMessage('BIDDING')                                 
-                    loadAuctions(true)
-                    setTimeout(async()=>{                        
-                        const auctionbiders = !curBid.biders.includes(userRecord._id)?curBid.biders.concat(userRecord._id):curBid.biders
+                    loadAuctions({user:userRecord, reload:true})
+                    setTimeout(async()=>{    
+                        let bidders = curBid.biders
+                        let mybids = [bidvalues[currIndex]]
+                        let isBidding = bidders.length? bidders.map((bider)=>{
+                            if (bider.bidder === userRecord._id){
+                                bider.mybids = bider.mybids.concat(bidvalues[currIndex])
+                                
+                                console.log(bider,mybids)
+                                return true
+                            }else{
+                                return false
+                            }
+                        }): []              
+
+                        const firstBidders = curBid.biders.concat({bidder:userRecord._id, mybids:mybids})
+                        const auctionbiders = isBidding.includes(true)? bidders: firstBidders
+                        // console.log(isBidding.includes(true))
+                        // console.log(bidders)
+                        // console.log(firstBidders)
+                        // console.log(auctionbiders)
                         const updateField = {
                             bidprice: bidvalues[currIndex],
                             bids: Number(curBid.bids)+1,
@@ -97,23 +115,39 @@ const Bidding = ()=>{
                             console.log(resps.mess)
                             setBidMessage('MAKE BID')
                         }else{
-                            if (resps.updated){
-                                loadAuctions(true)
-                                setTimeout(()=>{
-                                    setBidSuccessful(true)                               
-                                    setBidStatus("Your bid was Successful") 
-                                    setBidMessage('MAKE BID')
-                                    setBidvalues(liveAuctions.map(()=>{
-                                        return ""
-                                    }))
-                                },3000)
-                                
-                                setTimeout(()=>{
-                                    setBidStatus("")
-                                    setViewBidEntry(false)
-                                    setBiditemindex(currIndex)
-                                },5000)
-                            }
+                              const resp1 = await fetchServer("POST", {
+                                database: "Bidder_"+userRecord.username,
+                                collection: "Auctions", 
+                                update: {auction: curBid._id}
+                              }, "createDoc", server)
+                          
+                              if (resp1.err){
+                                setLoginMessage(resp1.mess)
+                                setBidMessage('MAKE BID')
+                              }else{
+                                if (resp1.mess){
+                                  setLoginMessage(resp1.mess)
+                                  setBidMessage('MAKE BID')
+                                }else{
+                                    if (resps.updated){
+                                        loadAuctions({user:userRecord, reload:true})
+                                        setTimeout(()=>{
+                                            setBidSuccessful(true)                               
+                                            setBidStatus("Your bid was Successful") 
+                                            setBidMessage('MAKE BID')
+                                            setBidvalues(liveAuctions.map(()=>{
+                                                return ""
+                                            }))
+                                        },3000)
+                                        
+                                        setTimeout(()=>{
+                                            setBidStatus("")
+                                            setViewBidEntry(false)
+                                            setBiditemindex(currIndex)
+                                        },5000)
+                                    }
+                                }
+                              }
                         }                    
                        
                     },3000)
@@ -121,13 +155,13 @@ const Bidding = ()=>{
                     setBidStatus("Your next bid must be greater than ₦"+(curBid.bidprice?Number(curBid.bidprice).toLocaleString():curBid.initialprice))
                     setTimeout(()=>{
                         setBidStatus("")
-                    },5000) 
+                    },3000) 
                 }                
             }else{
                 setBidStatus("Bidding is not available for this item at this time")
                 setTimeout(()=>{
                     setBidStatus("")
-                },5000)
+                },3000)
             }
         }
     }

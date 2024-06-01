@@ -60,6 +60,7 @@ const LandingPage = ()=> {
                     stopOnHover={false} 
                     interval={5000} 
                     showArrows
+                    showThumbs={false}
                     useKeyboardArrows={true}
                     transitionTime={1000} 
                     selectedItem={0} 
