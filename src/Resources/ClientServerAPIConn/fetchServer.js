@@ -14,7 +14,7 @@ const fetchServer = async (method, body, endpoint, server)=>{
         const response = await resp.json()
         return {err: false, ...response}
     } catch (error) {
-        return {err: true, mess: "Could not connect to server"}
+        return {err: true, mess: "Could not connect to server. Please check your internet connection"}
     }
 }
 

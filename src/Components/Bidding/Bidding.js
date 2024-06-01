@@ -102,7 +102,8 @@ const Bidding = ()=>{
                             bidprice: bidvalues[currIndex],
                             bids: Number(curBid.bids)+1,
                             biders: auctionbiders,
-                            bidersno: auctionbiders.length
+                            bidersno: auctionbiders.length,
+                            createdAt: Date.now()
                         }                        
                         const resps = await fetchServer("POST", {
                             database: "AuctionItems",
