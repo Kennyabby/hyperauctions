@@ -136,7 +136,7 @@ const Navbar = ()=>{
                 <div className='navend'>
                     {loggedin && 
                         <div className={'profilelink userprofilelink navigators'}>
-                            <div className='bids'>0 Bids</div>
+                            <div className='bids'><b>{myBidcount===null?'...':myBidcount}</b> Bids</div>
                             <div className='usericon'><IoNotifications/></div>
                             <div className='usericon'>
                                 <FaUser/><IoChevronDownOutline 

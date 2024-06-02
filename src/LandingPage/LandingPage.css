@@ -204,12 +204,25 @@
 .auctionstatus{
     font-size: .7em;
     padding: 10px 25px;
+    height: fit-content;
     background: rgba(247, 220, 86, 0.85);
+}
+.auctionstatus > div{
+    width: max-content;
+    /* margin-top: 50%;
+    margin-left: 50%; */
+    /* transform: translate(-50%,-50%); */
+ }
+.auctionpricediv{
+    margin: 10px;
+}
+.startingprice{
+    font-size: .6em;
 }
 .auctionprice{
     width: fit-content;
     margin: auto;
-    font-size: .9em;
+    font-size: 1.2em;
 }
 .auctionimg{
     width: 350px;

@@ -56,12 +56,17 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
           <div className='auctioncard' key={auction._id}>
             <div className='auctioncardtitle'>
               <div className={'auctionstatus'+(targetTimers[index]<=0?' bidended':'')}>
-               {startTimers[index]>0 && 'Live Soon'}
-               {targetTimers[index]<=bidPeriod && targetTimers[index] >=0 && 'Live'}
-               {targetTimers[index]<=0 && 'Live Ended'}
+                <div>
+                  {startTimers[index]>0 && 'Live Soon'}
+                  {targetTimers[index]<=bidPeriod && targetTimers[index] >=0 && 'Live'}
+                  {targetTimers[index]<=0 && 'Live Ended'}
+                </div>
               </div>
-              <div className='auctionprice'>
-                {'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
+              <div className='auctionpricediv'> 
+                <div className='auctionprice'>
+                  {'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
+                </div>
+                <div className='startingprice'>Starting price:</div>
               </div>
             </div>
             <img src={auctionImages[auction.src]} className='auctionimg' alt={auction.name} />
