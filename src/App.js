@@ -164,7 +164,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }else{
       setUserRecord(resp.record)
       // console.log(resp.record)
-      loadAuctions({user:resp.record, reload: true})
+      loadAuctions({user:resp.record, reload: false})
       setVerificationMail(resp.record.email)
       if(!resp.record.verified){
         Navigate('/verify')
@@ -223,7 +223,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
                   setAuctionItems((auctionItems)=>{
                     resp.record.forEach((record)=>{
                       auctionItems.forEach((auction,index)=>{
-                        if (!auction.mybids){
+                        if ([null, undefined].includes(auction.mybids)){
                           auction.mybids = 0
                         }
                         if(user!==null){
@@ -252,7 +252,9 @@ const countDownTime = (startDate,targetDate,timerId) =>{
                   setAuctionItems((auctionItems)=>{
                     auctionItems.forEach((auction)=>{
                       let bidders = auction.biders
-                      auction.mybids = 0
+                      if ([null, undefined].includes(auction.mybids)){
+                        auction.mybids = 0
+                      }
                       if (user!==null){
                         bidders.forEach((bidder)=>{
                           // console.log(bidder, user)
@@ -264,6 +266,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
                     })
                     return [...auctionItems, ...resp.record]
                   })
+                 
                 }
                 // console.log(currBidDetails)
                 if(currBidDetails!==null){
@@ -280,7 +283,11 @@ const countDownTime = (startDate,targetDate,timerId) =>{
               }
         }
       },loadgap*1000)
-      loadgap += 3
+      loadgap += 1
+      // if (reload === true){
+      //   loadgap += 0
+      // }else{
+      // }
     })
   }
   const getDate = (timestamp)=>{
