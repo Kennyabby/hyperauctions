@@ -49,12 +49,12 @@
     position: fixed;
     bottom: 5px;
     left: 5px;
-    background-color: rgba(30, 95, 113, 0.8);
-    width: max-content;
+    /* width: max-content; */
     padding: 20px 30px;
     border-radius: 8px;
-    border: solid rgba(144, 0, 0, 0.7) 2px;
-    color: rgb(255, 255, 255);
+    border-left: solid yellow 6px;
+    background: rgb(111, 124, 45);
+    color: yellow;
     font-weight: bold;
     font-size: 1em;
     z-index: 1;
