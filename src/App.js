@@ -154,6 +154,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }
   }
   const loadPage = async (propVal, currPath)=>{
+    loadAuctions({user:null, reload: false})
     const resp = await fetchServer("POST", {
       database: "AuctionDB",
       collection: "UsersBase", 
