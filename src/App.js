@@ -21,8 +21,8 @@ import DrinkData from './Resources/AuctionData/DrinkData';
 import TomatoData from './Resources/AuctionData/TomatoData';
 
 function App() {
-  // const SERVER = "http://localhost:3001"
-  const SERVER = "https://bid2buyserver.vercel.app"
+  const SERVER = "http://localhost:3001"
+  // const SERVER = "https://bid2buyserver.vercel.app"
   const [intervalId, setIntervalId] = useState(null)
   const [sessId, setSessID] = useState(null)
   const [winSize, setWinSize] = useState(window.innerWidth)
@@ -120,7 +120,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }
   }
   const loadAuctions = async({user, reload})=>{
-      const categories = await getCategories()
+      // const categories = await getCategories()
       // if (categories!==null){
       //   let categoryList = []
       //   categories.forEach((type)=>{
@@ -134,9 +134,9 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       }
       const categoryList = ['drinks','tomatoes','tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
       if(reload===true){
-        loadAuctionItems(categoryList,{},user,true)
+        loadAuctionItems(categoryList, {}, user, true)
       }else{
-        loadAuctionItems(categoryList,{},user)        
+        loadAuctionItems(categoryList, {}, user, false)        
       }
   }
   const countBids = async (user)=>{
@@ -153,19 +153,21 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       setMybidcount(resp1.count)
     }
   }
+  
   const loadPage = async (propVal, currPath)=>{
     loadAuctions({user:null, reload: false})
     const resp = await fetchServer("POST", {
       database: "AuctionDB",
       collection: "UsersBase", 
-      sessionId: propVal
+      sessionId: propVal 
     }, "getDocDetails", SERVER)
     if ([null, undefined].includes(resp.record)){
       removeSessions()
     }else{
       setUserRecord(resp.record)
       // console.log(resp.record)
-      loadAuctions({user:resp.record, reload: false})
+      console.log(auctionItems)
+      loadAuctions({user:resp.record, reload: true})
       setVerificationMail(resp.record.email)
       if(!resp.record.verified){
         Navigate('/verify')
@@ -213,14 +215,17 @@ const countDownTime = (startDate,targetDate,timerId) =>{
           prop: filter
         }, "getDocsDetails", SERVER)
         if ([null,undefined].includes(resp.record)){
-            // console.log(resp)
+          // console.log(resp)
         }else{
-            if (resp.err){
-                console.log(resp.mess)
-            }else{
+          if (resp.err){
+            console.log(resp.mess)
+          }else{
+              // console.log(auctionItems.length, reload)
+              // console.log('got auctions')
               // console.log("got details",resp.record)
                 // console.log(reload, auctionItems)
-                if (reload===true && auctionItems.length){
+                if (reload===true){
+                  // console.log('updating auctions')
                   setAuctionItems((auctionItems)=>{
                     resp.record.forEach((record)=>{
                       auctionItems.forEach((auction,index)=>{
@@ -284,7 +289,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
               }
         }
       },loadgap*1000)
-      loadgap += 1
+      loadgap += 1.5
       // if (reload === true){
       //   loadgap += 0
       // }else{
@@ -331,7 +336,9 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   
   useEffect(()=>{
     var currPath = window.localStorage.getItem('curr-path')
+    // console.log(currPath)
     if (currPath !== null && pathList.includes(currPath)){
+      // console.log('included')
       var sid = window.localStorage.getItem('sessn-id')
       var sess = 0
       if (sid !==null ){
@@ -350,11 +357,11 @@ const countDownTime = (startDate,targetDate,timerId) =>{
           removeSessions()
         }
       }else{
-        removeSessions(currPath)
-        loadAuctions({user:null,reload:true})
+        loadAuctions({user:null,reload:false})
+        // removeSessions(currPath)
       }
     }else{
-      loadAuctions()
+      loadAuctions({user:null,reload:false})
       // removeSessions()
     }
   },[sessId])
