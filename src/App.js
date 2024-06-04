@@ -166,7 +166,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }else{
       setUserRecord(resp.record)
       // console.log(resp.record)
-      console.log(auctionItems)
+      // console.log(auctionItems)
       loadAuctions({user:resp.record, reload: true})
       setVerificationMail(resp.record.email)
       if(!resp.record.verified){
