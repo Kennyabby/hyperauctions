@@ -21,6 +21,8 @@ const Bidding = ()=>{
     const [biditemindex, setBiditemindex] = useState(0)    
     const [liveAuctions, setLiveAuctions] = useState([])
     const [dateNow, setDateNow] = useState(Date.now())
+    const [bidderAuctionUpdated, setBidderAuctionUpdated] = useState(false)
+    const [auctionItemUpdated, setAuctionItemUpdated] = useState(false)
     const Navigate = useNavigate()
 
     useEffect(()=>{
@@ -55,9 +57,11 @@ const Bidding = ()=>{
         }    
         setCurBid(bid)
     },[currBid,window.localStorage.getItem('curbid')])
+
     useEffect(()=>{
         storePath('bidding')
     },[])
+    
     useEffect(()=>{
         setLiveAuctions(auctionItems.filter((auction)=>{
             let datenow = Date.now()
@@ -66,6 +70,8 @@ const Bidding = ()=>{
     },[auctionItems])
 
     const  makeBid = async (curBid,biditemindex)=>{
+        setAuctionItemUpdated(false)
+        setBidderAuctionUpdated(false)
         if(userRecord===null){
             Navigate('/login')
             setLoginMessage("Kindly Login to Make Your Bid")
@@ -125,45 +131,34 @@ const Bidding = ()=>{
                             console.log(resps.mess)
                             setBidMessage('MAKE BID')
                         }else{
-                              const resp1 = await fetchServer("POST", {
-                                database: "Bidder_"+userRecord.username,
-                                collection: "Auctions", 
-                                update: {
-                                    auction: curBid._id,
-                                    updatedAt: datenow
-                                }
-                              }, "createDoc", server)
-                          
-                              if (resp1.err){
-                                setLoginMessage(resp1.mess)
-                                setBidMessage('MAKE BID')
-                              }else{
-                                if (resp1.mess){
-                                  setLoginMessage(resp1.mess)
-                                  setBidMessage('MAKE BID')
-                                }else{
-                                    if (resps.updated){
-                                        loadAuctions({user:userRecord, reload:true})
-                                        setTimeout(()=>{
-                                            setBidSuccessful(true)                               
-                                            setBidStatus("Your bid was Successful") 
-                                            setBidMessage('MAKE BID')
-                                            setBidvalues(liveAuctions.map(()=>{
-                                                return ""
-                                            }))
-                                        },3000)
-                                        
-                                        setTimeout(()=>{
-                                            setBidStatus("")
-                                            setViewBidEntry(false)
-                                            setBiditemindex(currIndex)
-                                        },5000)
-                                    }
-                                }
-                              }
-                        }                    
+                            setAuctionItemUpdated(true)
+                            setBiditemindex(currIndex)
+                        }     
+                        
                        
                     },3000)
+                    const resp1 = await fetchServer("POST", {
+                        database: "Bidder_"+userRecord.username,
+                        collection: "Auctions", 
+                        update: {
+                            auction: curBid._id,
+                            updatedAt: datenow
+                        }
+                    }, "createDoc", server)
+                
+                    if (resp1.err){
+                        setLoginMessage(resp1.mess)
+                        setBidMessage('MAKE BID')
+                    }else{
+                        if (resp1.mess){
+                            setLoginMessage(resp1.mess)
+                            setBidMessage('MAKE BID')
+                        }else{
+                            if (resp1.isDelivered){
+                                setBidderAuctionUpdated(true)
+                            }
+                        }
+                    }               
                 }else{
                     setBidStatus("Your next bid must be greater than ₦"+(curBid.bidprice?Number(curBid.bidprice).toLocaleString():curBid.initialprice))
                     setTimeout(()=>{
@@ -179,6 +174,27 @@ const Bidding = ()=>{
             // console.log("promises are running.. but i'm printing anyways")
         }
     }
+    useEffect(()=>{
+        if (auctionItemUpdated && bidderAuctionUpdated){
+            loadAuctions({user:userRecord, reload:true})
+            setBidSuccessful(true)                               
+            setBidStatus("Your bid was Successful") 
+            setBidMessage('MAKE BID')
+            setBidvalues(liveAuctions.map(()=>{
+                return ""
+            }))
+            setTimeout(()=>{
+            },3000)
+            
+            setTimeout(()=>{
+                setBidStatus("")
+                setViewBidEntry(false)
+                
+            },2000)
+        }
+    },[auctionItemUpdated, bidderAuctionUpdated])
+
+    
     const calculateTimeLeft = (target) => {
         const now = new Date().getTime();
         const targetDate = new Date(target).getTime();
@@ -279,7 +295,6 @@ const Bidding = ()=>{
                                     document.body.scrollTop = 0; 
                                     document.documentElement.scrollTop = 0
                                 }}>Make Your Bid</div>
-
                             </div>
                             {<div className={'bidentry'+(viewBidEntry?'':' viewbidentry')}>
                                 <IoMdArrowRoundBack className='leavebidentry' onClick={()=>{

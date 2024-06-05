@@ -21,8 +21,8 @@ import DrinkData from './Resources/AuctionData/DrinkData';
 import TomatoData from './Resources/AuctionData/TomatoData';
 
 function App() {
-  // const SERVER = "http://localhost:3001"
-  const SERVER = "https://bid2buyserver.vercel.app"
+  const SERVER = "http://localhost:3001"
+  // const SERVER = "https://bid2buyserver.vercel.app"
   const [intervalId, setIntervalId] = useState(null)
   const [sessId, setSessID] = useState(null)
   const [winSize, setWinSize] = useState(window.innerWidth)
@@ -38,6 +38,7 @@ function App() {
   const [auctionItems, setAuctionItems] = useState([])
   const [catTries, setCatTries] = useState(0)
   const [myBidcount, setMybidcount] = useState(null)
+  const [userAuctions, setUserAuctions] =useState(null)
   const auctionImages = {...DrinkData,...TomatoData,...TvData,...WatchData,...CoushionData,...ArtsData,...JelweryData,...RelicData,...ShoeData}
   const shuffleList = (array) => {
     var currentIndex = array.length,
@@ -105,6 +106,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   //   return () => clearInterval(auctionReloadInterval);
   // },[])
   const removeSessions = (path)=>{
+    console.log('clossing session')
     window.localStorage.removeItem('sess-recg-id')
     window.localStorage.removeItem('idt-curr-usr')
     window.localStorage.removeItem('sessn-id')
@@ -119,7 +121,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       Navigate("/")
     }
   }
-  const loadAuctions = async({user, reload})=>{
+  const loadAuctions = async({user, reload, userAuctions})=>{
       // const categories = await getCategories()
       // if (categories!==null){
       //   let categoryList = []
@@ -130,30 +132,51 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       //   loadAuctionItems(categoryList,{})
       // }
       if(user!==null){
-        countBids(user)
+        const bidCount = await countBids(user,{})
+        setMybidcount(bidCount)
+
       }
       const categoryList = ['drinks','tomatoes','tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
+     
       if(reload===true){
-        loadAuctionItems(categoryList, {}, user, true)
+        await getUserAuctions(user).then((result)=>{
+          loadAuctionItems(categoryList, {}, user, true, result)
+        })
       }else{
-        loadAuctionItems(categoryList, {}, user, false)        
+        loadAuctionItems(categoryList, {}, user, false, userAuctions)        
       }
   }
-  const countBids = async (user)=>{
+  const countBids = async (user, filter)=>{
     const resp1 = await fetchServer("POST", {
       database: "Bidder_"+user.username,
       collection: "Auctions", 
-      prop: {}
+      prop: filter
     }, "getDocCount", SERVER)
 
     if (resp1.err){
       console.log(resp1.err)
+      return 0
     }else{
       // console.log('bid count:',resp1.count)
-      setMybidcount(resp1.count)
+      return resp1.count
     }
   }
-  
+  const getUserAuctions = async (user)=>{
+    const resp1 = await fetchServer("POST", {
+      database: "Bidder_"+user.username,
+      collection: "Auctions", 
+      prop: {}
+    }, "getDocsDetails", SERVER)
+
+    if (resp1.err){
+      console.log(resp1.err)
+      return []
+    }else{
+      // console.log('bid count:',resp1.count)
+      setUserAuctions(resp1.record) 
+      return await resp1.record     
+    }
+  }
   const loadPage = async (propVal, currPath)=>{
     loadAuctions({user:null, reload: false})
     const resp = await fetchServer("POST", {
@@ -162,12 +185,12 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       sessionId: propVal 
     }, "getDocDetails", SERVER)
     if ([null, undefined].includes(resp.record)){
-      removeSessions()
+      // removeSessions()
     }else{
       setUserRecord(resp.record)
-      // console.log(resp.record)
-      // console.log(auctionItems)
-      loadAuctions({user:resp.record, reload: true})
+      await getUserAuctions(resp.record).then((result)=>{
+        loadAuctions({user:resp.record, reload: true, userAuctions: result})
+      })
       setVerificationMail(resp.record.email)
       if(!resp.record.verified){
         Navigate('/verify')
@@ -204,9 +227,15 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }
   }
   
-  const loadAuctionItems = async (categories,filter,user,reload)=>{
+  const loadAuctionItems = async (categories,filter,user,reload, userAuctions)=>{
     let loadgap = 0
     const currBidDetails = JSON.parse(window.localStorage.getItem('currbid'))
+    const countUserBIds = (id) =>{
+      const count = userAuctions.filter((auction)=>{
+        return auction.auction === id
+      })
+      return count.length
+    }
     categories.forEach( async (category)=>{
       setTimeout( async ()=>{
         const resp = await fetchServer("POST", {
@@ -215,37 +244,26 @@ const countDownTime = (startDate,targetDate,timerId) =>{
           prop: filter
         }, "getDocsDetails", SERVER)
         if ([null,undefined].includes(resp.record)){
-          // console.log(resp)
         }else{
           if (resp.err){
             console.log(resp.mess)
           }else{
-              // console.log(auctionItems.length, reload)
-              // console.log('got auctions')
-              // console.log("got details",resp.record)
-                // console.log(reload, auctionItems)
                 if (reload===true){
-                  // console.log('updating auctions')
                   setAuctionItems((auctionItems)=>{
+                    var reloadedAuctions = []
                     resp.record.forEach((record)=>{
-                      auctionItems.forEach((auction,index)=>{
-                        if ([null, undefined].includes(auction.mybids)){
-                          auction.mybids = 0
-                        }
-                        if(user!==null){
-                          if (auction._id === record._id){
-                            auctionItems[index]=record
-                            auction.biders.forEach((bidder)=>{
-                              if(bidder.bidder === user._id){
-                                auctionItems[index].mybids = bidder.mybids.length
-                              }
-                            })
-                          }else{
-                            auction.biders.forEach((bidder)=>{
-                              if(bidder._id === user._id){
-                                auction.mybids = bidder.mybids.length
-                              }
-                            })
+                      auctionItems.forEach( async (auction,index)=>{
+                        if(!reloadedAuctions.includes(auction)){
+                          if ([null, undefined].includes(auction.mybids)){
+                            auction.mybids = 0
+                          }
+                          if(user!==null){
+                            if (record._id === auction._id){
+                              auctionItems[index]=record
+                              reloadedAuctions.push(auction)
+                            }
+                            const bidCount = countUserBIds(auction._id)
+                            auction.mybids = bidCount
                           }
                         }
                         
@@ -256,18 +274,13 @@ const countDownTime = (startDate,targetDate,timerId) =>{
                 }else{
                   // console.log('setting auction items')
                   setAuctionItems((auctionItems)=>{
-                    auctionItems.forEach((auction)=>{
-                      let bidders = auction.biders
+                    auctionItems.forEach( async (auction)=>{
                       if ([null, undefined].includes(auction.mybids)){
                         auction.mybids = 0
                       }
                       if (user!==null){
-                        bidders.forEach((bidder)=>{
-                          // console.log(bidder, user)
-                          if(bidder.bidder === user._id){
-                            auction.mybids = bidder.mybids.length
-                          }
-                        })
+                        const bidCount = countUserBIds(auction._id)
+                        auction.mybids = bidCount
                       }
                     })
                     return [...auctionItems, ...resp.record]
@@ -327,8 +340,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   }
 
   useEffect(()=>{
-    window.addEventListener("resize", getWinSize)
-    
+    window.addEventListener("resize", getWinSize)    
     return ()=>{
       window.removeEventListener("resize", getWinSize)
     }
