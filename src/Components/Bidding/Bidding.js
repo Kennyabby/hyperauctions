@@ -132,7 +132,7 @@ const Bidding = ()=>{
                             setBidMessage('MAKE BID')
                         }else{
                             setAuctionItemUpdated(true)
-                            setBiditemindex(currIndex)
+                            // setBiditemindex(currIndex)
                         }     
                         
                        
