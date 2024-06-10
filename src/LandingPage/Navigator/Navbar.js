@@ -19,6 +19,7 @@ const Navbar = ()=>{
     const Navigate = useNavigate()
     const [endpoint, setEndpoint] = useState(location)
     const [showMenu, setShowMenu] = useState(false)
+    const [yOffset, setYOffset] = useState(window.scrollY)
     const {userRecord, fetchServer,
         server,removeSessions, myBidcount
     } = useContext(ContextProvider)
@@ -35,6 +36,14 @@ const Navbar = ()=>{
             setLoggedin(true)
         }
     },[userRecord])
+
+    useEffect(()=>{
+        window.addEventListener('scroll', updateYOffset)
+    },[yOffset])
+    const updateYOffset = ()=>{
+        setYOffset(window.scrollY)
+    }
+
     const handleNavClick = (e) =>{
         const name = e.target.getAttribute('name')
         if (![null, undefined,'dropdown','logout'].includes(name)){
@@ -78,7 +87,7 @@ const Navbar = ()=>{
                 </div>
                 <AnimatePresence>
                     {(!showMenu && loggedin) && <motion.div 
-                        className={'profilelink userprofilelink extnavigators'}
+                        className={'profilelink userprofilelink extnavigators'+(yOffset>=90?' fixnavigator':'')}
                         initial={{opacity:0}}
                         animate={{opacity:1}}
                         transition={{duration:1.5}}
