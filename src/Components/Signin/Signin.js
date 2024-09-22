@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import bidlogo from '../../assets/images/auctionbidlogo.png'
 
 const Signin = () => {
-  
   const { server, fetchServer, storePath, 
     setVerificationMail, setVerificationCode, 
     generateCode, loadPage
@@ -17,11 +16,11 @@ const Signin = () => {
   const [field, setField] = useState({
     firstname: "",
     lastname: "",
-    // contact: "",
     email:"",
     username: "",
     password: "",
   });
+  
   const [signinStatus, setSigninStatus] = useState("SIGN UP")
   const [loginMessage, setLoginMessage] = useState("");
   const [showpass, SetShowpass] = useState(false);
@@ -39,7 +38,8 @@ const Signin = () => {
         }
       },3000)
   },[loginMessage])
-  const validateField = ()=>{
+  
+  const validateField = async ()=> {
     let ct=0
     Object.values(field).forEach((val)=>{
         if (!val){
@@ -49,9 +49,33 @@ const Signin = () => {
     if(ct){
         setLoginMessage("Kindly Fill All Fields!")
     }else{
-        validateSignup()
+      setSigninStatus("VALIDATING.....")
+      const resp2 = await fetchServer("POST", {
+        database: "AuctionDB",
+        collection: "UsersBase",
+        data: {email: field.email}
+      }, "isDocPresent", server)
+      if (resp2.err){
+          setLoginMessage('Could not reach the server.\
+            Please check your internent connection.')
+            setSigninStatus("SIGN UP")
+          setTimeout(()=>{
+              setLoginMessage("")
+          },3000)
+      }else{
+        if (resp2.isPresent){
+          setSigninStatus("SIGN UP")
+          setLoginMessage('An account already exist for this email.')
+          setTimeout(()=>{    
+            setLoginMessage("")
+          },3000)
+        }else{
+          validateSignup()
+        }
+      }
     }
   }
+
   const validateSignup = async ()=> {
     setSigninStatus("SIGNING UP...")
     setLoginMessage("")
@@ -213,7 +237,7 @@ const Signin = () => {
                     Navigate('/login')
                   })} 
                 > Login </label>
-              </div>
+            </div>
           </div>
           {loginMessage && <AnimatePresence>
               <motion.div 
@@ -279,17 +303,6 @@ const Signin = () => {
                 value={field.email}
               />
             </div>
-            {/* <div className="inpsgcv">
-              <label>PHONE NUMBER </label>
-              <input
-                name="contact"
-                placeholder="(+123)80***3721"
-                type="text"
-                className="sgninp"
-                defaultValue={field.contact}
-                value={field.contact}
-              />
-            </div> */}
             <div className="inpsgcv">
               <label>PASSWORD</label>
               <div className="sgnpassbx">

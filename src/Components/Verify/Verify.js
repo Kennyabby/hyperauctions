@@ -13,7 +13,7 @@ const Verify = () => {
   } = useContext(ContextProvider)
   const [countDownId,setCountDownId] = useState(null)
   const [spanLeft, setSpanLeft] = useState(null)
-  const [verificationMessage, SetVerificationMessage] = useState('Thanks for signing up! An email was sent to activate your account')
+  const [verificationMessage, SetVerificationMessage] = useState('Thanks for signing up! A verificaion code was sent to activate your account')
   const [field, setField] = useState({
     email: "",
     code: "",

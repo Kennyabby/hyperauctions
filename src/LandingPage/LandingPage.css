@@ -186,9 +186,20 @@
     grid-template-columns: repeat(auto-fit, minmax(350px,1fr));
 }
 .auctioncard{
+    position: relative;
     width: fit-content;
     margin: 20px auto;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.livecountdown{
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    font-size: 2em;
+    z-index: 100;
+    font-weight: bold;
+    cursor: pointer;
+    color: rgba(202, 170, 8, 0.85)
 }
 .auctioncard:hover .auctionname{
     font-weight: bold;
@@ -226,12 +237,13 @@
 }
 .auctionimg{
     width: 350px;
-    /* height: 300px; */
+    height: 300px;
     margin-bottom: 15px;
 }
 .auctiondesc{
     font-size: .8em;
     margin: 10px auto;
+    margin-bottom: 20px;
 }
 .auctionbtn{
     font-family: 'MontserratBold';
@@ -249,25 +261,74 @@
     background: rgb(187, 183, 183);
     cursor: auto;
 }
-.auctionlive{
+.auctionliveinfo{
     display: flex;
+}
+.liveinfocontent{
+    position: relative;
+    display: block;
+    padding: 0px auto;
+    padding-bottom: 200px;
+    width: 100%;
+    background: whitesmoke;
+    justify-content:space-between;
+}
+.maincontent{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    background: whitesmoke;
+    margin-top: auto;
+    margin-bottom: 0px;
+}
+.auctionlive{
+    display: block;
     width: fit-content;
-    margin: 30px auto;
+    margin: 0px 10px;
 }
 .auctionlive > div{
     display: block;
-    margin: auto 20px;
+    margin: 25px auto;
+    font-size: .8em;
 }
 .auctionlive > div .bid-no{
     font-size: 1.2em;
     font-weight: bold;
 }
+.bidpricediv{
+    text-align: left;
+    width: fit-content;
+    margin: auto;
+    margin-bottom: 30px;
+
+}
+.bidprice{
+    font-size: 1.7em;
+    font-weight: bold;
+}
+.bidstatus{
+    font-size: .8em;
+    text-align: center;
+}
+
 .auctiontimer{
+    display: flex;
+    width:100%;
+    margin: auto;
+    justify-content: space-around;
+    text-align: center;
     /* font-weight: bold; */
+}
+.timer{
+    text-align: left;
 }
 .timervalue{
     font-weight: bold;
+    font-size: .8em;
     margin: 5px auto;
+}
+.timerstatus{
+    font-size: .6em;
 }
 .viewmoreauction{
     width: fit-content;
