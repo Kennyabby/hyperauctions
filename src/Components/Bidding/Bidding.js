@@ -126,7 +126,6 @@ const Bidding = ()=>{
                             record: curBid,
                             update: updateField
                         }, "updateAuctionItems", server)
-                          
                         if (resps.err){
                             console.log(resps.mess)
                             setBidMessage('MAKE BID')
@@ -134,7 +133,6 @@ const Bidding = ()=>{
                             setAuctionItemUpdated(true)
                             // setBiditemindex(currIndex)
                         }     
-                        
                        
                     },3000)
                     const resp1 = await fetchServer("POST", {

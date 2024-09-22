@@ -133,7 +133,6 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
                       <div className='timerstatus'>Ended</div>
                     </div>
                   </div>}
-
                   <div
                     className={'auctionbtn'+(targetTimers[index]<=0?' bidended':'')}
                     onClick={() => { 
@@ -155,14 +154,12 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
                   <div className='bid-no'> {auction.biders.length}</div>
                   <div>Bidders</div>
                 </div>
-
                 {<div className='myauctionbids'>
                   <div className='bid-no'>{auction.mybids}</div>
                   <div>You</div>
                 </div>}
               </div>
             </div>
-            
           </div>
         )
       }) : <div>Loading...</div>
