@@ -156,7 +156,7 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
                   <div>Bidders</div>
                 </div>
 
-                {userRecord!==null && <div className='myauctionbids'>
+                {<div className='myauctionbids'>
                   <div className='bid-no'>{auction.mybids}</div>
                   <div>You</div>
                 </div>}
