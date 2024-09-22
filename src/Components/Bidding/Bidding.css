@@ -10,11 +10,12 @@
 }
 
 .biddetails{    
+    position: relative;
     width: 50%;
     height: 100%;
     text-align: center;
     margin: auto;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    
 }
 .bidpre{
     position: absolute;
@@ -39,9 +40,15 @@
     font-size: 4em;
     cursor: pointer;
 }
+.prdbidcov{
+    display: flex;
+}
+.bidimgcov{
+    width: 80%;
+}
 .bidimg{
-    width: 100px;
-    height: 400px;
+    width: 0px;
+    height: 400px; 
     margin: 0px auto;
     margin-bottom: 20px;
 }
@@ -54,7 +61,7 @@
 
 .bidlive{
     margin: 5px auto;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     background: rgba(247, 220, 86, 0.85);
     width: 70%;
     padding: 15px 50px;
@@ -118,7 +125,20 @@
     border-radius: 5px;
 }
 .bidauctiontimer{
+    display: block;
+    position: absolute;
     margin-bottom: 30px;
+    width: fit-content;
+    text-align: center;
+    background: whitesmoke;
+    padding: 7px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    bottom: 50px;
+    left: 10px;
+    .timerkey{
+        font-size: .8em;
+    }
 }
 .viewbidentry{
     display: block;

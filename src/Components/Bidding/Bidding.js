@@ -249,42 +249,45 @@ const Bidding = ()=>{
                             {/* <div className='bidpre'><IoChevronBack/></div>
                             <div className='bidnext'><IoChevronForwardOutline/></div> */}
                             <div className='biddetails'>
+                                <div className='bidname'>{auction.name}</div>
+                                <div className='biddesc'>{auction.description}</div>
                                 {/* <div className='bidbase'>
                                     <div className='bidbrand'>{currBid.brand}</div>
                                 </div> */}
-                                <img alt="bidimages" src={auctionImages[auction.src]} className='bidimg'/>
-                                {/* <div className='bidlive'>LIVE</div> */}
-                                <div className={'bidlive '+(targetTimers[index]<=0?' bidended':'')}>
-                                    {/* {startTimers[index]>0 && 'LIVE SOON'} */}
-                                    {'LIVE'}
-                                    {/* {targetTimers[index]<=0 && 'LIVE ENDED'} */}
-                                </div>
-                                <div className='bidname'>{auction.name}</div>
-                                <div className='biddesc'>{auction.description}</div>
-                                <div className='auctionlive'>
-                                    <div className='auctionbids'>
-                                        <div className='bid-no'>{auction.bids}</div>
-                                        <div>All Bids</div>
+                                <div className='prdbidcov'>
+                                    <div className='bidimgcov'>
+                                        <img alt="bidimages" src={auctionImages[auction.src]} className='bidimg'/>
                                     </div>
-                                    <div className='auctionbiders'>
-                                        <div className='bid-no'> {auction.biders.length}</div>
-                                        <div>Bidders</div>
-                                    </div>
+                                    <div className='auctionlive'>
+                                        <div className='auctionbids'>
+                                            <div className='bid-no'>{auction.bids}</div>
+                                            <div>All Bids</div>
+                                        </div>
+                                        <div className='auctionbiders'>
+                                            <div className='bid-no'> {auction.biders.length}</div>
+                                            <div>Bidders</div>
+                                        </div>
 
-                                    {userRecord!==null && <div className='myauctionbids'>
-                                        <div className='bid-no'>{auction.mybids}</div>
-                                        <div>Your Bids</div>
-                                    </div>}
+                                        {userRecord!==null && <div className='myauctionbids'>
+                                            <div className='bid-no'>{auction.mybids}</div>
+                                            <div>Your Bids</div>
+                                        </div>}
+                                    </div>
                                 </div>
                                 {startingTime > 0 && endingTime > 0 && <div className='auctiontimer bidauctiontimer'>
-                                    <div>Live in</div>
                                     <div className='timervalue'>{starting}</div>
+                                    <div className='timerkey'>Live starts in</div>
                                 </div>}
 
                                 {startingTime <= 0 && endingTime >= 0 && <div className='auctiontimer bidauctiontimer'>     
-                                    <div>Ends in</div>
                                     <div className='timervalue'>{ending}</div>
+                                    <div className='timerkey'>Live ends in</div>
                                 </div>}
+                                {/* <div className='bidlive'>LIVE</div> */}
+                                
+                                
+                                
+                                
                                 <div className='mobilebidlive' onClick={()=>{
                                     setViewBidEntry(true)
                                     setBidSuccessful(false)
@@ -298,6 +301,11 @@ const Bidding = ()=>{
                                 <IoMdArrowRoundBack className='leavebidentry' onClick={()=>{
                                     setViewBidEntry(false)
                                 }}/>
+                                <div className={'bidlive '+(targetTimers[index]<=0?' bidended':'')}>
+                                    {/* {startTimers[index]>0 && 'LIVE SOON'} */}
+                                    {'LIVE'}
+                                    {/* {targetTimers[index]<=0 && 'LIVE ENDED'} */}
+                                </div>
                                 <div className='bidentrytitle'>
                                     <div className='entrytitle'>{'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}</div>
                                     <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
@@ -343,6 +351,7 @@ const Bidding = ()=>{
                                     }
                                     }>{startingTime <=0 && endingTime >= 0 ? bidMessage :'NOT AVAILABLE'}</div>
                                 </div>
+                                
                             </div>}
                         </div>
                     )
