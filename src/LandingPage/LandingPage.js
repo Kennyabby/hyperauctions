@@ -15,15 +15,17 @@ import banner4 from '../assets/images/bannerimages/banner4.jpg'
 
 const LandingPage = ()=> {
     const {storePath, userRecord, setLoginMessage, 
-        setCurrBid, auctionItems, auctionImages 
+        setCurrBid, auctionItems, auctionImages, userAuctions
     } = useContext(ContextProvider)
     const Navigate = useNavigate()
-    const [currFeature, setCurrFeature] = useState('tvs')
+    const [currFeature, setCurrFeature] = useState('shoes')
     const [currAuction, setCurrAuction] = useState('live')
     const [viewStyle, stViewStyle] = useState('grid')
+    const [userBids, setUserBids] = useState([])
     useEffect(()=>{
         storePath('')
-    },[storePath])     
+    },[storePath])    
+    
     useEffect(()=>{
         // console.log(auctionItems)
     },[auctionItems])
@@ -50,7 +52,25 @@ const LandingPage = ()=> {
     }
     const handleAuctionTypeSelection = (e)=>{
         const name = e.target.getAttribute('name')
-
+        if (name){
+            setCurrAuction(name)
+        }
+        if (name==='userbid'){
+            var userbids = []     
+            
+            auctionItems.forEach((auctionItem)=>{
+                if(auctionItem.biders.length){
+                    auctionItem.biders.forEach((bidder)=>{
+                        if (bidder.bidder === userRecord._id){
+                            if (!userbids.includes(auctionItem)){
+                                userbids = userbids.concat(auctionItem)
+                            }
+                        }
+                    })
+                }
+            })
+            setUserBids(userbids)
+        }
     }
     return (
         <>
@@ -80,35 +100,6 @@ const LandingPage = ()=> {
                 </Carousel>
             </header>
             <main className='main bidmain'>
-                <div className='featured'>
-                    <div className='sectiontitle'>Featured Auction Items</div>
-                    <div className='featuredcont'>
-                        <div className='featuredsection' onClick={handleFeatureSelection}>
-                            <div name='jewelry' className={currFeature === 'jewelry' ? 'selected' : ''}>Jewelries</div>
-                            <div name='relics' className={currFeature === 'relics' ? 'selected' : ''}>Relics</div>
-                            <div name='arts' className={currFeature === 'arts' ? 'selected' : ''}>Arts</div>
-                            <div name='tvs' className={currFeature === 'tvs' ? 'selected' : ''}>Tvs</div>
-                            <div name='coushions' className={currFeature === 'coushions' ? 'selected' : ''}>Coushions</div>
-                            <div name='shoes' className={currFeature === 'shoes' ? 'selected' : ''}>Shoes</div>
-                            <div name='watches' className={currFeature === 'watches' ? 'selected' : ''}>Watches</div>
-                        </div>
-                        <br className='break'/>
-                        <div className='featuredbox'>
-                            {auctionItems.length ? auctionItems.filter((feature)=>{
-                                return feature.type===currFeature
-                            }).slice(0,4).map((auction, index)=>{
-                                return (
-                                    <div className='featurecard' key={index}>
-                                        <img src={auctionImages[auction.src]} className='featureimg'/>
-                                        <div className='featurename'>{auction.name}</div>
-                                        <div className='featuredesc'>{auction.description}</div>
-                                    </div>
-                                )
-                            }):<div></div>
-                        }
-                        </div>
-                    </div>
-                </div>
                 <div className='auctions'>
                     <div className='sectiontitle'>Bid2Buy Live Auctions For You</div>
                     <div className='auctioncont'>
@@ -138,13 +129,43 @@ const LandingPage = ()=> {
                     </div>
                     <div className='auctionbox'>
                         <Auctions 
-                            auctionItems = {auctionItems}
+                            auctionItems = {currAuction==='live'?auctionItems:userBids}
                             auctionImages = {auctionImages}
                             startBidding = {startBidding}
                             userRecord = {userRecord}
+                            userAuctions = {userAuctions}
                         />
                     </div>
-                    <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>
+                    {currAuction==='live' && <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>}
+                </div>
+                <div className='featured'>
+                    <div className='sectiontitle'>Featured Auction Items</div>
+                    <div className='featuredcont'>
+                        <div className='featuredsection' onClick={handleFeatureSelection}>
+                            <div name='shoes' className={currFeature === 'shoes' ? 'selected' : ''}>Shoes</div>
+                            <div name='drinks' className={currFeature === 'drinks' ? 'selected' : ''}>Drinks</div>
+                            <div name='tomatoes' className={currFeature === 'tomatoes' ? 'selected' : ''}>Tomatoes</div>
+                            {/* <div name='relics' className={currFeature === 'relics' ? 'selected' : ''}>Relics</div> */}
+                            {/* <div name='tvs' className={currFeature === 'tvs' ? 'selected' : ''}>Tvs</div> */}
+                            {/* <div name='coushions' className={currFeature === 'coushions' ? 'selected' : ''}>Coushions</div> */}
+                            {/* <div name='watches' className={currFeature === 'watches' ? 'selected' : ''}>Watches</div> */}
+                        </div>
+                        <br className='break'/>
+                        <div className='featuredbox'>
+                            {auctionItems.length ? auctionItems.filter((feature)=>{
+                                return feature.type===currFeature
+                            }).slice(0,4).map((auction, index)=>{
+                                return (
+                                    <div className='featurecard' key={index}>
+                                        <img src={auctionImages[auction.src]} className='featureimg'/>
+                                        <div className='featurename'>{auction.name}</div>
+                                        <div className='featuredesc'>{auction.description}</div>
+                                    </div>
+                                )
+                            }):<div></div>
+                        }
+                        </div>
+                    </div>
                 </div>
             </main>
             <footer className='footer'>

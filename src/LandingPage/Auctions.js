@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PiClockCountdownBold } from "react-icons/pi";
 
-const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => {
+const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userAuctions }) => {
   const calculateTimeLeft = (target) => {
     const now = new Date().getTime();
     const targetDate = new Date(target).getTime();
@@ -66,12 +66,12 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
   
   return (
     <div className='auctionbox'>
-      {auctionItems.length ? auctionItems.slice(0, 21).map((auction, index) => {
+      {userAuctions!==null ? (auctionItems.length ? (auctionItems.slice(0, 21).map((auction, index) => {
         const starting = getTimerString(startTimers[index])
         const ending = getTimerString(targetTimers[index])
         const bidPeriod = (auction.target-auction.start)
         return (
-          <div className='auctioncard' key={auction._id}>
+          <div className='auctioncard' key={String(index)+auction._id}>
             <PiClockCountdownBold className='livecountdown'/>
             <div className='auctioncardtitle'>
               <div className={'auctionstatus'+(targetTimers[index]<=0?' bidended':'')}>
@@ -162,7 +162,9 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord }) => 
             </div>
           </div>
         )
-      }) : <div>Loading...</div>
+      })):<div>
+        No Auctions at the moment
+      </div>) : <div>Loading...</div>
       }
     </div>
   );

@@ -136,7 +136,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
         setMybidcount(bidCount)
 
       }
-      const categoryList = ['drinks','tomatoes','tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts', 'shoes']
+      const categoryList = ['drinks','tomatoes', 'shoes','tvs', 'watches', 'relics', 'jewelry', 'coushions', 'arts']
      
       if(reload===true){
         await getUserAuctions(user).then((result)=>{
@@ -397,6 +397,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       verificationCode, setVerificationCode,
       generateCode,
       categories, setCategories,
+      userAuctions,
       auctionItems, setAuctionItems,
       auctionImages,
       countDownTime,

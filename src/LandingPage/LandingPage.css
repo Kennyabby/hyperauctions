@@ -32,8 +32,9 @@
     width: fit-content;
 }
 .featured{
-    display: none;
-    margin: 50px auto;
+    /* display: none; */
+    margin: 100px auto;
+    margin-top: 120px;
     text-align: center;
     width: 90%;
 }
