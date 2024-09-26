@@ -66,7 +66,7 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userA
   
   return (
     <div className='auctionbox'>
-      {userAuctions!==null ? (auctionItems.length ? (auctionItems.slice(0, 21).map((auction, index) => {
+      {((userRecord===null && auctionItems.length) || userAuctions!==null) ? (auctionItems.length ? (auctionItems.slice(0, 21).map((auction, index) => {
         const starting = getTimerString(startTimers[index])
         const ending = getTimerString(targetTimers[index])
         const bidPeriod = (auction.target-auction.start)

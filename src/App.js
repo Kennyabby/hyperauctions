@@ -185,7 +185,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       sessionId: propVal 
     }, "getDocDetails", SERVER)
     if ([null, undefined].includes(resp.record)){
-      // removeSessions()
+      removeSessions()
     }else{
       setUserRecord(resp.record)
       await getUserAuctions(resp.record).then((result)=>{
