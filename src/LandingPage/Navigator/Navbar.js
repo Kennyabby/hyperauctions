@@ -97,7 +97,13 @@ const Navbar = ()=>{
                             Navigate(-1)
                         }}/>
                         <div className='bids extbids'><b>{myBidcount===null?'...':myBidcount}</b> Bids</div>
-                        <div className='profilevisit extprofilevisit'>{![undefined, null].includes(userRecord) ?userRecord.username: '....'}</div>
+                        <div className='profilevisit extprofilevisit' 
+                            onClick={()=>{
+                                Navigate('/'+userRecord.status)
+                            }}
+                        >
+                            {![undefined, null].includes(userRecord) ?userRecord.username: '....'}
+                        </div>
                         <div className='usericon exticons'><IoNotifications/></div>
                         <div className='usericon exticons'>
                             <FaUser/><IoChevronDownOutline 
@@ -175,7 +181,11 @@ const Navbar = ()=>{
                             <div className='navlogin' name='login'>LOGIN</div>
                             <div className='navsignup' name='signup'>SIGN UP</div>
                         </div> :
-                        <div className='profilevisit'>{userRecord.username}</div>
+                        <div className='profilevisit'
+                            onClick={()=>{
+                                Navigate('/'+userRecord.status)
+                            }}
+                        >{userRecord.username}</div>
                     }
                 </div>
             </div>

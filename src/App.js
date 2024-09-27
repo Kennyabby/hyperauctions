@@ -5,6 +5,8 @@ import ContextProvider from './Resources/ContextProvider';
 import Login from './Components/Login/Login';
 import Signin from './Components/Signin/Signin'
 import LandingPage from './LandingPage/LandingPage'
+import Profile from './Components/Profile/Profile';
+import Panel from './Components/Panel/Panel';
 import { AnimatePresence, motion } from 'framer-motion';
 import fetchServer from './Resources/ClientServerAPIConn/fetchServer'
 import Navbar from './LandingPage/Navigator/Navbar';
@@ -28,11 +30,11 @@ function App() {
   const [winSize, setWinSize] = useState(window.innerWidth)
   const [userRecord, setUserRecord] = useState(null)
   const [openNavbar, setOpenNavbar] = useState(false)
-  const pathList = ['', 'bidding','login', 'signup', 'verify']
-  const noNavPath = ['login', 'signup', 'verify']
+  const [pathList, setPathList] = useState(['', 'bidding','login', 'signup', 'verify'])
+  const noNavPath = [null,'login', 'signup', 'verify','admin','user-profile']
   const [loginMessage, setLoginMessage] = useState('')
   const [currBid, setCurrBid] = useState(JSON.parse(window.localStorage.getItem('curbid')))
-  const [path, setPath] = useState('')
+  const [path, setPath] = useState(null)
   const [verificationMail, setVerificationMail] = useState(null)
   const [categories, setCategories] = useState(null)
   const [auctionItems, setAuctionItems] = useState([])
@@ -89,22 +91,8 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   const storePath = (path)=>{
     setPath(path)
     window.localStorage.setItem('curr-path',path)
-    // if (window.localStorage.getItem('sess-id') !== null){
-    //   window.localStorage.setItem('curr-path',path)
-    // } else {
-    //   removeSessions()
-    // }
   }
-  // useEffect(()=>{
-  //   const auctionReloadInterval = setInterval(()=>{
-  //     if (userRecord!==null){
-  //       loadAuctions(true)
-  //     }else{
-  //       loadAuctions()
-  //     }
-  //   },10000)
-  //   return () => clearInterval(auctionReloadInterval);
-  // },[])
+ 
   const removeSessions = (path)=>{
     console.log('clossing session')
     window.localStorage.removeItem('sess-recg-id')
@@ -187,6 +175,9 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     if ([null, undefined].includes(resp.record)){
       removeSessions()
     }else{
+      setPathList((pathList)=>{
+        return [...pathList, resp.record.status]
+      })
       setUserRecord(resp.record)
       await getUserAuctions(resp.record).then((result)=>{
         loadAuctions({user:resp.record, reload: true, userAuctions: result})
@@ -348,9 +339,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
   
   useEffect(()=>{
     var currPath = window.localStorage.getItem('curr-path')
-    // console.log(currPath)
-    if (currPath !== null && pathList.includes(currPath)){
-      // console.log('included')
+    if (currPath !== null && (pathList.includes(currPath) || ['admin', 'user-profile'].includes(currPath))){
       var sid = window.localStorage.getItem('sessn-id')
       var sess = 0
       if (sid !==null ){
@@ -370,11 +359,11 @@ const countDownTime = (startDate,targetDate,timerId) =>{
         }
       }else{
         loadAuctions({user:null,reload:false})
-        // removeSessions(currPath)
+        Navigate('/'+currPath)
       }
     }else{
       loadAuctions({user:null,reload:false})
-      // removeSessions()
+      Navigate('/')
     }
   },[sessId])
 
@@ -406,11 +395,13 @@ const countDownTime = (startDate,targetDate,timerId) =>{
     }}>
        {!noNavPath.includes(path) && <Navbar/>}
        <Routes>
-              <Route element={<LandingPage/>} path="/"></Route>
-              <Route element={<Login/>} path='/login'></Route>
-              <Route element={<Signin/>} path='/signup'></Route>
-              <Route element={<Verify/>} path='/verify'></Route>
-              <Route element={<Bidding/>} path='/bidding'></Route>
+          <Route element={<LandingPage/>} path="/"></Route>
+          <Route element={<Login/>} path='/login'></Route>
+          <Route element={<Signin/>} path='/signup'></Route>
+          <Route element={<Verify/>} path='/verify'></Route>
+          <Route element={<Bidding/>} path='/bidding'></Route>
+          {pathList.includes('admin') && <Route element={<Panel/>} path='/admin'></Route>}
+          {pathList.includes('user-profile') && <Route element={<Profile/>} path='/user-profile'></Route>}
         </Routes>
     </ContextProvider.Provider>
     </>
