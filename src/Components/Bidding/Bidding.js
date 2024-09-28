@@ -122,7 +122,7 @@ const Bidding = ()=>{
                         }                        
                         const resps = await fetchServer("POST", {
                             database: "AuctionItems",
-                            collection: curBid.type, 
+                            collection: 'all', 
                             record: curBid,
                             update: updateField
                         }, "updateAuctionItems", server)

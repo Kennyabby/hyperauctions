@@ -31,7 +31,7 @@ function App() {
   const [userRecord, setUserRecord] = useState(null)
   const [openNavbar, setOpenNavbar] = useState(false)
   const [pathList, setPathList] = useState(['', 'bidding','login', 'signup', 'verify'])
-  const noNavPath = [null,'login', 'signup', 'verify','admin','user-profile']
+  const noNavPath = [null,'login', 'signup', 'verify','admin']
   const [loginMessage, setLoginMessage] = useState('')
   const [currBid, setCurrBid] = useState(JSON.parse(window.localStorage.getItem('curbid')))
   const [path, setPath] = useState(null)
@@ -231,8 +231,8 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       setTimeout( async ()=>{
         const resp = await fetchServer("POST", {
           database: 'AuctionItems',
-          collection: category, 
-          prop: filter
+          collection: 'all', 
+          prop: {type:category,...filter}
         }, "getDocsDetails", SERVER)
         if ([null,undefined].includes(resp.record)){
         }else{
