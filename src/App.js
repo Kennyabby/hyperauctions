@@ -189,6 +189,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
         Navigate('/'+currPath)
       }
     }
+    getCategories()
   }
 
   const getCategories = async () =>{
@@ -385,7 +386,7 @@ const countDownTime = (startDate,targetDate,timerId) =>{
       verificationMail, setVerificationMail,
       verificationCode, setVerificationCode,
       generateCode,
-      categories, setCategories,
+      categories, setCategories, getCategories,
       userAuctions,
       auctionItems, setAuctionItems,
       auctionImages,

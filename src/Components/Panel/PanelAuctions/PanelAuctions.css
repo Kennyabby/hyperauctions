@@ -1,0 +1,179 @@
+.panelauctions{
+    /* display: flex; */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    width: 100%;
+    height: 90%;
+    margin: auto;
+    text-align: center;
+}
+.panelauctioncard{
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.panelsecticondiv{
+    opacity: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 70px;
+    padding: 5px 10px;
+    /* color: white; */
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: rgba(255,255,255,0.7);
+}
+.panelsecticon{
+    /* margin-left: 25px; */
+    cursor: pointer;
+    font-weight: bold;
+}
+.panelauctioncard:hover > .panelsecticondiv{
+    opacity: 1;
+}
+.panellivecountdown{
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    font-size: 2em;
+    z-index: 100;
+    font-weight: bold;
+    cursor: pointer;
+    color: rgba(202, 170, 8, 0.85)
+}
+.panelauctionimg{
+    width: 210px;
+    height: 210px;
+    margin-bottom: 15px;
+}
+
+.panelauctioncard:hover .panelauctionname{
+    font-weight: bold;
+}
+.panelauctioncardtitle{
+    display: flex;
+    justify-content: space-between;
+    /* margin: 10px; */
+    font-weight: bold;
+    font-size: .8em;
+    text-align: left;
+}
+.panelauctionstatus{
+    font-size: .7em;
+    padding: 10px 15px;
+    height: fit-content;
+    background: rgba(247, 220, 86, 0.85);
+}
+.panelauctionstatus > div{
+    width: max-content;
+    /* margin-top: 50%;
+    margin-left: 50%; */
+    /* transform: translate(-50%,-50%); */
+ }
+.panelauctionpricediv{
+    margin: 10px;
+}
+.panelstartingprice{
+    font-size: .6em;
+}
+.panelauctionprice{
+    width: fit-content;
+    margin: auto;
+    font-size: .8em;
+}
+.panelauctionname{
+    font-size: .7em;
+    margin: auto;
+}
+.panelauctiondesc{
+    font-size: .6em;
+    margin: 10px auto;
+    margin-bottom: 20px;
+}
+.panelauctionbtn{
+    font-family: 'MontserratBold';
+    margin: 20px auto;
+    background: rgba(247, 220, 86, 0.85);
+    width: fit-content;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.panelbidended{
+    font-weight: lighter;
+    font-family: 'MontserratRegular';
+    background: rgb(187, 183, 183);
+    cursor: auto;
+}
+.panelauctionliveinfo{
+    display: flex;
+    height: fit-content;
+}
+.panelliveinfocontent{
+    position: relative;
+    display: block;
+    padding: 0px auto;
+    width: 100%;
+    background: whitesmoke;
+    justify-content:space-between;
+}
+.panelmaincontent{
+    width: 100%;
+    height: 100%;
+    background: whitesmoke;
+}
+.panelauctionlive{
+    display: block;
+    width: fit-content;
+    margin: auto 10px;
+}
+.panelauctionlive > div{
+    display: block;
+    margin: 25px auto;
+    font-size: .6em;
+}
+.panelauctionlive > div .bid-no{
+    font-size: .8em;
+    font-weight: bold;
+}
+.panelbidpricediv{
+    text-align: left;
+    width: fit-content;
+    margin: auto;
+    margin-bottom: 10px;
+
+}
+.panelbidprice{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.panelbidstatus{
+    font-size: .6em;
+    text-align: center;
+}
+
+.panelauctiontimer{
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    margin: auto;
+    justify-content: space-around;
+    text-align: center;
+    /* font-weight: bold; */
+}
+.paneltimer{
+    text-align: center;
+}
+.paneltimervalue{
+    font-weight: bold;
+    font-size: .6em;
+    margin: 5px;
+}
+.paneltimerstatus{
+    font-size: .4em;
+    margin: 5px;
+}

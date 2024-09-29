@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PiClockCountdownBold } from "react-icons/pi";
+import Spinner from '../Resources/SpecialComponents/Spinner';
 
 const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userAuctions }) => {
   const calculateTimeLeft = (target) => {
@@ -164,7 +165,15 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userA
         )
       })):<div>
         No Auctions at the moment
-      </div>) : <div>Loading...</div>
+      </div>) : <div>
+        <Spinner
+            diameter='40'
+            defaultcolor='rgba(0, 0, 0, 0.1)'
+            loadingcolor='darkblue'
+            borderwidth='5'
+            spintime='1'
+        />
+      </div>
       }
     </div>
   );

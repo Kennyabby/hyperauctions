@@ -136,7 +136,7 @@ const LandingPage = ()=> {
                             userAuctions = {userAuctions}
                         />
                     </div>
-                    {currAuction==='live' && <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>}
+                    {currAuction==='live' && auctionItems.length>0 && <div className='viewmoreauction'>{'<  View More Auctions  >'}</div>}
                 </div>
                 <div className='featured'>
                     <div className='sectiontitle'>Featured Auction Items</div>

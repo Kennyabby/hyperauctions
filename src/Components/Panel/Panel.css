@@ -56,10 +56,9 @@
 }
 .sidnavitem{
     display: flex;
-    width: 95%;
+    width: 93%;
     margin: 15px auto;
-    font-size: 1.2em;
-    background: rgba(247, 241, 159, 0.3);
+    font-size: 1em;
     padding: 15px 0px;
     border-radius: 10px;
     cursor: pointer;
@@ -72,6 +71,7 @@
 .navselected{
     font-weight: bold;
     border-right: solid rgb(240, 246, 84) 5px;
+    background: rgba(247, 241, 159, 0.2);
 }
 
 .navlgt{
@@ -79,4 +79,6 @@
     width: 95%;
     margin: 30px auto;
     cursor: pointer;
+    color: brown;
+    font-weight: 600;
 }

@@ -4,18 +4,7 @@
 .disp{
     display: block;
 }
-.button{
-    padding: 15px 20px;
-    border-radius: 25px;
-    background-color: #7046aa;
-    color: white;
-    font-weight: bold;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin: auto;
-    margin-top: 50px;
-    width: 80%
-}
+
 .icons{
     font-size: 2rem;
     cursor: pointer;
@@ -48,3 +37,9 @@
 .appr{
     color: rgb(78, 156, 78)
 }
+  
+  /* Keyframe for rotating animation */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
