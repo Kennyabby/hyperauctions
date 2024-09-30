@@ -8,6 +8,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { FaCloudArrowUp } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
+import { IoImageOutline } from "react-icons/io5";
 
 const PanelAuctions = ()=>{
     const [selectedCard, setSelectedCard] = useState(null)
@@ -17,15 +18,71 @@ const PanelAuctions = ()=>{
     const [updateTitle, setUpdateTitle] = useState('New')
     const [updating, setUpdating] = useState(false)
   const {
-    server, fetchServer, 
-    auctionItems, auctionImages, 
+    server, fetchServer, loadAuctions,
+    auctionItems, auctionImages, categories, setAuctionItems,
     userAuctions, userRecord
   } = useContext(ContextProvider)
   const defaultFields = {
-    category:'',
-    description:''
+    name:'',
+    description:'',
+    brand:'',
+    src:'',
+    type:'',
+    initialprice:'',
+    start:'',
+    target:''
   }
   const [fields, setFields] = useState(defaultFields)
+
+  useEffect(()=>{
+    if (edittingAuction._id){
+      setFields({
+        name:edittingAuction.name,
+        description:edittingAuction.description,
+        brand:edittingAuction.brand,
+        src:edittingAuction.src,
+        type:edittingAuction.type,
+        initialprice:edittingAuction.initialprice,
+        start:toDatetime(edittingAuction.start),
+        target:toDatetime(edittingAuction.target)
+      })
+      console.log(edittingAuction.start)
+    }
+  },[edittingAuction])
+
+  function toDatetime(timestamp) {
+    const date = new Date((timestamp + _getTimeZoneOffsetInMs()));
+    // slice(0, 19) includes seconds
+    return date.toISOString().slice(0, 19);
+  }
+  
+  function _getTimeZoneOffsetInMs() {
+    return new Date().getTimezoneOffset() * -60 * 1000;
+  }
+  function timestampToDatetimeLocal(timestamp) {
+    const date = new Date(timestamp * 1000); // Convert timestamp to Date object
+
+    // Get the local date in the format 'YYYY-MM-DDTHH:MM'
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // Return formatted date for datetime-local
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+  const dateTimeToTimestamp = (datetime)=>{
+    const [datePart, timePart] = String(datetime).split('T'); // Split date and time parts
+    const [year, month, day] = datePart.split('-').map(Number); // Split and parse date
+    const [hours, minutes] = timePart.split(':').map(Number); // Split and parse time
+
+    // Create a Date object using local time components
+    const date = new Date(year, month - 1, day, hours, minutes); // Month is zero-indexed
+
+    // Return the Unix timestamp (in seconds)
+    return Math.floor(date.getTime() / 1000);
+  }
   const calculateTimeLeft = (target) => {
     const now = new Date().getTime();
     const targetDate = new Date(target).getTime();
@@ -86,9 +143,180 @@ const PanelAuctions = ()=>{
     return () => clearInterval(targetTimerInterval);
 
   },[auctionItems])
+
+  const handleAuctionField = (e)=>{
+    const name = e.target.getAttribute('name')
+    const value = e.target.value
+
+    setFields((fields)=>{
+        return {...fields, [name]:value}
+    })
+
+  }
+
+  const handleAuctionUpdate = async()=>{
+    setUpdating(true)
+    if (fields.name){
+      if (updateTitle==='Add'){
+        const newAuction = {
+            ...fields,
+            biders:[],
+            bidersNo:0,
+            bids:0,
+            mybids:0,
+            bidprice:"",
+            createdAt: Date.now(),
+        }
+        const newAuctions = [newAuction, ...auctionItems]
+        const resps = await fetchServer("POST", {
+            database: 'AuctionItems',
+            collection: "all", 
+            update: newAuction
+        }, "createNewDoc", server)
+        
+        if (resps.err){
+            setUpdating(false)
+            console.log(resps.mess)
+        }else{
+            setUpdating(false)
+            setAuctionItems(newAuctions)
+            setAddAuction(false)
+            setFields(defaultFields)
+            loadAuctions({user:userRecord, reload:true})
+        }
+      }else if (updateTitle==='Edit'){
+          const updatedAuction = {
+              ...edittingAuction,  
+            ...fields,
+            createdAt:edittingAuction.createdAt?edittingAuction.createdAt:Date.now(),
+            start: dateTimeToTimestamp(fields.start),
+            target: dateTimeToTimestamp(fields.target),
+          }
+          const filteredAuc = auctionItems.filter((auc)=>{
+            return auc._id!==edittingAuction._id
+          })
+          const updatedAuctions = [updatedAuction, ...filteredAuc]
+          delete updatedAuction._id
+          const resps = await fetchServer("POST", {
+              database: 'AuctionItmes',
+              collection: "all", 
+              prop: [{
+                name: edittingAuction.name, 
+                description:edittingAuction.description
+              }, updatedAuction]
+          }, "updateOneDoc", server)
+            
+          if (resps.err){
+              setUpdating(false)
+              console.log(resps.mess)
+          }else{
+                setUpdating(false)
+                setAuctionItems(updatedAuctions)
+                setAddAuction(false)
+                setFields(defaultFields)
+                loadAuctions({user:userRecord, reload:true})                
+          }
+      }
+  }
+}
   return (
     <div className='panelauctions'>
-      {((userRecord===null && auctionItems.length) || userAuctions!==null) ? (auctionItems.length ? (auctionItems.slice(0,).map((auction, index) => {
+        
+        {addAuction && <div className='paneladdblock' 
+            onChange={handleAuctionField}
+        >
+            <div className='panelupdateicondiv'>
+                <MdOutlineCancel className='panelupdateicon deleteicon'
+                    onClick={()=>{
+                        setUpdating(false)
+                        setAddAuction(false)
+                        setEdittingAuction({})
+                    }}
+                />
+                {updating ? <Spinner
+                    diameter='8'
+                    defaultcolor='rgba(0, 0, 0, 0.1)'
+                    loadingcolor='darkblue'
+                    borderwidth='3'
+                    spintime='1'
+                /> : <FaCloudArrowUp className='panelupdateicon'
+                    onClick={handleAuctionUpdate}
+                    aria-disabled = {updating}
+                />}                
+            </div>
+            {edittingAuction._id ? <img src={auctionImages[edittingAuction.src]} className='addauctionpanelimg' alt={edittingAuction.name} /> :
+            <div className='addauctionpanelimg'> 
+              <IoImageOutline/>
+              <div>+</div>
+            </div>}
+            <div className='panelinpcov'>
+                <input
+                    className='panelinp'
+                    name='name'
+                    placeholder='Auction Name'
+                    type='text'
+                    value={fields.name}
+                />
+            </div>
+            <div className='panelinpcov'>
+                <textarea
+                    className='panelinparea'
+                    name='description'
+                    placeholder='Description'
+                    type='text'
+                    value={fields.description}
+                />
+            </div>
+            <div className='panelinpcov'>
+                <select
+                    className='panelinp'
+                    name='type'
+                    placeholder='Auction Name'
+                    type='text'
+                    value={fields.type}
+                >
+                    <option value={''}>Select Category</option>
+                    {categories.map((category, id)=>{
+                        return(
+                            <option key={id} value={category.category}>{category.category}</option>
+                        )
+                    })}
+                </select>
+            </div>
+            <div className='panelinpcov'>
+                <div>Starting Price</div>
+                <input
+                    className='panelinp'
+                    name='initialprice'
+                    placeholder='Starting Price'
+                    type='text'
+                    value={fields.initialprice}
+                />
+            </div>
+            <div className='panelinpcov'>
+                <div>Start Time</div>
+                <input
+                    className='panelinp'
+                    name='start'
+                    type='datetime-local'
+                    value={fields.start}
+                />
+            </div>
+            <div className='panelinpcov'> 
+                <div>End Time</div>
+                <input
+                    className='panelinp'
+                    name='target'
+                    type='datetime-local'
+                    value={fields.target}
+                />
+            </div>
+            
+            <div></div>
+        </div>}
+      {((userRecord===null && auctionItems.length) || userAuctions!==null) ? (auctionItems.length ? (auctionItems.slice(0,).filter((fltauction)=>{
+        return fltauction._id !== edittingAuction._id
+      }).map((auction, index) => {
         const starting = getTimerString(startTimers[index])
         const ending = getTimerString(targetTimers[index])
         const bidPeriod = (auction.target-auction.start)
