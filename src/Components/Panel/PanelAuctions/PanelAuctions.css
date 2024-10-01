@@ -25,6 +25,20 @@
     top: 0px;
     right: 0px;
     background: rgba(247, 247, 102, 0.7);
+    transition: opacity .25s ease-in;
+}
+.paneldelsecticondiv{
+    opacity: 1;
+    display: flex;
+    justify-content: space-between;
+    width: 70px;
+    padding: 5px 10px;
+    /* color: white; */
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: rgba(247, 247, 102, 0.7);
+    transition: opacity .25s ease-in;
 }
 .panelsecticon{
     /* margin-left: 25px; */
@@ -202,7 +216,7 @@
     .panelinpcov{
         margin: 10px;
         font-size: .8em;
-        div{
+        .panelinplbl{
             margin: 10px auto;
         }
         .panelinp{
@@ -220,6 +234,7 @@
     }
 }
 .panelupdateicondiv{
+    display: flex;
     background: rgb(253, 253, 201);
     width: fit-content;
     justify-content: space-between;

@@ -20,6 +20,7 @@ const Panel = ()=>{
     const defaultNav = window.localStorage.getItem('currnav')
     const [currNav, setCurrNav] = useState(defaultNav?defaultNav:'dashboard')
     const [panelView, setPanelView] = useState()
+    const panelauctRef = useRef(null)
     const {
         storePath, userRecord
     } = useContext(ContextProvider)
@@ -33,7 +34,7 @@ const Panel = ()=>{
             setPanelView(<Dashboard/>)
         }
         else if (currNav==='auctions'){
-            setPanelView(<PanelAuctions/>)
+            setPanelView(<PanelAuctions panelauctRef={panelauctRef}/>)
         }
         else if (currNav==='bidders'){
             setPanelView(<Bidders/>)
@@ -58,7 +59,7 @@ const Panel = ()=>{
                 <div></div>
                 <div className='panelview'>
                     <div className='welcome'>{`Welcome Back,`} <b>{`${userRecord.firstname} ${userRecord.lastname}`}</b></div>
-                    <div className='dashview'>
+                    <div className='dashview' ref={panelauctRef}>
                         {panelView}
                     </div>
                 </div>

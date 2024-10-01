@@ -1,6 +1,7 @@
 import './PanelAuctions.css'
 import { useState, useEffect, useRef, useContext } from "react";
 import Spinner from '../../../Resources/SpecialComponents/Spinner';
+import ToggleSwitch from '../../../Resources/SpecialComponents/ToggleSwitch';
 import ContextProvider from '../../../Resources/ContextProvider';
 import { PiClockCountdownBold } from 'react-icons/pi';
 import { MdAdd } from "react-icons/md";
@@ -10,18 +11,21 @@ import { FaCloudArrowUp } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
 import { IoImageOutline } from "react-icons/io5";
 
-const PanelAuctions = ()=>{
+const PanelAuctions = ({panelauctRef})=>{
     const [selectedCard, setSelectedCard] = useState(null)
     const [addAuction, setAddAuction] = useState(false)
     const [curAuction, setCurAuction] = useState({})
     const [edittingAuction, setEdittingAuction] = useState({})
+    const [deletingAuctions, setDeletingAuctions] = useState([])
     const [updateTitle, setUpdateTitle] = useState('New')
     const [updating, setUpdating] = useState(false)
+    const [deleting, setDeleting] = useState(false)
   const {
     server, fetchServer, loadAuctions,
     auctionItems, auctionImages, categories, setAuctionItems,
     userAuctions, userRecord
   } = useContext(ContextProvider)
+  const [clearBids, setClearBids] = useState(false)
   const defaultFields = {
     name:'',
     description:'',
@@ -46,7 +50,6 @@ const PanelAuctions = ()=>{
         start:toDatetime(edittingAuction.start),
         target:toDatetime(edittingAuction.target)
       })
-      console.log(edittingAuction.start)
     }
   },[edittingAuction])
 
@@ -81,7 +84,7 @@ const PanelAuctions = ()=>{
     const date = new Date(year, month - 1, day, hours, minutes); // Month is zero-indexed
 
     // Return the Unix timestamp (in seconds)
-    return Math.floor(date.getTime() / 1000);
+    return date.getTime()
   }
   const calculateTimeLeft = (target) => {
     const now = new Date().getTime();
@@ -189,35 +192,78 @@ const PanelAuctions = ()=>{
               ...edittingAuction,  
             ...fields,
             createdAt:edittingAuction.createdAt?edittingAuction.createdAt:Date.now(),
-            start: dateTimeToTimestamp(fields.start),
-            target: dateTimeToTimestamp(fields.target),
+            start: fields.start === toDatetime(edittingAuction.start) ? edittingAuction.start: dateTimeToTimestamp(fields.start),
+            target: fields.target === toDatetime(edittingAuction.target) ? edittingAuction.target: dateTimeToTimestamp(fields.target),
+            bids:clearBids? 0 : edittingAuction.bids,
+            bidersno:clearBids? 0 : edittingAuction.bidersno,
+            mybids:clearBids? 0 : edittingAuction.mybids,
+            biders:clearBids? []: edittingAuction.biders,
+            bidprice:clearBids? '' : edittingAuction.bidprice
           }
           const filteredAuc = auctionItems.filter((auc)=>{
             return auc._id!==edittingAuction._id
           })
-          const updatedAuctions = [updatedAuction, ...filteredAuc]
+          const auctionId = updatedAuction._id
           delete updatedAuction._id
+          
           const resps = await fetchServer("POST", {
-              database: 'AuctionItmes',
-              collection: "all", 
-              prop: [{
-                name: edittingAuction.name, 
-                description:edittingAuction.description
-              }, updatedAuction]
+            database: 'AuctionItems',
+            collection: "all", 
+            prop: [{
+              name: edittingAuction.name, 
+              description:edittingAuction.description
+            }, updatedAuction]
           }, "updateOneDoc", server)
-            
+          
           if (resps.err){
-              setUpdating(false)
-              console.log(resps.mess)
+            setUpdating(false)
+            setClearBids(false)
+            console.log(resps.mess)
           }else{
-                setUpdating(false)
+                updatedAuction._id = auctionId
+                const updatedAuctions = [updatedAuction, ...filteredAuc]
+                setEdittingAuction({})
                 setAuctionItems(updatedAuctions)
+                setUpdating(false)
+                setClearBids(false)
                 setAddAuction(false)
                 setFields(defaultFields)
                 loadAuctions({user:userRecord, reload:true})                
           }
       }
   }
+
+}
+const deleteAuction = async(auction)=>{
+    const filteredAuc = auctionItems.filter((auc)=>{
+      return auc._id!==auction._id
+    })
+    const resps = await fetchServer("POST", {
+        database: 'AuctionItems',
+        collection: "all", 
+        update: {
+          name: auction.name, 
+          description:auction.description
+        }
+    }, "removeDoc", server)
+    if (resps.err){
+        setDeleting(false)
+        setClearBids(false)
+        console.log(resps.mess)
+    }else{
+      setAuctionItems(filteredAuc)
+      setDeleting(false)
+      setDeletingAuctions((deletingAuctions)=>{
+        const remainingAuctions = deletingAuctions.filter((delauction)=>{
+          return delauction._id !== auction._id
+        })
+        return remainingAuctions
+      })
+      setClearBids(false)
+      setAddAuction(false)
+      setFields(defaultFields)
+      loadAuctions({user:userRecord, reload:true})
+    }
 }
   return (
     <div className='panelauctions'>
@@ -230,6 +276,7 @@ const PanelAuctions = ()=>{
                     onClick={()=>{
                         setUpdating(false)
                         setAddAuction(false)
+                        setClearBids(false)
                         setEdittingAuction({})
                     }}
                 />
@@ -248,6 +295,15 @@ const PanelAuctions = ()=>{
             <div className='addauctionpanelimg'> 
               <IoImageOutline/>
               <div>+</div>
+            </div>}
+           {updateTitle==='Edit'&&<div className='panelinpcov'>
+              <div className='panelinplbl'>Clear Bids</div>
+              <ToggleSwitch 
+                size={40}
+                setToggleState = {(isToggleState)=>{
+                  setClearBids(isToggleState)
+                }}
+              />
             </div>}
             <div className='panelinpcov'>
                 <input
@@ -284,7 +340,7 @@ const PanelAuctions = ()=>{
                 </select>
             </div>
             <div className='panelinpcov'>
-                <div>Starting Price</div>
+                <div className='panelinplbl'>Starting Price</div>
                 <input
                     className='panelinp'
                     name='initialprice'
@@ -294,7 +350,7 @@ const PanelAuctions = ()=>{
                 />
             </div>
             <div className='panelinpcov'>
-                <div>Start Time</div>
+                <div className='panelinplbl'>Start Time</div>
                 <input
                     className='panelinp'
                     name='start'
@@ -303,7 +359,7 @@ const PanelAuctions = ()=>{
                 />
             </div>
             <div className='panelinpcov'> 
-                <div>End Time</div>
+                <div className='panelinplbl'>End Time</div>
                 <input
                     className='panelinp'
                     name='target'
@@ -311,8 +367,6 @@ const PanelAuctions = ()=>{
                     value={fields.target}
                 />
             </div>
-            
-            <div></div>
         </div>}
       {((userRecord===null && auctionItems.length) || userAuctions!==null) ? (auctionItems.length ? (auctionItems.slice(0,).filter((fltauction)=>{
         return fltauction._id !== edittingAuction._id
@@ -322,16 +376,40 @@ const PanelAuctions = ()=>{
         const bidPeriod = (auction.target-auction.start)
         return (
           <div className='panelauctioncard' key={String(index)+auction._id} name={auction._id}>
-            <div className='panelsecticondiv'>
-                <CiEdit className='panelsecticon'
+            <div className={deletingAuctions.includes(auction)? 'paneldelsecticondiv': 'panelsecticondiv'}>
+                {!deletingAuctions.includes(auction) && <CiEdit className='panelsecticon'
                     onClick={()=>{
                         setEdittingAuction(auction)      
                         setSelectedCard(auction._id)                                                                                     
                         setUpdateTitle('Edit')
                         setAddAuction(true)
+                        panelauctRef.current.scrollTo({
+                          top: 0,
+                          behavior: 'smooth'
+                        })
                     }}
-                />
-                {!(targetTimers[index]<=bidPeriod && targetTimers[index] >=0) && <MdDelete className='panelsecticon deleteicon'/>}
+                />}
+                {!(targetTimers[index]<=bidPeriod && targetTimers[index] >=0) && 
+                  ((deleting && deletingAuctions.includes(auction))? 
+                    <Spinner
+                    diameter='8'
+                    defaultcolor='rgba(0, 0, 0, 0.1)'
+                    loadingcolor='red'
+                    borderwidth='3'
+                    spintime='1'
+                  /> :
+                    <MdDelete 
+                      className='panelsecticon deleteicon'
+                      onClick={()=>{
+                        setDeletingAuctions((deletingAuctions)=>{
+                          return [...deletingAuctions,auction]
+                        })
+                        setDeleting(true)
+                        deleteAuction(auction)
+                      }}
+                    />
+                  )
+                }
             </div>
             {/* <PiClockCountdownBold className='panellivecountdown'/> */}
             <div className='panelauctioncardtitle'>
@@ -437,6 +515,10 @@ const PanelAuctions = ()=>{
                 setFields({...defaultFields})
                 setUpdateTitle('New')
                 setAddAuction(true)
+                panelauctRef.current.scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                })
             }}
         />
     </div>
