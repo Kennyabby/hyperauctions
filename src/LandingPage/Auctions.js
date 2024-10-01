@@ -164,7 +164,7 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userA
           </div>
         )
       })):<div>
-        No Auctions at the moment
+        Make a bid and come here after.
       </div>) : <div>
         <Spinner
             diameter='40'
