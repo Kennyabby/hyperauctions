@@ -282,6 +282,7 @@ const deleteAuction = async(auction)=>{
                         setClearBids(false)
                         setEdittingAuction({})
                     }}
+                    title='close'
                 />
                 {updating ? <Spinner
                     diameter='8'
@@ -291,6 +292,7 @@ const deleteAuction = async(auction)=>{
                     spintime='1'
                 /> : <FaCloudArrowUp className='panelupdateicon'
                     onClick={handleAuctionUpdate}
+                    title='save'
                     aria-disabled = {updating}
                 />}                
             </div>
@@ -394,6 +396,7 @@ const deleteAuction = async(auction)=>{
                           behavior: 'smooth'
                         })
                     }}
+                    title='edit'
                 />}
                 {!(targetTimers[index]<=bidPeriod && targetTimers[index] >=0) && 
                   ((deleting && deletingAuctions.includes(auction))? 
@@ -402,7 +405,7 @@ const deleteAuction = async(auction)=>{
                       defaultcolor='rgba(0, 0, 0, 0.3)'
                       loadingcolor='red'
                       borderwidth='3'
-                      spintime='1'
+                      spintime='1'                                            
                     /> :
                     <MdDelete 
                       className='panelsecticon deleteicon'
@@ -413,6 +416,7 @@ const deleteAuction = async(auction)=>{
                         setDeleting(true)
                         deleteAuction(auction)
                       }}
+                      title='delete'
                     />
                   )
                 }

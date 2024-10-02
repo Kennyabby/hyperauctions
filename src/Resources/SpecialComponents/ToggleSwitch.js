@@ -18,6 +18,7 @@ const ToggleSwitch = ({ onColor = '#4CAF50', offColor = '#ccc', size = 60, setTo
         height: `${size / 2}px`,             // Height is half of the width for circular shape
         backgroundColor: isToggled ? onColor : offColor,  // Dynamic background color
       }}
+      title={String(isToggled)}
     >
       <div
         className="togglecircle"
@@ -26,6 +27,7 @@ const ToggleSwitch = ({ onColor = '#4CAF50', offColor = '#ccc', size = 60, setTo
           height: `${size / 2.5}px`,         // Circle height
           transform: isToggled ? `translateX(${size / 2}px)` : 'translateX(0)',  // Move the circle
         }}
+        title={String(isToggled)}
       ></div>
     </div>
   );

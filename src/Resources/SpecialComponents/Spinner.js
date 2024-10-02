@@ -5,6 +5,7 @@ const Spinner = ({diameter, defaultcolor, loadingcolor, borderwidth, spintime})=
     return(
         <>
             <div className='spinner'
+                title='loading'
                 style={{
                     width:`${diameter}px`,
                     height:`${diameter}px`,
