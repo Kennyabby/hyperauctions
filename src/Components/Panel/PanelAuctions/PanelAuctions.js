@@ -14,7 +14,7 @@ import { IoImageOutline } from "react-icons/io5";
 const PanelAuctions = ({panelauctRef})=>{
     const [selectedCard, setSelectedCard] = useState(null)
     const [addAuction, setAddAuction] = useState(false)
-    const [curAuction, setCurAuction] = useState({})
+    const [curAuctionLive, setCurAuctionLive] = useState(false)
     const [edittingAuction, setEdittingAuction] = useState({})
     const [deletingAuctions, setDeletingAuctions] = useState([])
     const [updateTitle, setUpdateTitle] = useState('New')
@@ -37,7 +37,11 @@ const PanelAuctions = ({panelauctRef})=>{
     target:''
   }
   const [fields, setFields] = useState(defaultFields)
-
+  useEffect(()=>{
+    const bidPeriod = edittingAuction.target - edittingAuction.start
+    const targetTimer = calculateTimeLeft(edittingAuction.target)
+    setCurAuctionLive(targetTimer<=bidPeriod && targetTimer >=0)
+  },[edittingAuction])
   useEffect(()=>{
     if (edittingAuction._id){
       setFields({
@@ -118,6 +122,7 @@ const PanelAuctions = ({panelauctRef})=>{
     // return `${day}, ${month} ${dayOfMonth}, ${year} ${hours}:${minutes}:${seconds}`;
     return `${month} ${dayOfMonth}, ${year}`;
   }
+
   const [startTimers, setStartTimers] = useState(
     auctionItems.map((auction) => calculateTimeLeft(auction.start))
   );
@@ -154,7 +159,6 @@ const PanelAuctions = ({panelauctRef})=>{
     setFields((fields)=>{
         return {...fields, [name]:value}
     })
-
   }
 
   const handleAuctionUpdate = async()=>{
@@ -232,8 +236,8 @@ const PanelAuctions = ({panelauctRef})=>{
           }
       }
   }
-
 }
+
 const deleteAuction = async(auction)=>{
     const filteredAuc = auctionItems.filter((auc)=>{
       return auc._id!==auction._id
@@ -267,7 +271,6 @@ const deleteAuction = async(auction)=>{
 }
   return (
     <div className='panelauctions'>
-        
         {addAuction && <div className='paneladdblock' 
             onChange={handleAuctionField}
         >
@@ -292,11 +295,11 @@ const deleteAuction = async(auction)=>{
                 />}                
             </div>
             {edittingAuction._id ? <img src={auctionImages[edittingAuction.src]} className='addauctionpanelimg' alt={edittingAuction.name} /> :
-            <div className='addauctionpanelimg'> 
-              <IoImageOutline/>
-              <div>+</div>
-            </div>}
-           {updateTitle==='Edit'&&<div className='panelinpcov'>
+              <div className='addauctionpanelimg'> 
+                <IoImageOutline/>
+                <div>+</div>
+              </div>}
+           {(!curAuctionLive && updateTitle==='Edit') && <div className='panelinpcov'>
               <div className='panelinplbl'>Clear Bids</div>
               <ToggleSwitch 
                 size={40}
@@ -330,6 +333,7 @@ const deleteAuction = async(auction)=>{
                     placeholder='Auction Name'
                     type='text'
                     value={fields.type}
+                    disabled={curAuctionLive}
                 >
                     <option value={''}>Select Category</option>
                     {categories.map((category, id)=>{
@@ -347,6 +351,7 @@ const deleteAuction = async(auction)=>{
                     placeholder='Starting Price'
                     type='text'
                     value={fields.initialprice}
+                    disabled={curAuctionLive}
                 />
             </div>
             <div className='panelinpcov'>
@@ -356,6 +361,7 @@ const deleteAuction = async(auction)=>{
                     name='start'
                     type='datetime-local'
                     value={fields.start}
+                    disabled={curAuctionLive}
                 />
             </div>
             <div className='panelinpcov'> 
@@ -392,12 +398,12 @@ const deleteAuction = async(auction)=>{
                 {!(targetTimers[index]<=bidPeriod && targetTimers[index] >=0) && 
                   ((deleting && deletingAuctions.includes(auction))? 
                     <Spinner
-                    diameter='8'
-                    defaultcolor='rgba(0, 0, 0, 0.1)'
-                    loadingcolor='red'
-                    borderwidth='3'
-                    spintime='1'
-                  /> :
+                      diameter='8'
+                      defaultcolor='rgba(0, 0, 0, 0.3)'
+                      loadingcolor='red'
+                      borderwidth='3'
+                      spintime='1'
+                    /> :
                     <MdDelete 
                       className='panelsecticon deleteicon'
                       onClick={()=>{
