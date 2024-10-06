@@ -12,7 +12,10 @@ import { MdOutlineCancel } from "react-icons/md";
 import { IoImageOutline } from "react-icons/io5";
 
 const PanelAuctions = ({panelauctRef})=>{
+    const addAuctionRef = useRef(null)
     const [selectedCard, setSelectedCard] = useState(null)
+    const [file, setFile] = useState(null)
+    const [srcEncoded, setSrcEncoded] = useState(null)
     const [addAuction, setAddAuction] = useState(false)
     const [curAuctionLive, setCurAuctionLive] = useState(false)
     const [edittingAuction, setEdittingAuction] = useState({})
@@ -23,14 +26,14 @@ const PanelAuctions = ({panelauctRef})=>{
   const {
     server, fetchServer, loadAuctions,
     auctionItems, auctionImages, categories, setAuctionItems,
-    userAuctions, userRecord
+    userAuctions, userRecord, getDate, getImage
   } = useContext(ContextProvider)
   const [clearBids, setClearBids] = useState(false)
   const defaultFields = {
     name:'',
     description:'',
     brand:'',
-    src:'',
+    src:{name:''},
     type:'',
     initialprice:'',
     start:'',
@@ -164,9 +167,11 @@ const PanelAuctions = ({panelauctRef})=>{
   const handleAuctionUpdate = async()=>{
     setUpdating(true)
     if (fields.name){
-      if (updateTitle==='Add'){
+      if (updateTitle==='New'){
         const newAuction = {
             ...fields,
+            start: dateTimeToTimestamp(fields.start),
+            target: dateTimeToTimestamp(fields.target),
             biders:[],
             bidersNo:0,
             bids:0,
@@ -185,11 +190,30 @@ const PanelAuctions = ({panelauctRef})=>{
             setUpdating(false)
             console.log(resps.mess)
         }else{
-            setUpdating(false)
-            setAuctionItems(newAuctions)
-            setAddAuction(false)
-            setFields(defaultFields)
-            loadAuctions({user:userRecord, reload:true})
+            const resps = await fetchServer( "POST", {
+              update: {
+                bider: 'hyperauctions',
+                imgPath: 'auctions',
+              },
+              imageInfo: {
+                image: srcEncoded,
+                imageName: fields.src['name'],
+                imageType: srcEncoded['type']
+              },
+            }, "postImg", server)
+            if (resps.err){
+              console.log('Error While posting Images')
+              // handle image upload error
+            }else{
+              if (!resps.mess){
+                setUpdating(false)
+                setAuctionItems(newAuctions)
+                setAddAuction(false)
+                setFields(defaultFields)
+                loadAuctions({user:userRecord, reload:true})
+                setSrcEncoded(null)
+              }
+            }
         }
       }else if (updateTitle==='Edit'){
           const updatedAuction = {
@@ -209,7 +233,7 @@ const PanelAuctions = ({panelauctRef})=>{
           })
           const auctionId = updatedAuction._id
           delete updatedAuction._id
-          
+          delete updatedAuction.imgsrc
           const resps = await fetchServer("POST", {
             database: 'AuctionItems',
             collection: "all", 
@@ -224,15 +248,34 @@ const PanelAuctions = ({panelauctRef})=>{
             setClearBids(false)
             console.log(resps.mess)
           }else{
-                updatedAuction._id = auctionId
-                const updatedAuctions = [updatedAuction, ...filteredAuc]
-                setEdittingAuction({})
-                setAuctionItems(updatedAuctions)
-                setUpdating(false)
-                setClearBids(false)
-                setAddAuction(false)
-                setFields(defaultFields)
-                loadAuctions({user:userRecord, reload:true})                
+            const resps = await fetchServer( "POST", {
+              update: {
+                bider: 'hyperauctions',
+                imgPath: 'auctions',
+              },
+              imageInfo: {
+                image: srcEncoded,
+                imageName: fields.src['name'],
+                imageType: srcEncoded['type']
+              },
+            }, "postImg", server)
+            if (resps.err){
+              console.log('Error While posting Images')
+              // handle image upload error
+            }else{
+
+              updatedAuction._id = auctionId
+              updatedAuction.imgsrc = srcEncoded
+              const updatedAuctions = [updatedAuction, ...filteredAuc]
+              setEdittingAuction({})
+              setAuctionItems(updatedAuctions)
+              setUpdating(false)
+              setClearBids(false)
+              setAddAuction(false)
+              setFields(defaultFields)
+              loadAuctions({user:userRecord, reload:true}) 
+              setSrcEncoded(null)
+            }
           }
       }
   }
@@ -256,19 +299,88 @@ const deleteAuction = async(auction)=>{
         console.log(resps.mess)
     }else{
       setAuctionItems(filteredAuc)
-      setDeleting(false)
       setDeletingAuctions((deletingAuctions)=>{
         const remainingAuctions = deletingAuctions.filter((delauction)=>{
           return delauction._id !== auction._id
         })
+        if (!remainingAuctions.length){
+          setDeleting(false)
+        }
         return remainingAuctions
       })
+      setEdittingAuction({})
       setClearBids(false)
       setAddAuction(false)
       setFields(defaultFields)
       loadAuctions({user:userRecord, reload:true})
+      setSrcEncoded(null)
     }
 }
+
+const fileHandler = async (e) => {
+  var file = e.target.files[0]
+  setFile(file)
+  var resize_width = 400
+  var reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.name = file.name //get the image's name
+  reader.size = file.size //get the image's size
+  reader.onload = function (event) {
+    var img = new Image() //create a image
+    img.src = event.target.result //result is base64-encoded Data URI
+    img.name = event.target.name //set name (optional)
+    img.size = event.target.size //set size (optional)
+    img.onload = function (el) {
+      var elem = document.createElement('canvas')
+      var scaleFactor = resize_width / el.target.width
+      var ctx = elem.getContext('2d')
+      elem.width = resize_width
+      elem.height = el.target.height * scaleFactor
+
+      ctx.drawImage(el.target, 0, 0, elem.width, elem.height)
+      const imageData = ctx.getImageData(0, 0, elem.width, elem.height).data
+
+      const pixelColors = []
+      for (let i = 0; i < imageData.length; i += 4) {
+        const r = imageData[i]
+        const g = imageData[i + 1]
+        const b = imageData[i + 2]
+        const a = imageData[i + 3]
+        pixelColors.push(`rgba(${r}, ${g}, ${b}, ${a})`)
+      }
+
+      const uniqueColors = new Set(pixelColors)
+
+      const colorPalette = Array.from(uniqueColors)
+
+      const colorCounts = {}
+      let maxCount = 0
+      let dominantColor = ''
+      for (let i = 0; i < colorPalette.length; i++) {
+        const color = colorPalette[i]
+        colorCounts[color] = (colorCounts[color] || 0) + 1
+        if (colorCounts[color] > maxCount) {
+          maxCount = colorCounts[color]
+          dominantColor = color
+        }
+      }
+      var srcEncoded = elem.toDataURL('image/jpeg');
+      setSrcEncoded(srcEncoded)
+      const name = e.target.getAttribute("name");
+      var imgSrc = String(Date.now())+'.jpg'
+      setFields((fields)=>{
+       return  {...fields, [name]: {              
+          name: imgSrc,
+          dominantColor: dominantColor,
+          width: elem.width,
+          height: elem.height
+        }
+      }
+      })
+    }
+  }
+}
+
   return (
     <div className='panelauctions'>
         {addAuction && <div className='paneladdblock' 
@@ -281,6 +393,8 @@ const deleteAuction = async(auction)=>{
                         setAddAuction(false)
                         setClearBids(false)
                         setEdittingAuction({})
+                        setSrcEncoded(null)
+                        setFields(defaultFields)
                     }}
                     title='close'
                 />
@@ -296,11 +410,73 @@ const deleteAuction = async(auction)=>{
                     aria-disabled = {updating}
                 />}                
             </div>
-            {edittingAuction._id ? <img src={auctionImages[edittingAuction.src]} className='addauctionpanelimg' alt={edittingAuction.name} /> :
-              <div className='addauctionpanelimg'> 
-                <IoImageOutline/>
-                <div>+</div>
-              </div>}
+            {(!srcEncoded && edittingAuction._id) ? <div style={{position:'relative'}}>
+              <input
+                ref={addAuctionRef}
+                name = "src"
+                type='file'
+                accept='image/*'
+                multiple = {false}
+                onChange={fileHandler}
+                style={{display:'none'}}
+              />
+              <CiEdit style={{
+                position:'absolute', 
+                right:'15px', 
+                top:'5px', 
+                cursor:'pointer',
+                background: 'rgba(255,255,255,0.3)'
+              }}
+                  onClick={()=>{
+                    addAuctionRef.current.click()
+                  }}
+                  title='edit'
+              />
+                <img src={edittingAuction.src['name'] ? edittingAuction.imgsrc : auctionImages[edittingAuction.src]} className='addauctionpanelimg' alt={edittingAuction.name} /> 
+              </div> :
+              (srcEncoded? 
+                <div style={{position:'relative'}}>
+                  <input
+                    ref={addAuctionRef}
+                    name = "src"
+                    type='file'
+                    accept='image/*'
+                    multiple = {false}
+                    onChange={fileHandler}
+                    style={{display:'none'}}
+                  />
+                  <CiEdit style={{
+                    position:'absolute', 
+                    right:'15px', 
+                    top:'5px', 
+                    cursor:'pointer',
+                    background: 'rgba(255,255,255,0.3)'
+                  }}
+                      onClick={()=>{
+                        addAuctionRef.current.click()
+                      }}
+                      title='edit'
+                  />
+                  <img src={srcEncoded} className='addauctionpanelimg' alt={'new auction image'}/>
+                </div>:
+                <div className='addauctionpanelimg' 
+                  onClick={()=>{
+                    addAuctionRef.current.click()
+                  }}
+                > 
+                  <input
+                    ref={addAuctionRef}
+                    name = "src"
+                    type='file'
+                    accept='image/*'
+                    multiple = {false}
+                    onChange={fileHandler}
+                    style={{display:'none'}}
+                  />
+                  <IoImageOutline/>
+                  <div>+</div>
+                </div>
+              )}
            {(!curAuctionLive && updateTitle==='Edit') && <div className='panelinpcov'>
               <div className='panelinplbl'>Clear Bids</div>
               <ToggleSwitch 
@@ -382,130 +558,31 @@ const deleteAuction = async(auction)=>{
         const starting = getTimerString(startTimers[index])
         const ending = getTimerString(targetTimers[index])
         const bidPeriod = (auction.target-auction.start)
-        return (
-          <div className='panelauctioncard' key={String(index)+auction._id} name={auction._id}>
-            <div className={deletingAuctions.includes(auction)? 'paneldelsecticondiv': 'panelsecticondiv'}>
-                {!deletingAuctions.includes(auction) && <CiEdit className='panelsecticon'
-                    onClick={()=>{
-                        setEdittingAuction(auction)      
-                        setSelectedCard(auction._id)                                                                                     
-                        setUpdateTitle('Edit')
-                        setAddAuction(true)
-                        panelauctRef.current.scrollTo({
-                          top: 0,
-                          behavior: 'smooth'
-                        })
-                    }}
-                    title='edit'
-                />}
-                {!(targetTimers[index]<=bidPeriod && targetTimers[index] >=0) && 
-                  ((deleting && deletingAuctions.includes(auction))? 
-                    <Spinner
-                      diameter='8'
-                      defaultcolor='rgba(0, 0, 0, 0.3)'
-                      loadingcolor='red'
-                      borderwidth='3'
-                      spintime='1'                                            
-                    /> :
-                    <MdDelete 
-                      className='panelsecticon deleteicon'
-                      onClick={()=>{
-                        setDeletingAuctions((deletingAuctions)=>{
-                          return [...deletingAuctions,auction]
-                        })
-                        setDeleting(true)
-                        deleteAuction(auction)
-                      }}
-                      title='delete'
-                    />
-                  )
-                }
-            </div>
-            {/* <PiClockCountdownBold className='panellivecountdown'/> */}
-            <div className='panelauctioncardtitle'>
-              <div className={'panelauctionstatus'+(targetTimers[index]<=0?' panelbidended':'')}>
-                <div>
-                  {startTimers[index]>0 && 'Live Soon'}
-                  {targetTimers[index]<=bidPeriod && targetTimers[index] >=0 && 'Live'}
-                  {targetTimers[index]<=0 && 'Live Ended'}
-                </div>
-              </div>
-              <div className='panelauctionpricediv'> 
-                <div className='panelauctionprice'>
-                  {'₦'+auction.initialprice}
-                </div>
-                <div className='panelstartingprice'>Starting price:</div>
-              </div>
-            </div>
-            <img src={auctionImages[auction.src]} className='panelauctionimg' alt={auction.name} />
-            <div className='panelauctionname'>{auction.name}</div>
-            <div className='panelauctiondesc'>{auction.description}</div>
-            <div className='panelauctionliveinfo'>
-              <div className='panelliveinfocontent'>
-                <div className='panelmaincontent'>
-                  <div className='panelbidpricediv'> 
-                    <div className='panelbidprice'>
-                      {'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
-                    </div>
-                    {startTimers[index] > 0 && <div className='panelbidstatus'>Highest bid so far:</div>}
-                    {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='panelbidstatus'>Highest bid so far:</div>}
-                    {targetTimers[index] < 0 && <div className='panelbidstatus'>Winning Price</div>}
-                  </div>
 
-                  {startTimers[index] > 0 && <div className='panelauctiontimer'>
-                    <div className='paneltimer'>
-                      <div className='paneltimervalue'>{formatDate(auction.start)}</div>
-                      <div className='paneltimerstatus'>Starting</div>
-                    </div>
-                    <div className='paneltimer'>
-                      <div className='paneltimervalue'>{formatDate(auction.target)}</div>
-                      <div className='paneltimerstatus'>Ends by</div>
-                    </div>
-                  </div>}
-                  {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='panelauctiontimer'>
-                    <div className='paneltimer'>
-                      <div className='paneltimervalue'>{formatDate(auction.start)}</div>
-                      <div className='paneltimerstatus'>Started</div>
-                    </div>
-                    <div className='paneltimer'>
-                      <div className='paneltimervalue'>{formatDate(auction.target)}</div>
-                      <div className='paneltimerstatus'>Ends by</div>
-                    </div>
-                  </div>}
-                  {targetTimers[index] < 0 && <div className='panelauctiontimer'>
-                    <div className='paneltimer'>
-                      <div className='paneltimervalue'>{formatDate(auction.start)}</div>
-                      <div className='paneltimerstatus'>Started</div>
-                    </div>
-                    <div className='paneltimer'>
-                      <div className='paneltimervalue'>{formatDate(auction.target)}</div>
-                      <div className='paneltimerstatus'>Ended</div>
-                    </div>
-                  </div>}
-                  {/* <div
-                    className={'auctionbtn'+(targetTimers[index]<=0?' bidended':'')}
-                    onClick={() => { 
-                      if (targetTimers[index]>0){
-                        // startBidding(auction) 
-                      }
-                    }}
-                  >
-                    {starting==='EXPIRED'?'BID NOW':(startTimers[index]<=3600000?'STARTING SOON':'UPCOMING')}
-                  </div> */}
-                </div>
-              </div>
-              <div className='panelauctionlive'>
-                <div className='panelauctionbids'>
-                  <div className='bid-no'>{auction.bids}</div>
-                  <div>Bids</div>
-                </div>
-                <div className='panelauctionbiders'>
-                  <div className='bid-no'> {auction.biders.length}</div>
-                  <div>Bidders</div>
-                </div>                
-              </div>
-            </div>
-          </div>
+        return (
+          <AuctionView 
+            index = {index}
+            key={String(index)+auction._id}
+            auction={auction}
+            auctionImages={auctionImages}
+            deleteAuction = {deleteAuction}
+            deletingAuctions={deletingAuctions}
+            setDeletingAuctions = {setDeletingAuctions}
+            setEdittingAuction = {setEdittingAuction}
+            setUpdateTitle = {setUpdateTitle}
+            setAddAuction = {setAddAuction}
+            setSelectedCard={setSelectedCard}
+            panelauctRef = {panelauctRef}
+            targetTimers = {targetTimers}
+            startTimers = {startTimers}
+            bidPeriod = {bidPeriod}
+            ending = {ending}
+            starting =  {starting}
+            deleting={deleting}
+            setDeleting={setDeleting}
+            formatDate={formatDate}
+            getImage={getImage}
+          />
         )
       })):<div>
         No Auctions at the moment
@@ -537,3 +614,163 @@ const deleteAuction = async(auction)=>{
 }
 
 export default PanelAuctions
+
+
+const AuctionView = ({ 
+  auction, index, auctionImages, 
+  deleteAuction, deletingAuctions, setDeletingAuctions,
+  setEdittingAuction, setUpdateTitle, deleting, setDeleting, 
+  formatDate, setAddAuction, panelauctRef, startTimers, 
+  targetTimers, bidPeriod, setSelectedCard, getImage
+}) =>{
+useEffect(()=>{
+
+  const viewImage = async () => {
+    const src = await getImage({
+          imgUrl: auction.src['name'] ? auction.src['name'] : auction.src,
+          bider: 'hyperauctions',
+          imagePath: 'auctions'
+      })
+      auction.imgsrc = src
+      // console.log(auction.src['name'] ? auction.src['name'] : auction.src, src)
+    }
+    viewImage()
+  },[auction])
+  
+  return (
+    <>
+      <div className='panelauctioncard' name={auction._id}>
+        <div className={deletingAuctions.includes(auction)? 'paneldelsecticondiv': 'panelsecticondiv'}>
+            {!deletingAuctions.includes(auction) && <CiEdit className='panelsecticon'
+                onClick={()=>{
+                    setEdittingAuction(auction)      
+                    setSelectedCard(auction._id)                                                                                     
+                    setUpdateTitle('Edit')
+                    setAddAuction(true)
+                    panelauctRef.current.scrollTo({
+                      top: 0,
+                      behavior: 'smooth'
+                    })
+                }}
+                title='edit'
+            />}
+            {!(targetTimers[index]<=bidPeriod && targetTimers[index] >=0) && 
+              ((deleting && deletingAuctions.includes(auction))? 
+                <Spinner
+                  diameter='8'
+                  defaultcolor='rgba(0, 0, 0, 0.3)'
+                  loadingcolor='red'
+                  borderwidth='3'
+                  spintime='1'                                            
+                /> :
+                <MdDelete 
+                  className='panelsecticon deleteicon'
+                  onClick={()=>{
+                    setDeletingAuctions((deletingAuctions)=>{
+                      return [...deletingAuctions,auction]
+                    })
+                    setDeleting(true)
+                    deleteAuction(auction)
+                  }}
+                  title='delete'
+                />
+              )
+            }
+        </div>
+        {/* <PiClockCountdownBold className='panellivecountdown'/> */}
+        <div className='panelauctioncardtitle'>
+          <div className={'panelauctionstatus'+(targetTimers[index]<=0?' panelbidended':'')}>
+            <div>
+              {startTimers[index]>0 && 'Live Soon'}
+              {targetTimers[index]<=bidPeriod && targetTimers[index] >=0 && 'Live'}
+              {targetTimers[index]<=0 && 'Live Ended'}
+            </div>
+          </div>
+          <div className='panelauctionpricediv'> 
+            <div className='panelauctionprice'>
+              {'₦'+auction.initialprice}
+            </div>
+            <div className='panelstartingprice'>Starting price:</div>
+          </div>
+        </div>
+        {auction.src['name'] ? (auction.imgsrc ? 
+          <img src={auction.imgsrc} className='panelauctionimg' alt={auction.name} />
+          :<div 
+            className='panelauctionimg'
+            style={{
+              background: auction.src['dominantColor']
+            }}
+          ></div>) :
+          <img src={auctionImages[auction.src]} className='panelauctionimg' alt={auction.name} />
+        }
+        <div className='panelauctionname'>{auction.name}</div>
+        <div className='panelauctiondesc'>{auction.description}</div>
+        <div className='panelauctionliveinfo'>
+          <div className='panelliveinfocontent'>
+            <div className='panelmaincontent'>
+              <div className='panelbidpricediv'> 
+                <div className='panelbidprice'>
+                  {'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
+                </div>
+                {startTimers[index] > 0 && <div className='panelbidstatus'>Highest bid so far:</div>}
+                {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='panelbidstatus'>Highest bid so far:</div>}
+                {targetTimers[index] < 0 && <div className='panelbidstatus'>Winning Price</div>}
+              </div>
+
+              {startTimers[index] > 0 && <div className='panelauctiontimer'>
+                <div className='paneltimer'>
+                  <div className='paneltimervalue'>{formatDate(auction.start)}</div>
+                  <div className='paneltimerstatus'>Starting</div>
+                </div>
+                <div className='paneltimer'>
+                  <div className='paneltimervalue'>{formatDate(auction.target)}</div>
+                  <div className='paneltimerstatus'>Ends by</div>
+                </div>
+              </div>}
+              {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='panelauctiontimer'>
+                <div className='paneltimer'>
+                  <div className='paneltimervalue'>{formatDate(auction.start)}</div>
+                  <div className='paneltimerstatus'>Started</div>
+                </div>
+                <div className='paneltimer'>
+                  <div className='paneltimervalue'>{formatDate(auction.target)}</div>
+                  <div className='paneltimerstatus'>Ends by</div>
+                </div>
+              </div>}
+              {targetTimers[index] < 0 && <div className='panelauctiontimer'>
+                <div className='paneltimer'>
+                  <div className='paneltimervalue'>{formatDate(auction.start)}</div>
+                  <div className='paneltimerstatus'>Started</div>
+                </div>
+                <div className='paneltimer'>
+                  <div className='paneltimervalue'>{formatDate(auction.target)}</div>
+                  <div className='paneltimerstatus'>Ended</div>
+                </div>
+              </div>}
+              {/* <div
+                className={'auctionbtn'+(targetTimers[index]<=0?' bidended':'')}
+                onClick={() => { 
+                  if (targetTimers[index]>0){
+                    // startBidding(auction) 
+                  }
+                }}
+              >
+                {starting==='EXPIRED'?'BID NOW':(startTimers[index]<=3600000?'STARTING SOON':'UPCOMING')}
+              </div> */}
+            </div>
+          </div>
+          <div className='panelauctionlive'>
+            <div className='panelauctionbids'>
+              <div className='bid-no'>{auction.bids}</div>
+              <div>Bids</div>
+            </div>
+            <div className='panelauctionbiders'>
+              <div className='bid-no'> {auction.biders.length}</div>
+              <div>Bidders</div>
+            </div>                
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}

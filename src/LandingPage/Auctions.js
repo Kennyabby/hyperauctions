@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { PiClockCountdownBold } from "react-icons/pi";
 import Spinner from '../Resources/SpecialComponents/Spinner';
+import ContextProvider from '../Resources/ContextProvider';
 
 const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userAuctions }) => {
   const calculateTimeLeft = (target) => {
@@ -10,7 +11,7 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userA
 
     return distance
   };
-
+  const {getImage} = useContext(ContextProvider)
   const getTimerString = (time)=>{
     if (time <= 0) return 'EXPIRED';
     const days = Math.floor(time / (1000 * 60 * 60 * 24));
@@ -72,96 +73,20 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userA
         const ending = getTimerString(targetTimers[index])
         const bidPeriod = (auction.target-auction.start)
         return (
-          <div className='auctioncard' key={String(index)+auction._id}>
-            <PiClockCountdownBold className='livecountdown'/>
-            <div className='auctioncardtitle'>
-              <div className={'auctionstatus'+(targetTimers[index]<=0?' bidended':'')}>
-                <div>
-                  {startTimers[index]>0 && 'Live Soon'}
-                  {targetTimers[index]<=bidPeriod && targetTimers[index] >=0 && 'Live'}
-                  {targetTimers[index]<=0 && 'Live Ended'}
-                </div>
-              </div>
-              <div className='auctionpricediv'> 
-                <div className='auctionprice'>
-                  {'₦'+auction.initialprice}
-                </div>
-                <div className='startingprice'>Starting price:</div>
-              </div>
-            </div>
-            <img src={auctionImages[auction.src]} className='auctionimg' alt={auction.name} />
-            <div className='auctionname'>{auction.name}</div>
-            <div className='auctiondesc'>{auction.description}</div>
-            <div className='auctionliveinfo'>
-              <div className='liveinfocontent'>
-                <div className='maincontent'>
-                  <div className='bidpricediv'> 
-                    <div className='bidprice'>
-                      {'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
-                    </div>
-                    {startTimers[index] > 0 && <div className='bidstatus'>Highest bid so far:</div>}
-                    {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='bidstatus'>Highest bid so far:</div>}
-                    {targetTimers[index] < 0 && <div className='bidstatus'>Winning Price</div>}
-                  </div>
-
-                  {startTimers[index] > 0 && <div className='auctiontimer'>
-                    <div className='timer'>
-                      <div className='timervalue'>{formatDate(auction.start)}</div>
-                      <div className='timerstatus'>Starting</div>
-                    </div>
-                    <div className='timer'>
-                      <div className='timervalue'>{formatDate(auction.target)}</div>
-                      <div className='timerstatus'>Ends by</div>
-                    </div>
-                  </div>}
-                  {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='auctiontimer'>
-                    <div className='timer'>
-                      <div className='timervalue'>{formatDate(auction.start)}</div>
-                      <div className='timerstatus'>Started</div>
-                    </div>
-                    <div className='timer'>
-                      <div className='timervalue'>{formatDate(auction.target)}</div>
-                      <div className='timerstatus'>Ends by</div>
-                    </div>
-                  </div>}
-                  {targetTimers[index] < 0 && <div className='auctiontimer'>
-                    <div className='timer'>
-                      <div className='timervalue'>{formatDate(auction.start)}</div>
-                      <div className='timerstatus'>Started</div>
-                    </div>
-                    <div className='timer'>
-                      <div className='timervalue'>{formatDate(auction.target)}</div>
-                      <div className='timerstatus'>Ended</div>
-                    </div>
-                  </div>}
-                  <div
-                    className={'auctionbtn'+(targetTimers[index]<=0?' bidended':'')}
-                    onClick={() => { 
-                      if (targetTimers[index]>0){
-                        startBidding(auction) 
-                      }
-                    }}
-                  >
-                    {starting==='EXPIRED'?'BID NOW':(startTimers[index]<=3600000?'STARTING SOON':'UPCOMING')}
-                  </div>
-                </div>
-              </div>
-              <div className='auctionlive'>
-                <div className='auctionbids'>
-                  <div className='bid-no'>{auction.bids}</div>
-                  <div>Bids</div>
-                </div>
-                <div className='auctionbiders'>
-                  <div className='bid-no'> {auction.biders.length}</div>
-                  <div>Bidders</div>
-                </div>
-                {<div className='myauctionbids'>
-                  <div className='bid-no'>{auction.mybids}</div>
-                  <div>You</div>
-                </div>}
-              </div>
-            </div>
-          </div>
+          <AuctionView
+            key={index}
+            index={index}
+            auction = {auction}
+            targetTimers={targetTimers}
+            startTimers={startTimers}
+            bidPeriod={bidPeriod}
+            starting={starting}
+            ending={ending}
+            auctionImages={auctionImages}
+            formatDate={formatDate}
+            startBidding={startBidding}
+            getImage={getImage}
+          />
         )
       })):<div>
         Make a bid and come here after.
@@ -180,3 +105,132 @@ const Auctions = ({ auctionItems, auctionImages, startBidding, userRecord, userA
 };
 
 export default Auctions;
+
+
+
+const AuctionView  = ({
+  auction, index, targetTimers, startTimers, bidPeriod, 
+  starting, ending, auctionImages, startBidding, formatDate,
+  getImage
+}) =>{
+
+  useEffect(()=>{
+    const viewImage = async () => {
+      const src = await getImage({
+            imgUrl: auction.src['name'] ? auction.src['name'] : auction.src,
+            bider: 'hyperauctions',
+            imagePath: 'auctions'
+        })
+        auction.imgsrc = src
+      }
+    viewImage()
+  },[auction])
+
+  return (
+    <>
+      <div className='auctioncard' key={String(index)+auction._id}>
+        <PiClockCountdownBold className='livecountdown'/>
+        <div className='auctioncardtitle'>
+          <div className={'auctionstatus'+(targetTimers[index]<=0?' bidended':'')}>
+            <div>
+              {startTimers[index]>0 && 'Live Soon'}
+              {targetTimers[index]<=bidPeriod && targetTimers[index] >=0 && 'Live'}
+              {targetTimers[index]<=0 && 'Live Ended'}
+            </div>
+          </div>
+          <div className='auctionpricediv'> 
+            <div className='auctionprice'>
+              {'₦'+auction.initialprice}
+            </div>
+            <div className='startingprice'>Starting price:</div>
+          </div>
+        </div>
+        {!auction.imgsrc? 
+        <div className='auctionimg'
+          style={{
+            background:auction.src['dominantColor']
+          }}
+        ></div> :
+        <img 
+          src={auction.src['name'] ? auction.imgsrc : auctionImages[auction.src]} 
+          className='auctionimg' 
+          alt={auction.name} 
+          style={{
+            background:auction.src['dominantColor']
+          }}
+        />}
+        <div className='auctionname'>{auction.name}</div>
+        <div className='auctiondesc'>{auction.description}</div>
+        <div className='auctionliveinfo'>
+          <div className='liveinfocontent'>
+            <div className='maincontent'>
+              <div className='bidpricediv'> 
+                <div className='bidprice'>
+                  {'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
+                </div>
+                {startTimers[index] > 0 && <div className='bidstatus'>Highest bid so far:</div>}
+                {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='bidstatus'>Highest bid so far:</div>}
+                {targetTimers[index] < 0 && <div className='bidstatus'>Winning Price</div>}
+              </div>
+
+              {startTimers[index] > 0 && <div className='auctiontimer'>
+                <div className='timer'>
+                  <div className='timervalue'>{formatDate(auction.start)}</div>
+                  <div className='timerstatus'>Starting</div>
+                </div>
+                <div className='timer'>
+                  <div className='timervalue'>{formatDate(auction.target)}</div>
+                  <div className='timerstatus'>Ends by</div>
+                </div>
+              </div>}
+              {targetTimers[index]<=bidPeriod && targetTimers[index]>=0 && <div className='auctiontimer'>
+                <div className='timer'>
+                  <div className='timervalue'>{formatDate(auction.start)}</div>
+                  <div className='timerstatus'>Started</div>
+                </div>
+                <div className='timer'>
+                  <div className='timervalue'>{formatDate(auction.target)}</div>
+                  <div className='timerstatus'>Ends by</div>
+                </div>
+              </div>}
+              {targetTimers[index] < 0 && <div className='auctiontimer'>
+                <div className='timer'>
+                  <div className='timervalue'>{formatDate(auction.start)}</div>
+                  <div className='timerstatus'>Started</div>
+                </div>
+                <div className='timer'>
+                  <div className='timervalue'>{formatDate(auction.target)}</div>
+                  <div className='timerstatus'>Ended</div>
+                </div>
+              </div>}
+              <div
+                className={'auctionbtn'+(targetTimers[index]<=0?' bidended':'')}
+                onClick={() => { 
+                  if (targetTimers[index]>0){
+                    startBidding(auction) 
+                  }
+                }}
+              >
+                {starting==='EXPIRED'?'BID NOW':(startTimers[index]<=3600000?'STARTING SOON':'UPCOMING')}
+              </div>
+            </div>
+          </div>
+          <div className='auctionlive'>
+            <div className='auctionbids'>
+              <div className='bid-no'>{auction.bids}</div>
+              <div>Bids</div>
+            </div>
+            <div className='auctionbiders'>
+              <div className='bid-no'> {auction.biders.length}</div>
+              <div>Bidders</div>
+            </div>
+            {<div className='myauctionbids'>
+              <div className='bid-no'>{auction.mybids}</div>
+              <div>You</div>
+            </div>}
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}

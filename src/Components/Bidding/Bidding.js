@@ -9,7 +9,7 @@ import { IoChevronBack, IoChevronForwardOutline } from "react-icons/io5";
 import { Carousel } from 'react-responsive-carousel';
 const Bidding = ()=>{
     const {storePath, userRecord, currBid, fetchServer,
-        setCurrBid, setLoginMessage, 
+        setCurrBid, setLoginMessage, getImage,
         auctionImages,server, loadAuctions, auctionItems
     } = useContext(ContextProvider)
     const [bidSuccessful, setBidSuccessful] = useState(false)
@@ -245,115 +245,30 @@ const Bidding = ()=>{
                     const ending = getTimerString(endingTime)
                     const bidPeriod = endingTime - startingTime
                     return (
-                        curBid!==null && auctionImages!==null && <div className='biddingcover' key={auction._id}>
-                            {/* <div className='bidpre'><IoChevronBack/></div>
-                            <div className='bidnext'><IoChevronForwardOutline/></div> */}
-                            <div className='biddetails'>
-                                <div className='bidname'>{auction.name}</div>
-                                <div className='biddesc'>{auction.description}</div>
-                                {/* <div className='bidbase'>
-                                    <div className='bidbrand'>{currBid.brand}</div>
-                                </div> */}
-                                <div className='prdbidcov'>
-                                    <div className='bidimgcov'>
-                                        <img alt="bidimages" src={auctionImages[auction.src]} className='bidimg'/>
-                                    </div>
-                                    <div className='auctionlive'>
-                                        <div className='auctionbids'>
-                                            <div className='bid-no'>{auction.bids}</div>
-                                            <div>All Bids</div>
-                                        </div>
-                                        <div className='auctionbiders'>
-                                            <div className='bid-no'> {auction.biders.length}</div>
-                                            <div>Bidders</div>
-                                        </div>
-
-                                        {userRecord!==null && <div className='myauctionbids'>
-                                            <div className='bid-no'>{auction.mybids}</div>
-                                            <div>Your Bids</div>
-                                        </div>}
-                                    </div>
-                                </div>
-                                {startingTime > 0 && endingTime > 0 && <div className='auctiontimer bidauctiontimer'>
-                                    <div className='timervalue'>{starting}</div>
-                                    <div className='timerkey'>Live starts in</div>
-                                </div>}
-
-                                {startingTime <= 0 && endingTime >= 0 && <div className='auctiontimer bidauctiontimer'>     
-                                    <div className='timervalue'>{ending}</div>
-                                    <div className='timerkey'>Live ends in</div>
-                                </div>}
-                                {/* <div className='bidlive'>LIVE</div> */}
-                                
-                                
-                                
-                                
-                                <div className='mobilebidlive' onClick={()=>{
-                                    setViewBidEntry(true)
-                                    setBidSuccessful(false)
-                                    setBiditemindex(index)
-                                    window.localStorage.setItem('curbid',JSON.stringify(auction))
-                                    document.body.scrollTop = 0; 
-                                    document.documentElement.scrollTop = 0
-                                }}>Make Your Bid</div>
-                            </div>
-                            {<div className={'bidentry'+(viewBidEntry?'':' viewbidentry')}>
-                                <IoMdArrowRoundBack className='leavebidentry' onClick={()=>{
-                                    setViewBidEntry(false)
-                                }}/>
-                                <div className={'bidlive '+(targetTimers[index]<=0?' bidended':'')}>
-                                    {/* {startTimers[index]>0 && 'LIVE SOON'} */}
-                                    {'LIVE'}
-                                    {/* {targetTimers[index]<=0 && 'LIVE ENDED'} */}
-                                </div>
-                                <div className='bidentrytitle'>
-                                    <div className='entrytitle'>{'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}</div>
-                                    <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
-                                </div>
-                                <AnimatePresence>
-                                    {bidStatus && <motion.div initial={{opacity:0}}
-                                        animate={{opacity:1}}
-                                        transition={{
-                                            opacity: {
-                                                duration: .8,
-                                                ease: 'easeIn'
-                                            },
-                                        }}
-                                        exit={{opacity: 0, transition:{opacity:{
-                                            duration: 0.8,
-                                            ease: 'easeOut',
-                                        }}}}
-                                        
-                                        className='verifymsg bidverifymsg'>
-                                        {bidSuccessful && <FaCircleCheck className='verifycheck'/>}
-                                        <div>{bidStatus}</div>
-                                    </motion.div>}
-                                </AnimatePresence>
-                                <div className='userbidcard'>
-                                    <label>WHAT'S YOUR BID?</label>
-                                    <input 
-                                        className='lgninp bidinp'
-                                        type='number'
-                                        name={index}
-                                        value={bidvalues[index]}
-                                        onChange={(e)=>{
-                                            setBidvalues((bidvalues)=>{
-                                                bidvalues[index] = e.target.value
-                                                return [...bidvalues]
-                                            })
-                                        }}
-                                        placeholder={'> ₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
-                                    />
-                                    <div className='userbidbtn' onClick={()=>{
-                                        setBiditemindex(index)
-                                        window.localStorage.setItem('curbid',JSON.stringify(auction))
-                                        makeBid(auction,index)
-                                    }
-                                    }>{startingTime <=0 && endingTime >= 0 ? bidMessage :'NOT AVAILABLE'}</div>
-                                </div>
-                                
-                            </div>}
-                        </div>
+                        <BidView
+                            index={index}
+                            auction={auction}
+                            auctionImages={auctionImages}
+                            curBid={curBid}
+                            userRecord={userRecord}
+                            startingTime={startingTime}
+                            endingTime={endingTime}
+                            starting={starting}
+                            ending={ending}
+                            setViewBidEntry={setViewBidEntry}
+                            bidSuccessful= {bidSuccessful}
+                            setBidSuccessful={setBidSuccessful}
+                            setBiditemindex={setBiditemindex}
+                            viewBidEntry={viewBidEntry}
+                            targetTimers={targetTimers}
+                            startTimers={startTimers}
+                            bidStatus={bidStatus}
+                            bidvalues={bidvalues}
+                            setBidvalues={setBidvalues}
+                            makeBid={makeBid}
+                            bidMessage = {bidMessage}
+                            getImage={getImage}
+                        />
                     )
                 }):
                 
@@ -368,3 +283,154 @@ const Bidding = ()=>{
 }
 
 export default Bidding
+
+const BidView = ({
+        index, auction, auctionImages, curBid, userRecord,
+        startingTime, endingTime, starting, ending, bidSuccessful,
+        setViewBidEntry, setBiditemindex, setBidSuccessful,
+        viewBidEntry, targetTimers, startTimers, bidStatus, 
+        bidvalues, setBidvalues, makeBid, bidMessage, getImage
+    })=>{
+
+    useEffect(()=>{
+        const viewImage = async () => {
+            const src = await getImage({
+                imgUrl: auction.src['name'] ? auction.src['name'] : auction.src,
+                bider: 'hyperauctions',
+                imagePath: 'auctions'
+            })
+            auction.imgsrc = src
+            }
+        viewImage()
+        },[auction])
+
+    return (
+        <>
+        {curBid!==null && auctionImages!==null && <div className='biddingcover' key={auction._id}>
+            {/* <div className='bidpre'><IoChevronBack/></div>
+            <div className='bidnext'><IoChevronForwardOutline/></div> */}
+            <div className='biddetails'>
+                <div className='bidname'>{auction.name}</div>
+                <div className='biddesc'>{auction.description}</div>
+                {/* <div className='bidbase'>
+                    <div className='bidbrand'>{currBid.brand}</div>
+                </div> */}
+                <div className='prdbidcov'>
+                    <div className='bidimgcov'>
+                        {!auction.imgsrc? 
+                            <div className='bidimg'
+                                style={{
+                                    background:auction.src['dominantColor']
+                                }}
+                            ></div> :
+                            <img 
+                                alt="bidimages" 
+                                src={auction.src['name'] ? auction.imgsrc : auctionImages[auction.src]} 
+                                className='bidimg'
+                                style={{
+                                    background:auction.src['dominantColor']
+                                }}
+                            />
+                        }
+                        
+                    </div>
+                    <div className='auctionlive'>
+                        <div className='auctionbids'>
+                            <div className='bid-no'>{auction.bids}</div>
+                            <div>All Bids</div>
+                        </div>
+                        <div className='auctionbiders'>
+                            <div className='bid-no'> {auction.biders.length}</div>
+                            <div>Bidders</div>
+                        </div>
+
+                        {userRecord!==null && <div className='myauctionbids'>
+                            <div className='bid-no'>{auction.mybids}</div>
+                            <div>Your Bids</div>
+                        </div>}
+                    </div>
+                </div>
+                {startingTime > 0 && endingTime > 0 && <div className='auctiontimer bidauctiontimer'>
+                    <div className='timervalue'>{starting}</div>
+                    <div className='timerkey'>Live starts in</div>
+                </div>}
+
+                {startingTime <= 0 && endingTime >= 0 && <div className='auctiontimer bidauctiontimer'>     
+                    <div className='timervalue'>{ending}</div>
+                    <div className='timerkey'>Live ends in</div>
+                </div>}
+                {/* <div className='bidlive'>LIVE</div> */}
+                
+                
+                
+                
+                <div className='mobilebidlive' onClick={()=>{
+                    setViewBidEntry(true)
+                    setBidSuccessful(false)
+                    setBiditemindex(index)
+                    window.localStorage.setItem('curbid',JSON.stringify(auction))
+                    document.body.scrollTop = 0; 
+                    document.documentElement.scrollTop = 0
+                }}>Make Your Bid</div>
+            </div>
+            {<div className={'bidentry'+(viewBidEntry?'':' viewbidentry')}>
+                <IoMdArrowRoundBack className='leavebidentry' onClick={()=>{
+                    setViewBidEntry(false)
+                }}/>
+                <div className={'bidlive '+(targetTimers[index]<=0?' bidended':'')}>
+                    {/* {startTimers[index]>0 && 'LIVE SOON'} */}
+                    {'LIVE'}
+                    {/* {targetTimers[index]<=0 && 'LIVE ENDED'} */}
+                </div>
+                <div className='bidentrytitle'>
+                    <div className='entrytitle'>{'₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}</div>
+                    <div className='entrycardlabel'>HIGHEST BID SO FAR</div>
+                </div>
+                <AnimatePresence>
+                    {bidStatus && <motion.div initial={{opacity:0}}
+                        animate={{opacity:1}}
+                        transition={{
+                            opacity: {
+                                duration: .8,
+                                ease: 'easeIn'
+                            },
+                        }}
+                        exit={{opacity: 0, transition:{opacity:{
+                            duration: 0.8,
+                            ease: 'easeOut',
+                        }}}}
+                        
+                        className='verifymsg bidverifymsg'>
+                        {bidSuccessful && <FaCircleCheck className='verifycheck'/>}
+                        <div>{bidStatus}</div>
+                    </motion.div>}
+                </AnimatePresence>
+                <div className='userbidcard'>
+                    <label>WHAT'S YOUR BID?</label>
+                    <input 
+                        className='lgninp bidinp'
+                        type='number'
+                        name={index}
+                        value={bidvalues[index]}
+                        onChange={(e)=>{
+                            setBidvalues((bidvalues)=>{
+                                bidvalues[index] = e.target.value
+                                return [...bidvalues]
+                            })
+                        }}
+                        placeholder={'> ₦'+(auction.bidprice?Number(auction.bidprice).toLocaleString():auction.initialprice)}
+                    />
+                    <div className='userbidbtn' onClick={()=>{
+                        setBiditemindex(index)
+                        window.localStorage.setItem('curbid',JSON.stringify(auction))
+                        makeBid(auction,index)
+                    }
+                    }>{startingTime <=0 && endingTime >= 0 ? bidMessage :'NOT AVAILABLE'}</div>
+                </div>
+                
+            </div>}
+        </div>
+        }
+        </>
+    )
+}
