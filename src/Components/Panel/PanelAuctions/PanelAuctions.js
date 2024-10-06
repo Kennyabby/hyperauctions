@@ -248,33 +248,47 @@ const PanelAuctions = ({panelauctRef})=>{
             setClearBids(false)
             console.log(resps.mess)
           }else{
-            const resps = await fetchServer( "POST", {
-              update: {
-                bider: 'hyperauctions',
-                imgPath: 'auctions',
-              },
-              imageInfo: {
-                image: srcEncoded,
-                imageName: fields.src['name'],
-                imageType: srcEncoded['type']
-              },
-            }, "postImg", server)
-            if (resps.err){
-              console.log('Error While posting Images')
-              // handle image upload error
+            if (srcEncoded){
+              const resps = await fetchServer( "POST", {
+                update: {
+                  bider: 'hyperauctions',
+                  imgPath: 'auctions',
+                },
+                imageInfo: {
+                  image: srcEncoded,
+                  imageName: fields.src['name'],
+                  imageType: srcEncoded['type']
+                },
+              }, "postImg", server)
+              if (resps.err){
+                console.log('Error While posting Images')
+                // handle image upload error
+              }else{
+  
+                updatedAuction._id = auctionId
+                updatedAuction.imgsrc = srcEncoded
+                const updatedAuctions = [updatedAuction, ...filteredAuc]
+                setEdittingAuction({})
+                setAuctionItems(updatedAuctions)
+                setUpdating(false)
+                setClearBids(false)
+                setAddAuction(false)
+                setFields(defaultFields)
+                loadAuctions({user:userRecord, reload:true}) 
+                setSrcEncoded(null)
+              }
             }else{
-
               updatedAuction._id = auctionId
-              updatedAuction.imgsrc = srcEncoded
-              const updatedAuctions = [updatedAuction, ...filteredAuc]
-              setEdittingAuction({})
-              setAuctionItems(updatedAuctions)
-              setUpdating(false)
-              setClearBids(false)
-              setAddAuction(false)
-              setFields(defaultFields)
-              loadAuctions({user:userRecord, reload:true}) 
-              setSrcEncoded(null)
+                updatedAuction.imgsrc = srcEncoded
+                const updatedAuctions = [updatedAuction, ...filteredAuc]
+                setEdittingAuction({})
+                setAuctionItems(updatedAuctions)
+                setUpdating(false)
+                setClearBids(false)
+                setAddAuction(false)
+                setFields(defaultFields)
+                loadAuctions({user:userRecord, reload:true}) 
+                setSrcEncoded(null)
             }
           }
       }
@@ -514,7 +528,7 @@ const fileHandler = async (e) => {
                     disabled={curAuctionLive}
                 >
                     <option value={''}>Select Category</option>
-                    {categories.map((category, id)=>{
+                    {categories?.map((category, id)=>{
                         return(
                             <option key={id} value={category.category}>{category.category}</option>
                         )
